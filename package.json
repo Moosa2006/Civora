@@ -1,10 +1,13 @@
 {
   "name": "zinnovatio",
   "version": "1.0.0",
-  "description": "",
+  "description": "Civora Civic Issue Reporting and Public Accountability Platform",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "postinstall": "npm run postinstall --prefix server",
+    "build": "npm run build --prefix server",
+    "start": "npm run start --prefix server",
+    "test": "npm run test:verify --prefix server"
   },
   "keywords": [],
   "author": "",

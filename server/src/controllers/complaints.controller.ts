@@ -197,6 +197,145 @@ export async function getMyComplaints(req: Request, res: Response, next: NextFun
   }
 }
 
+const complaintWithDetailsArgs = Prisma.validator<Prisma.ComplaintDefaultArgs>()({
+  include: {
+    category: {
+      select: {
+        id: true,
+        code: true,
+        name: true,
+      },
+    },
+    assignedDepartment: {
+      select: {
+        id: true,
+        code: true,
+        name: true,
+      },
+    },
+    assignedOfficial: {
+      select: {
+        id: true,
+        name: true,
+      },
+    },
+    statusHistory: {
+      include: {
+        changedBy: {
+          select: {
+            id: true,
+            name: true,
+            role: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'asc' },
+    },
+    documents: {
+      select: {
+        id: true,
+        fileName: true,
+        mimeType: true,
+        fileSize: true,
+        documentCategory: true,
+        visibility: true,
+        sha256Checksum: true,
+        perceptualHash: true,
+        capturedAt: true,
+        browserCaptureTimestamp: true,
+        captureLatitude: true,
+        captureLongitude: true,
+        captureAccuracy: true,
+        isGpsVerified: true,
+        createdAt: true,
+      },
+    },
+    inspections: {
+      include: {
+        inspector: {
+          select: {
+            id: true,
+            name: true,
+            role: true,
+          },
+        },
+      },
+      orderBy: { inspectionDate: 'desc' },
+    },
+  },
+});
+
+type ComplaintWithDetails = Prisma.ComplaintGetPayload<typeof complaintWithDetailsArgs>;
+
+const complaintTrackArgs = Prisma.validator<Prisma.ComplaintDefaultArgs>()({
+  include: {
+    category: {
+      select: {
+        code: true,
+        name: true,
+      },
+    },
+    assignedDepartment: {
+      select: {
+        code: true,
+        name: true,
+      },
+    },
+    statusHistory: {
+      select: {
+        fromStatus: true,
+        toStatus: true,
+        reasonOrRemarks: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: 'asc' },
+    },
+    inspections: {
+      select: {
+        id: true,
+        outcome: true,
+        observations: true,
+        measurements: true,
+        inspectionDate: true,
+      },
+      orderBy: { inspectionDate: 'desc' },
+    },
+    documents: {
+      where: { visibility: 'PUBLIC' },
+      select: {
+        id: true,
+        fileName: true,
+        mimeType: true,
+        fileSize: true,
+        documentCategory: true,
+        sha256Checksum: true,
+        perceptualHash: true,
+        capturedAt: true,
+        browserCaptureTimestamp: true,
+        captureLatitude: true,
+        captureLongitude: true,
+        captureAccuracy: true,
+        isGpsVerified: true,
+        createdAt: true,
+      },
+    },
+    sla: true,
+    escalations: {
+      where: {
+        status: { in: ['ACTIVE', 'ACKNOWLEDGED', 'ACTION_PLANNED'] },
+      },
+      select: {
+        id: true,
+        escalationLevel: true,
+        status: true,
+        createdAt: true,
+      },
+    },
+  },
+});
+
+type ComplaintTrackPayload = Prisma.ComplaintGetPayload<typeof complaintTrackArgs>;
+
 export async function getComplaintById(req: Request, res: Response, next: NextFunction) {
   try {
     if (!req.user) {
@@ -215,73 +354,9 @@ export async function getComplaintById(req: Request, res: Response, next: NextFu
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
     const whereClause: Prisma.ComplaintWhereUniqueInput = isUuid ? { id } : { trackingId: id };
 
-    const complaint = await prisma.complaint.findUnique({
+    const complaint: ComplaintWithDetails | null = await prisma.complaint.findUnique({
       where: whereClause,
-      include: {
-        category: {
-          select: {
-            id: true,
-            code: true,
-            name: true,
-          },
-        },
-        assignedDepartment: {
-          select: {
-            id: true,
-            code: true,
-            name: true,
-          },
-        },
-        assignedOfficial: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-        statusHistory: {
-          include: {
-            changedBy: {
-              select: {
-                id: true,
-                name: true,
-                role: true,
-              },
-            },
-          },
-          orderBy: { createdAt: 'asc' },
-        },
-        documents: {
-          select: {
-            id: true,
-            fileName: true,
-            mimeType: true,
-            fileSize: true,
-            documentCategory: true,
-            visibility: true,
-            sha256Checksum: true,
-            perceptualHash: true,
-            capturedAt: true,
-            browserCaptureTimestamp: true,
-            captureLatitude: true,
-            captureLongitude: true,
-            captureAccuracy: true,
-            isGpsVerified: true,
-            createdAt: true,
-          },
-        },
-        inspections: {
-          include: {
-            inspector: {
-              select: {
-                id: true,
-                name: true,
-                role: true,
-              },
-            },
-          },
-          orderBy: { inspectionDate: 'desc' },
-        },
-      },
+      include: complaintWithDetailsArgs.include,
     });
 
     if (!complaint) {
@@ -344,8 +419,8 @@ export async function getComplaintById(req: Request, res: Response, next: NextFu
 
     // Filter documents by visibility for citizens
     const filteredDocuments = complaint.documents
-      .filter((doc) => isStaff || doc.visibility === 'PUBLIC')
-      .map((doc) => ({
+      .filter((doc: ComplaintWithDetails['documents'][number]) => isStaff || doc.visibility === 'PUBLIC')
+      .map((doc: ComplaintWithDetails['documents'][number]) => ({
         ...doc,
         fileSize: Number(doc.fileSize),
         captureLatitude: doc.captureLatitude ? Number(doc.captureLatitude) : null,
@@ -381,72 +456,9 @@ export async function trackComplaintByTrackingId(req: Request, res: Response, ne
       });
     }
 
-    const complaint = await prisma.complaint.findUnique({
+    const complaint: ComplaintTrackPayload | null = await prisma.complaint.findUnique({
       where: { trackingId: trackingId.toUpperCase() },
-      include: {
-        category: {
-          select: {
-            code: true,
-            name: true,
-          },
-        },
-        assignedDepartment: {
-          select: {
-            code: true,
-            name: true,
-          },
-        },
-        statusHistory: {
-          select: {
-            fromStatus: true,
-            toStatus: true,
-            reasonOrRemarks: true,
-            createdAt: true,
-          },
-          orderBy: { createdAt: 'asc' },
-        },
-        inspections: {
-          select: {
-            id: true,
-            outcome: true,
-            observations: true,
-            measurements: true,
-            inspectionDate: true,
-          },
-          orderBy: { inspectionDate: 'desc' },
-        },
-        documents: {
-          where: { visibility: 'PUBLIC' },
-          select: {
-            id: true,
-            fileName: true,
-            mimeType: true,
-            fileSize: true,
-            documentCategory: true,
-            sha256Checksum: true,
-            perceptualHash: true,
-            capturedAt: true,
-            browserCaptureTimestamp: true,
-            captureLatitude: true,
-            captureLongitude: true,
-            captureAccuracy: true,
-            isGpsVerified: true,
-            createdAt: true,
-          },
-        },
-        sla: true,
-        escalations: {
-          where: {
-            status: { in: ['ACTIVE', 'ACKNOWLEDGED', 'ACTION_PLANNED'] },
-          },
-          select: {
-            id: true,
-            escalationLevel: true,
-            status: true,
-            createdAt: true,
-          },
-        },
-      },
+      include: complaintTrackArgs.include,
     });
 
     if (!complaint) {
@@ -517,7 +529,7 @@ export async function trackComplaintByTrackingId(req: Request, res: Response, ne
       timeline: complaint.statusHistory,
       progressUpdates: publicProgress,
       inspections: complaint.inspections,
-      evidence: complaint.documents.map((d) => ({
+      evidence: complaint.documents.map((d: ComplaintTrackPayload['documents'][number]) => ({
         ...d,
         fileSize: Number(d.fileSize),
         captureLatitude: d.captureLatitude ? Number(d.captureLatitude) : null,
