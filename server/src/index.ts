@@ -12,9 +12,21 @@ if (process.env.NODE_ENV !== 'test') {
     console.log(`[Civora Backend] Health endpoint: http://localhost:${PORT}/api/health`);
 
     // Ensure baseline municipal metadata asynchronously on startup
-    ensureBaselineMetadata().catch((err) => {
-      console.warn('[Civora Backend] Background metadata bootstrap deferred:', err?.message || err);
-    });
+    ensureBaselineMetadata()
+      .then((res) => {
+        if (res.seeded) {
+          console.log(
+            `[Civora Backend] Baseline municipal metadata initialized: ${res.departments} departments, ${res.categories} categories.`
+          );
+        } else {
+          console.log(
+            `[Civora Backend] Baseline municipal metadata verified in database (${res.categories} active categories).`
+          );
+        }
+      })
+      .catch((err) => {
+        console.error('[Civora Backend Error] Background metadata initialization failed:', err?.message || err);
+      });
   });
 
   const handleShutdown = async (signal: string) => {

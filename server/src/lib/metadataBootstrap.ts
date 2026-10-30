@@ -74,11 +74,9 @@ export const BASELINE_CATEGORIES: BaselineCategoryDef[] = [
   },
 ];
 
-/**
- * Ensures baseline municipal departments and complaint categories are present in the database.
- * Idempotent: Can be called multiple times without creating duplicates.
- */
-export async function ensureBaselineMetadata(): Promise<{ seeded: boolean; departments: number; categories: number }> {
+let inFlightBootstrap: Promise<{ seeded: boolean; departments: number; categories: number }> | null = null;
+
+async function executeBootstrap(): Promise<{ seeded: boolean; departments: number; categories: number }> {
   try {
     const existingCatCount = await prisma.complaintCategory.count({ where: { isActive: true } });
     const existingDeptCount = await prisma.department.count({ where: { isActive: true } });
@@ -112,7 +110,7 @@ export async function ensureBaselineMetadata(): Promise<{ seeded: boolean; depar
     for (const c of BASELINE_CATEGORIES) {
       const departmentId = deptMap.get(c.departmentCode);
       if (!departmentId) {
-        console.warn(`[Metadata Bootstrap] Missing departmentId for code ${c.departmentCode}`);
+        console.warn(`[Civora Metadata Bootstrap] Missing departmentId for code ${c.departmentCode}`);
         continue;
       }
 
@@ -144,9 +142,29 @@ export async function ensureBaselineMetadata(): Promise<{ seeded: boolean; depar
       departments: deptMap.size,
       categories: seededCategories,
     };
-  } catch (err) {
+  } catch (err: any) {
+    if (err?.message?.includes('42P05') || err?.message?.includes('prepared statement')) {
+      console.error(
+        '[Civora Metadata Bootstrap Critical] PostgreSQL 42P05 detected: Prepared statement collision on connection pooler. Ensure pgbouncer=true is present in DATABASE_URL.'
+      );
+    }
     console.error('[Civora Metadata Bootstrap] Failed to ensure baseline metadata:', err);
     throw err;
   }
 }
 
+/**
+ * Ensures baseline municipal departments and complaint categories are present in the database.
+ * Idempotent & Concurrency-Safe: Multiple concurrent callers await the same in-flight operation.
+ */
+export async function ensureBaselineMetadata(): Promise<{ seeded: boolean; departments: number; categories: number }> {
+  if (inFlightBootstrap) {
+    return inFlightBootstrap;
+  }
+
+  inFlightBootstrap = executeBootstrap().finally(() => {
+    inFlightBootstrap = null;
+  });
+
+  return inFlightBootstrap;
+}

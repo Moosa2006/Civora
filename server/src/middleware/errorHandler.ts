@@ -41,6 +41,24 @@ export function errorHandler(
     });
   }
 
+  // Detect PostgreSQL 42P05 / Prepared statement collisions from connection poolers
+  if (
+    err instanceof Prisma.PrismaClientUnknownRequestError &&
+    (err.message.includes('42P05') || err.message.includes('prepared statement'))
+  ) {
+    console.error(
+      `[Civora Database Pooler Collision ${correlationId || 'N/A'}]: Prepared statement collision 42P05. Ensure pgbouncer=true is appended to DATABASE_URL.`
+    );
+    return res.status(503).json({
+      success: false,
+      error: {
+        code: 'DATABASE_POOLER_COLLISION',
+        message: 'Database connection pooler encountered a prepared statement collision. pgbouncer=true parameter is required on DATABASE_URL.',
+        correlationId,
+      },
+    });
+  }
+
   // Prisma-specific known request errors
   if (err instanceof Prisma.PrismaClientKnownRequestError) {
     // P1xxx codes denote database connection, authentication, and reachability issues

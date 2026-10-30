@@ -31,6 +31,7 @@ export async function getDepartments(_req: Request, res: Response, next: NextFun
         });
       } catch (seedErr) {
         console.error('[Meta Controller] Auto-seeding departments failed:', seedErr);
+        return next(seedErr);
       }
     }
 
@@ -86,6 +87,7 @@ export async function getCategories(_req: Request, res: Response, next: NextFunc
         });
       } catch (seedErr) {
         console.error('[Meta Controller] Auto-seeding categories failed:', seedErr);
+        return next(seedErr);
       }
     }
 
