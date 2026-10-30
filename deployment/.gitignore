@@ -1,0 +1,6 @@
+# Deployment directory gitignore
+# Ignore all secrets and environment files
+.env*
+*.secrets
+*.secrets.env
+

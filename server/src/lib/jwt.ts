@@ -5,9 +5,8 @@ const JWT_SECRET = process.env.JWT_SECRET || 'civora-development-jwt-secret-min-
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 
 export function signAuthToken(payload: JWTPayload): string {
-  // @ts-expect-error jsonwebtoken types signature overload
   return jwt.sign(payload, JWT_SECRET, {
-    expiresIn: JWT_EXPIRES_IN,
+    expiresIn: JWT_EXPIRES_IN as any,
   });
 }
 

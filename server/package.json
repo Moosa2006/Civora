@@ -22,7 +22,13 @@
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.3.0",
+    "@types/node": "^22.13.4",
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -31,17 +37,10 @@
     "express-rate-limit": "^8.7.1",
     "jsonwebtoken": "^9.0.3",
     "multer": "^2.4.0",
-    "zod": "^4.6.7"
-  },
-  "devDependencies": {
-    "@types/bcryptjs": "^2.4.6",
-    "@types/cookie-parser": "^1.4.10",
-    "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.0",
-    "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^22.13.4",
     "prisma": "^6.19.3",
     "tsx": "^4.19.3",
-    "typescript": "^5.7.3"
-  }
+    "typescript": "^5.7.3",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {}
 }
