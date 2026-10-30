@@ -358,7 +358,32 @@ export function AdminSystemPage() {
       }
       if (overviewRes.ok) {
         const ovData = await overviewRes.json();
-        if (ovData.success) setOverview(ovData.data);
+        if (ovData.success && ovData.data) {
+          const raw = ovData.data;
+          const normalized: DashboardOverviewData = {
+            ...raw,
+            metrics: raw.metrics || {
+              totalUsers: raw.users?.total ?? 0,
+              activeUsers: raw.users?.active ?? 0,
+              usersByRole: {
+                CITIZEN: raw.users?.citizens ?? 0,
+                OFFICIAL: raw.users?.officials ?? 0,
+                ADMIN: raw.users?.admins ?? 0,
+              },
+              totalComplaints: raw.complaints?.total ?? 0,
+              complaintsAwaitingAction: raw.complaints?.awaitingAction ?? 0,
+              complaintsInProgress: raw.complaints?.activeBacklog ?? 0,
+              complaintsResolved: raw.complaints?.resolved ?? 0,
+              complaintsRejected: raw.complaints?.rejected ?? 0,
+              complaintsOverdue: raw.complaints?.overdue ?? 0,
+              openIncidents: raw.incidents?.openCount ?? 0,
+              recentAuditActionsCount: raw.recentAuditEvents?.length ?? 0,
+            },
+            recentAuditEvents: Array.isArray(raw.recentAuditEvents) ? raw.recentAuditEvents : [],
+            recentIncidents: Array.isArray(raw.recentIncidents) ? raw.recentIncidents : [],
+          };
+          setOverview(normalized);
+        }
       }
     } catch (err: unknown) {
       setErrorMsg(err instanceof Error ? err.message : 'Unable to query diagnostics');
@@ -1051,28 +1076,28 @@ export function AdminSystemPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <MetricCard
               label={t('adminSystem.registeredUsers')}
-              value={overview ? overview.metrics.totalUsers : diagnostics?.metrics?.usersCount ?? 0}
+              value={overview?.metrics?.totalUsers ?? diagnostics?.metrics?.usersCount ?? 0}
               subtext={`${overview?.metrics?.activeUsers ?? 0} active recently`}
               accentColor="blue"
               icon={<UsersIcon className="w-5 h-5 text-blue-400" />}
             />
             <MetricCard
               label={t('adminSystem.totalComplaints')}
-              value={overview ? overview.metrics.totalComplaints : diagnostics?.metrics?.complaintsCount ?? 0}
+              value={overview?.metrics?.totalComplaints ?? diagnostics?.metrics?.complaintsCount ?? 0}
               subtext={`${overview?.metrics?.complaintsAwaitingAction ?? 0} awaiting assignment`}
               accentColor="purple"
               icon={<ActivityIcon className="w-5 h-5 text-purple-400" />}
             />
             <MetricCard
               label={t('adminSystem.overdueCases')}
-              value={overview ? overview.metrics.complaintsOverdue : 0}
+              value={overview?.metrics?.complaintsOverdue ?? 0}
               subtext="Beyond target SLA resolution window"
               accentColor="rose"
               icon={<AlertTriangleIcon className="w-5 h-5 text-rose-400" />}
             />
             <MetricCard
               label={t('adminSystem.openIncidents')}
-              value={overview ? overview.metrics.openIncidents : 0}
+              value={overview?.metrics?.openIncidents ?? 0}
               subtext="Active system alerts & degradations"
               accentColor="amber"
               icon={<ShieldCheckIcon className="w-5 h-5 text-amber-400" />}
