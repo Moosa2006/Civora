@@ -51,13 +51,6 @@ export function LoginPage() {
     }
   };
 
-
-  const handleQuickFill = (demoEmail: string) => {
-    setEmail(demoEmail);
-    setPassword('CivoraDev123!');
-    setErrorMessage(null);
-  };
-
   if (isAuthenticated && user) {
     return (
       <Container size="md" className="py-12">
@@ -123,7 +116,7 @@ export function LoginPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="e.g., citizen1@example.test"
+              placeholder="e.g., citizen@example.com"
               autoComplete="email"
               required
               disabled={isSubmitting}
@@ -191,46 +184,6 @@ export function LoginPage() {
               className="text-xs text-[#54625A] hover:text-[#202522] dark:text-[#C5D4C9] dark:hover:text-[#F5F2EA] underline underline-offset-2 cursor-pointer font-medium"
             >
               Check Contractor Application Status
-            </button>
-          </div>
-        </div>
-
-        {/* Development Quick-Fill Accounts Helper */}
-        <div className="mt-6 pt-5 border-t border-[#DED8CB] dark:border-[#283931] bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/60 -mx-6 -mb-6 p-5 rounded-b-xl">
-          <p className="text-[11px] font-mono font-semibold text-[#54625A] dark:text-[#C5D4C9] uppercase tracking-wider mb-2 text-center">
-            Development Quick Demo Logins
-          </p>
-          <p className="text-[11px] text-[#54625A] dark:text-[#C5D4C9] text-center mb-3">
-            Password: <code className="text-[#173D32] dark:text-[#7BC4B2] font-mono font-semibold">CivoraDev123!</code>
-          </p>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            <button
-              type="button"
-              onClick={() => handleQuickFill('citizen1@example.test')}
-              className="px-2 py-1.5 rounded-lg text-xs bg-white dark:bg-[#16201C] hover:bg-[#ECE7DB] dark:hover:bg-[#1D2A25] text-[#202522] dark:text-[#F5F2EA] border border-[#DED8CB] dark:border-[#283931] text-center transition-colors cursor-pointer font-medium"
-            >
-              Citizen 1
-            </button>
-            <button
-              type="button"
-              onClick={() => handleQuickFill('contractor1@example.test')}
-              className="px-2 py-1.5 rounded-lg text-xs bg-white dark:bg-[#16201C] hover:bg-[#ECE7DB] dark:hover:bg-[#1D2A25] text-[#854F0B] dark:text-[#F3B768] border border-[#854F0B]/40 text-center transition-colors cursor-pointer font-semibold"
-            >
-              Contractor 1
-            </button>
-            <button
-              type="button"
-              onClick={() => handleQuickFill('official1@example.test')}
-              className="px-2 py-1.5 rounded-lg text-xs bg-white dark:bg-[#16201C] hover:bg-[#ECE7DB] dark:hover:bg-[#1D2A25] text-[#202522] dark:text-[#F5F2EA] border border-[#DED8CB] dark:border-[#283931] text-center transition-colors cursor-pointer font-medium"
-            >
-              Official 1
-            </button>
-            <button
-              type="button"
-              onClick={() => handleQuickFill('admin1@example.test')}
-              className="px-2 py-1.5 rounded-lg text-xs bg-white dark:bg-[#16201C] hover:bg-[#ECE7DB] dark:hover:bg-[#1D2A25] text-[#202522] dark:text-[#F5F2EA] border border-[#DED8CB] dark:border-[#283931] text-center transition-colors cursor-pointer font-medium"
-            >
-              Admin 1
             </button>
           </div>
         </div>
