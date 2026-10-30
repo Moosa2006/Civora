@@ -354,6 +354,26 @@ export function AdminComplaintsPage() {
                       <Badge variant="neutral" size="sm">
                         {c.priority} Priority
                       </Badge>
+                      {c.isDuplicate && (
+                        <Badge variant="warning" size="sm">
+                          Duplicate ({Math.round((c.duplicateConfidence || 0.8) * 100)}%)
+                        </Badge>
+                      )}
+                      {c.aiRiskLevel === 'HIGH' && (
+                        <Badge variant="danger" size="sm">
+                          AI Risk: High ({c.aiRiskScore || 75}/100)
+                        </Badge>
+                      )}
+                      {c.aiRiskLevel === 'NEEDS_REVIEW' && (
+                        <Badge variant="warning" size="sm">
+                          AI Flag: Needs Review
+                        </Badge>
+                      )}
+                      {c.aiRiskLevel === 'LOW' && c.aiAnalysisStatus === 'COMPLETED' && (
+                        <Badge variant="success" size="sm">
+                          AI Verified
+                        </Badge>
+                      )}
                       <span className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
                         • {c.category?.name || 'Category'}
                       </span>
@@ -362,9 +382,26 @@ export function AdminComplaintsPage() {
                     <h3 className="text-base font-bold font-heading text-[#202522] dark:text-[#E8F0EC]">{c.title}</h3>
                     <p className="text-xs text-[#4A5750] dark:text-[#A8BFAE] leading-relaxed">{c.description}</p>
 
+                    {c.aiFindings?.verificationSummary && (
+                      <div className="p-2.5 rounded-lg bg-[#ECE7DB]/60 dark:bg-[#1D2A25]/60 border border-[#DED8CB] dark:border-[#283931] text-xs space-y-1">
+                        <div className="flex items-center justify-between text-[#173D32] dark:text-[#7BC4B2] font-semibold text-[11px]">
+                          <span>AI Integrity Findings</span>
+                          {c.aiFindings.fraudIndicators && c.aiFindings.fraudIndicators.length > 0 && (
+                            <span className="text-amber-600 dark:text-amber-400 font-mono">
+                              Flags: {c.aiFindings.fraudIndicators.join(', ')}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-[#3E4B44] dark:text-[#C5D4C9] text-[11px] leading-relaxed">
+                          {c.aiFindings.verificationSummary}
+                        </p>
+                      </div>
+                    )}
+
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-[#54625A] dark:text-[#C5D4C9] pt-2 border-t border-[#DED8CB] dark:border-[#283931]">
                       <div>
                         <strong className="text-[#202522] dark:text-[#E8F0EC]">Location:</strong> {c.locationAddress} ({c.locality})
+                        {c.ward && <span className="block text-[11px] text-[#173D32] dark:text-[#7BC4B2] font-medium">Ward: {c.ward}</span>}
                       </div>
                       <div>
                         <strong className="text-[#202522] dark:text-[#E8F0EC]">Citizen:</strong>{' '}

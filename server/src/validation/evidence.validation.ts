@@ -35,6 +35,36 @@ export const uploadEvidenceMetadataSchema = z.object({
     .uuid('Invalid replacement document ID.')
     .optional()
     .nullable(),
+  clientPerceptualHash: z
+    .string()
+    .regex(/^[0-9a-fA-F]{16}$/, 'Client perceptual hash must be a 16-character hexadecimal string.')
+    .optional()
+    .nullable(),
+  browserCaptureTimestamp: z
+    .string()
+    .datetime({ offset: true })
+    .optional()
+    .nullable(),
+  browserLatitude: z
+    .coerce
+    .number()
+    .min(-90)
+    .max(90)
+    .optional()
+    .nullable(),
+  browserLongitude: z
+    .coerce
+    .number()
+    .min(-180)
+    .max(180)
+    .optional()
+    .nullable(),
+  browserAccuracy: z
+    .coerce
+    .number()
+    .positive()
+    .optional()
+    .nullable(),
 });
 
 export const reviewEvidenceSchema = z

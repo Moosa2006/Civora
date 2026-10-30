@@ -361,6 +361,26 @@ export function OfficialWorkspacePage() {
                       <Badge variant="neutral" size="sm">
                         {c.priority} Priority
                       </Badge>
+                      {c.isDuplicate && (
+                        <Badge variant="warning" size="sm">
+                          Duplicate Advisory ({Math.round((c.duplicateConfidence || 0.8) * 100)}%)
+                        </Badge>
+                      )}
+                      {c.aiRiskLevel === 'HIGH' && (
+                        <Badge variant="danger" size="sm">
+                          AI Risk: High ({c.aiRiskScore || 75}/100)
+                        </Badge>
+                      )}
+                      {c.aiRiskLevel === 'NEEDS_REVIEW' && (
+                        <Badge variant="warning" size="sm">
+                          AI Flag: Needs Review
+                        </Badge>
+                      )}
+                      {c.aiRiskLevel === 'LOW' && c.aiAnalysisStatus === 'COMPLETED' && (
+                        <Badge variant="success" size="sm">
+                          AI Verified
+                        </Badge>
+                      )}
                       {(c as any).sla && (
                         <span
                           className={`text-xs px-2 py-0.5 rounded font-mono font-medium border ${
@@ -384,6 +404,22 @@ export function OfficialWorkspacePage() {
                     <h3 className="text-base font-bold font-heading text-[#202522] dark:text-[#F5F2EA]">{c.title}</h3>
                     <p className="text-xs text-[#3E4B44] dark:text-[#C5D4C9] leading-relaxed">{c.description}</p>
 
+                    {c.aiFindings?.verificationSummary && (
+                      <div className="p-2.5 rounded-lg bg-[#ECE7DB]/60 dark:bg-[#1D2A25]/60 border border-[#DED8CB] dark:border-[#283931] text-xs space-y-1">
+                        <div className="flex items-center justify-between text-[#173D32] dark:text-[#7BC4B2] font-semibold text-[11px]">
+                          <span>AI Integrity Findings</span>
+                          {c.aiFindings.fraudIndicators && c.aiFindings.fraudIndicators.length > 0 && (
+                            <span className="text-amber-600 dark:text-amber-400 font-mono">
+                              Flags: {c.aiFindings.fraudIndicators.join(', ')}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-[#3E4B44] dark:text-[#C5D4C9] text-[11px] leading-relaxed">
+                          {c.aiFindings.verificationSummary}
+                        </p>
+                      </div>
+                    )}
+
                     {c.status === 'REOPENED' && (
                       <div className="p-2.5 rounded-lg bg-[#FEF6E9] dark:bg-[#1D2A25] border border-[#854F0B]/40 text-xs text-[#854F0B] dark:text-[#F3B768]">
                         ⚠️ Reopened by citizen — requires re-inspection or additional remediation.
@@ -395,6 +431,7 @@ export function OfficialWorkspacePage() {
                         <MapPinIcon className="w-3.5 h-3.5 text-[#173D32] dark:text-[#7BC4B2] shrink-0" />
                         <span>
                           <strong className="text-[#202522] dark:text-[#F5F2EA]">Location:</strong> {c.locationAddress} ({c.locality})
+                          {c.ward && <span className="block text-[11px] text-[#173D32] dark:text-[#7BC4B2] font-medium">Ward: {c.ward}</span>}
                         </span>
                       </div>
                       <div className="flex items-center gap-1.5">

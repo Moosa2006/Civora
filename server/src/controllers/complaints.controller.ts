@@ -258,6 +258,14 @@ export async function getComplaintById(req: Request, res: Response, next: NextFu
             fileSize: true,
             documentCategory: true,
             visibility: true,
+            sha256Checksum: true,
+            perceptualHash: true,
+            capturedAt: true,
+            browserCaptureTimestamp: true,
+            captureLatitude: true,
+            captureLongitude: true,
+            captureAccuracy: true,
+            isGpsVerified: true,
             createdAt: true,
           },
         },
@@ -340,6 +348,8 @@ export async function getComplaintById(req: Request, res: Response, next: NextFu
       .map((doc) => ({
         ...doc,
         fileSize: Number(doc.fileSize),
+        captureLatitude: doc.captureLatitude ? Number(doc.captureLatitude) : null,
+        captureLongitude: doc.captureLongitude ? Number(doc.captureLongitude) : null,
       }));
 
     return res.status(200).json({
@@ -413,6 +423,14 @@ export async function trackComplaintByTrackingId(req: Request, res: Response, ne
             mimeType: true,
             fileSize: true,
             documentCategory: true,
+            sha256Checksum: true,
+            perceptualHash: true,
+            capturedAt: true,
+            browserCaptureTimestamp: true,
+            captureLatitude: true,
+            captureLongitude: true,
+            captureAccuracy: true,
+            isGpsVerified: true,
             createdAt: true,
           },
         },
@@ -502,6 +520,8 @@ export async function trackComplaintByTrackingId(req: Request, res: Response, ne
       evidence: complaint.documents.map((d) => ({
         ...d,
         fileSize: Number(d.fileSize),
+        captureLatitude: d.captureLatitude ? Number(d.captureLatitude) : null,
+        captureLongitude: d.captureLongitude ? Number(d.captureLongitude) : null,
       })),
       sla: complaint.sla
         ? {

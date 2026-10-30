@@ -569,6 +569,18 @@ model Complaint {
   primaryDuplicateLinks ComplaintDuplicateLink[]   @relation("PrimaryComplaintDuplicates")
   duplicateLinks        ComplaintDuplicateLink[]   @relation("DuplicateComplaintLinks")
 
+  // Module 18: AI Verification, Duplicate & Fraud Detection
+  aiAnalysisStatus      String?                    @default("PENDING") @db.VarChar(32)
+  aiRiskLevel           String?                    @db.VarChar(32)
+  aiRiskScore           Int?                       @default(0)
+  aiFindings            Json?
+  aiAnalyzedAt          DateTime?
+  isDuplicate           Boolean                    @default(false)
+  duplicateConfidence   Float?
+  primaryComplaintId    String?                    @db.Uuid
+  primaryComplaint      Complaint?                 @relation("ComplaintHierarchy", fields: [primaryComplaintId], references: [id], onDelete: SetNull)
+  subordinateComplaints Complaint[]                @relation("ComplaintHierarchy")
+
   @@index([trackingId])
   @@index([status])
   @@index([categoryId])
@@ -580,6 +592,10 @@ model Complaint {
   @@index([ward])
   @@index([latitude, longitude])
   @@index([isLocationPublic])
+  @@index([aiAnalysisStatus])
+  @@index([aiRiskLevel])
+  @@index([isDuplicate])
+  @@index([primaryComplaintId])
   @@map("complaints")
 }
 
@@ -956,6 +972,15 @@ model Document {
   isQuarantined          Boolean                  @default(false)
   quarantineReason       String?                  @db.Text
 
+  // Image Capture Time, Location & Perceptual Hashing
+  perceptualHash          String?                  @db.VarChar(64)
+  capturedAt              DateTime?
+  captureLatitude         Decimal?                 @db.Decimal(10, 7)
+  captureLongitude        Decimal?                 @db.Decimal(10, 7)
+  captureAccuracy         Float?
+  isGpsVerified           Boolean                  @default(false)
+  browserCaptureTimestamp DateTime?
+
   reviewLogs             EvidenceReviewLog[]
 
   @@index([complaintId])
@@ -976,6 +1001,8 @@ model Document {
   @@index([evidencePurpose])
   @@index([reviewedById])
   @@index([isQuarantined])
+  @@index([sha256Checksum])
+  @@index([perceptualHash])
   @@map("documents")
 }
 

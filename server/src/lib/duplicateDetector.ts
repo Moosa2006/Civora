@@ -101,12 +101,16 @@ export async function findPotentialDuplicates(
         notIn: [ComplaintStatus.RESOLVED, ComplaintStatus.CLOSED, ComplaintStatus.REJECTED],
       },
       isModerated: false,
-      ...(input.excludeComplaintId ? { id: { not: input.excludeComplaintId } } : {}),
-      OR: [
-        { categoryId: input.categoryId },
-        ...(input.locality ? [{ locality: { equals: input.locality, mode: 'insensitive' as const } }] : []),
-        ...(input.ward ? [{ ward: { equals: input.ward, mode: 'insensitive' as const } }] : []),
-      ],
+      ...(input.excludeComplaintId && input.excludeComplaintId.length === 36 ? { id: { not: input.excludeComplaintId } } : {}),
+      ...(input.categoryId && input.categoryId.length === 36 || input.locality || input.ward
+        ? {
+            OR: [
+              ...(input.categoryId && input.categoryId.length === 36 ? [{ categoryId: input.categoryId }] : []),
+              ...(input.locality ? [{ locality: { equals: input.locality, mode: 'insensitive' as const } }] : []),
+              ...(input.ward ? [{ ward: { equals: input.ward, mode: 'insensitive' as const } }] : []),
+            ],
+          }
+        : {}),
     },
     take: 40,
     orderBy: { createdAt: 'desc' },

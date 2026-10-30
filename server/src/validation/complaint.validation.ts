@@ -32,8 +32,8 @@ export const createComplaintSchema = z.object({
   ward: z
     .string()
     .trim()
-    .max(100, 'Ward identifier must not exceed 100 characters.')
-    .optional(),
+    .min(1, 'Municipal Ward is mandatory for complaint triage.')
+    .max(100, 'Ward identifier must not exceed 100 characters.'),
   latitude: z
     .number()
     .min(-90, 'Latitude must be between -90 and 90.')
