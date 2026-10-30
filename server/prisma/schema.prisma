@@ -1,0 +1,1792 @@
+// Civora Database Schema
+// PostgreSQL with Prisma ORM
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==========================================
+// ENUMS
+// ==========================================
+
+enum UserRole {
+  CITIZEN
+  GOVERNMENT_OFFICIAL
+  ADMIN
+  CONTRACTOR
+}
+
+enum AccountStatus {
+  ACTIVE
+  PENDING_VERIFICATION
+  SUSPENDED
+}
+
+enum ComplaintPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum ComplaintStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  ASSIGNED
+  IN_PROGRESS
+  RESOLVED
+  VERIFIED
+  REOPENED
+  REJECTED
+  CLOSED
+}
+
+enum CivicWorkStatus {
+  PROPOSED
+  SANCTIONED
+  TENDERING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum InspectionOutcome {
+  SATISFACTORY
+  NEEDS_REPAIR
+  WORK_REQUIRED
+  RESOLVED_ON_SITE
+  INVALID_COMPLAINT
+}
+
+enum FeasibilityAssessment {
+  FEASIBLE
+  CONDITIONALLY_FEASIBLE
+  NOT_FEASIBLE
+  REQUIRES_FURTHER_STUDY
+}
+
+enum EstimateStatus {
+  DRAFT
+  SUBMITTED
+  REVISED
+  APPROVED
+  REJECTED
+}
+
+enum ApprovalType {
+  TECHNICAL_SANCTION
+  ADMINISTRATIVE_APPROVAL
+  FINANCIAL_SANCTION
+  WORK_ORDER_APPROVAL
+}
+
+enum ApprovalDecision {
+  PENDING
+  APPROVED
+  REJECTED
+  MODIFICATIONS_REQUESTED
+}
+
+enum ContractorStatus {
+  ACTIVE
+  INACTIVE
+  BLACKLISTED
+}
+
+enum ExecutionStatus {
+  AWARDED
+  COMMENCED
+  IN_PROGRESS
+  SUBSTANTIALLY_COMPLETED
+  COMPLETED
+  TERMINATED
+}
+
+enum FinancialRecordType {
+  BUDGET_ALLOCATION
+  CONTRACTOR_PAYMENT
+  EXPENSE_REIMBURSEMENT
+  RETENTION_HOLD
+  PENALTY_DEDUCTION
+}
+
+enum PaymentStatus {
+  PLANNED
+  PROCESSING
+  PAID
+  HELD
+  FAILED
+}
+
+enum DocumentCategory {
+  COMPLAINT_EVIDENCE
+  INSPECTION_PHOTO
+  ASSESSMENT_REPORT
+  DPR_DOCUMENT
+  APPROVAL_LETTER
+  WORK_ORDER_COPY
+  PROGRESS_PHOTO
+  INVOICE_RECEIPT
+  COMPLETION_CERTIFICATE
+  TENDER_DOCUMENT
+  BID_PROPOSAL
+}
+
+enum DocumentVisibility {
+  PUBLIC
+  INTERNAL_OFFICIAL
+  RESTRICTED_ADMIN
+}
+
+enum TenderStatus {
+  DRAFT
+  PUBLISHED
+  UNDER_EVALUATION
+  AWARDED
+  CLOSED
+  CANCELLED
+}
+
+enum BidStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+}
+
+enum WorkStartStatus {
+  SUBMITTED
+  VERIFIED
+  REJECTED
+}
+
+enum MilestoneStatus {
+  PENDING
+  SUBMITTED_FOR_REVIEW
+  APPROVED
+  REJECTED_REVISION_REQUIRED
+  COMPLETED
+}
+
+enum DefectStatus {
+  REPORTED
+  INSPECTED
+  RECTIFICATION_IN_PROGRESS
+  RECTIFIED_VERIFIED
+  CLOSED
+  DISPUTED
+}
+
+enum NotificationType {
+  COMPLAINT_SUBMITTED
+  STATUS_CHANGED
+  DEPARTMENT_ASSIGNED
+  PROGRESS_UPDATE
+  RESOLUTION_SUBMITTED
+  RESOLUTION_VERIFIED
+  COMPLAINT_REOPENED
+  MESSAGE_RECEIVED
+  PROJECT_UPDATE
+  SYSTEM_ALERT
+  PROPOSAL_SUBMITTED
+  PROPOSAL_STATUS_CHANGED
+  PROPOSAL_RESPONSE
+  POLL_CREATED
+  SLA_WARNING
+  SLA_BREACH
+  ESCALATION_TRIGGERED
+  ESCALATION_ACKNOWLEDGED
+  SLA_EXTENSION_REQUESTED
+  SLA_EXTENSION_DECIDED
+  EVIDENCE_UPLOADED
+  EVIDENCE_APPROVED
+  EVIDENCE_REJECTED
+  EVIDENCE_RESUBMISSION_REQUESTED
+  RESOLUTION_PROOF_SUBMITTED
+  RESOLUTION_PROOF_VERIFIED
+  RESOLUTION_PROOF_REJECTED
+  MODERATION_WARNING
+  CONTENT_MODERATED
+  ACCOUNT_RESTRICTED
+  RESTRICTION_LIFTED
+  APPEAL_DECISION
+  TENDER_PUBLISHED
+  BID_SUBMITTED
+  BID_EVALUATED
+  CONTRACT_AWARDED
+  WORK_START_SUBMITTED
+  WORK_START_VERIFIED
+  MILESTONE_CLAIMED
+  MILESTONE_APPROVED
+  MILESTONE_REJECTED
+  PAYMENT_RECORDED
+  DEFECT_REPORTED
+  DEFECT_RECTIFIED
+}
+
+enum AbuseReportReason {
+  SPAM
+  HARASSMENT
+  PERSONAL_DATA_EXPOSURE
+  IMPERSONATION
+  MALICIOUS_OR_SUSPICIOUS
+  MISINFORMATION
+  OTHER
+}
+
+enum AbuseReportStatus {
+  PENDING
+  UNDER_REVIEW
+  RESOLVED_ACTION_TAKEN
+  RESOLVED_NO_VIOLATION
+  DISMISSED
+}
+
+enum ReportTargetType {
+  COMPLAINT
+  COMPLAINT_MESSAGE
+  PROPOSAL
+  PROPOSAL_COMMENT
+  POLL
+  DOCUMENT
+}
+
+enum ModerationCaseStatus {
+  OPEN
+  UNDER_REVIEW
+  ACTION_TAKEN
+  RESOLVED_NO_VIOLATION
+  CLOSED
+}
+
+enum ModerationPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum ModerationActionType {
+  NO_ACTION
+  WARNING_ISSUED
+  CONTENT_HIDDEN
+  CONTENT_REMOVED
+  CONTENT_RESTORED
+  ACCOUNT_RESTRICTED
+  DUPLICATE_LINKED
+}
+
+enum AppealStatus {
+  PENDING
+  UNDER_REVIEW
+  UPHELD
+  REJECTED
+}
+
+enum UserRestrictionType {
+  SUBMISSION_RESTRICTED
+  COMMENTING_RESTRICTED
+  UPLOAD_RESTRICTED
+  ACCOUNT_SUSPENDED
+}
+
+enum ProposalStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  NEEDS_CLARIFICATION
+  PUBLISHED
+  ACCEPTED_FOR_CONSIDERATION
+  DECLINED
+  ARCHIVED
+}
+
+enum PollStatus {
+  DRAFT
+  SCHEDULED
+  OPEN
+  CLOSED
+  ARCHIVED
+}
+
+enum PollType {
+  SINGLE_CHOICE
+  MULTI_CHOICE
+}
+
+enum PollVisibilityRule {
+  ALWAYS_VISIBLE
+  AFTER_VOTE
+  AFTER_CLOSE
+}
+
+enum SlaStatus {
+  ON_TRACK
+  APPROACHING_DEADLINE
+  RESPONSE_OVERDUE
+  RESOLUTION_OVERDUE
+  BREACHED
+  RESOLVED_ON_TIME
+  RESOLVED_LATE
+  NO_SLA
+}
+
+enum EscalationLevel {
+  LEVEL_1_OFFICIAL
+  LEVEL_2_SUPERVISOR
+  LEVEL_3_HEAD_ADMIN
+}
+
+enum EscalationStatus {
+  ACTIVE
+  ACKNOWLEDGED
+  ACTION_PLANNED
+  RESOLVED
+  DE_ESCALATED
+}
+
+enum EscalationTrigger {
+  RESPONSE_DEADLINE_MISSED
+  RESOLUTION_DEADLINE_MISSED
+  OVERDUE_GRACE_EXCEEDED
+  MANUAL_SUPERVISOR_ESCALATION
+  REPEATED_BREACH
+}
+
+enum ExtensionRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum EvidencePurpose {
+  CITIZEN_SUPPORTING
+  OFFICIAL_PROGRESS
+  RESOLUTION_PROOF
+  ADMINISTRATIVE_REVIEW
+}
+
+enum EvidenceReviewStatus {
+  PENDING_REVIEW
+  UNDER_REVIEW
+  VERIFIED
+  REJECTED
+  RESUBMISSION_REQUESTED
+  QUARANTINED
+}
+
+// ==========================================
+// CORE MASTER TABLES
+// ==========================================
+
+model Department {
+  id          String   @id @default(uuid()) @db.Uuid
+  code        String   @unique @db.VarChar(50)
+  name        String   @db.VarChar(255)
+  description String?  @db.Text
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  officials           User[]              @relation("DepartmentOfficials")
+  complaintCategories ComplaintCategory[]
+  assignedComplaints  Complaint[]         @relation("DepartmentComplaints")
+  civicWorks          CivicWork[]
+  escalatedComplaints ComplaintEscalation[] @relation("DepartmentEscalations")
+  tenders             Tender[]
+
+  @@map("departments")
+}
+
+model ComplaintCategory {
+  id           String     @id @default(uuid()) @db.Uuid
+  code         String     @unique @db.VarChar(50)
+  name         String     @db.VarChar(255)
+  description  String?    @db.Text
+  departmentId String     @db.Uuid
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+  isActive     Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  complaints  Complaint[]
+  proposals   CommunityProposal[]
+  polls       PublicPoll[]
+  slaPolicies SlaPolicy[]
+
+  @@index([departmentId])
+  @@map("complaint_categories")
+}
+
+// ==========================================
+// A. USERS
+// ==========================================
+
+model User {
+  id              String        @id @default(uuid()) @db.Uuid
+  email           String        @unique @db.VarChar(255)
+  name            String        @db.VarChar(255)
+  phone           String?       @db.VarChar(50)
+  passwordHash    String        @db.VarChar(255)
+  role            UserRole      @default(CITIZEN)
+  accountStatus   AccountStatus @default(ACTIVE)
+  departmentId    String?       @db.Uuid
+  department      Department?   @relation("DepartmentOfficials", fields: [departmentId], references: [id], onDelete: SetNull)
+  contractorId    String?       @db.Uuid
+  contractor      Contractor?   @relation("ContractorUsers", fields: [contractorId], references: [id], onDelete: SetNull)
+  emailVerifiedAt DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Relationships
+  submittedComplaints      Complaint[]                @relation("CitizenComplaints")
+  assignedComplaints       Complaint[]                @relation("OfficialComplaints")
+  inspections              SiteInspection[]           @relation("InspectorInspections")
+  technicalAssessments     TechnicalAssessment[]      @relation("AssessorAssessments")
+  preparedEstimates        Estimate[]                 @relation("EstimatePreparer")
+  sanctionDecisions        ApprovalSanction[]         @relation("ApproverSanctions")
+  progressUpdatesLogged    ExecutionProgressUpdate[]  @relation("LoggedProgressUpdates")
+  uploadedDocuments        Document[]                 @relation("UploadedDocuments")
+  statusHistoryChanges     ComplaintStatusHistory[]   @relation("StatusChangedBy")
+  auditEvents              AuditEvent[]               @relation("UserAuditEvents")
+  notifications            Notification[]             @relation("UserNotifications")
+  notificationPref         NotificationPreference?    @relation("UserNotificationPreferences")
+  sentComplaintMessages    ComplaintMessage[]         @relation("SentComplaintMessages")
+  submittedProposals       CommunityProposal[]        @relation("CitizenProposals")
+  moderatedProposals       CommunityProposal[]        @relation("ModeratedProposals")
+  respondedProposals       CommunityProposal[]        @relation("OfficialResponseProposals")
+  proposalSupports         ProposalSupport[]          @relation("UserProposalSupports")
+  proposalComments         ProposalComment[]          @relation("UserProposalComments")
+  createdPolls             PublicPoll[]               @relation("UserCreatedPolls")
+  pollVotes                PollVote[]                 @relation("UserPollVotes")
+  pollParticipations       PollParticipation[]        @relation("UserPollParticipations")
+  createdSlaPolicies       SlaPolicy[]                @relation("CreatedSlaPolicies")
+  updatedSlaPolicies       SlaPolicy[]                @relation("UpdatedSlaPolicies")
+  escalationsAssigned      ComplaintEscalation[]      @relation("EscalatedToOfficial")
+  escalationsCreated       ComplaintEscalation[]      @relation("EscalatedBy")
+  escalationsAcknowledged  ComplaintEscalation[]      @relation("EscalationAcknowledgedBy")
+  escalationActionPlans    ComplaintEscalation[]      @relation("EscalationActionPlanBy")
+  escalationsResolved      ComplaintEscalation[]      @relation("EscalationResolvedBy")
+  escalationActionLogs     EscalationActionLog[]      @relation("UserEscalationLogs")
+  requestedSlaExtensions   SlaExtensionRequest[]      @relation("RequestedSlaExtensions")
+  decidedSlaExtensions     SlaExtensionRequest[]      @relation("DecidedSlaExtensions")
+  reviewedDocuments        Document[]                 @relation("ReviewedDocuments")
+  evidenceReviewLogs       EvidenceReviewLog[]        @relation("UserEvidenceReviewLogs")
+  reportedAbuse            AbuseReport[]              @relation("UserReportedAbuse")
+  assignedAbuseReports     AbuseReport[]              @relation("AssignedAbuseReports")
+  assignedModerationCases  ModerationCase[]           @relation("AssignedModerationCases")
+  targetedModerationCases  ModerationCase[]           @relation("TargetedModerationCases")
+  moderationActions        ModerationAction[]         @relation("UserModerationActions")
+  moderationAppeals        ModerationAppeal[]         @relation("UserAppeals")
+  reviewedAppeals          ModerationAppeal[]         @relation("ReviewedAppeals")
+  userRestrictions         UserRestriction[]          @relation("TargetUserRestrictions")
+  createdRestrictions      UserRestriction[]          @relation("CreatedUserRestrictions")
+  liftedRestrictions       UserRestriction[]          @relation("LiftedUserRestrictions")
+  linkedDuplicates         ComplaintDuplicateLink[]   @relation("UserLinkedDuplicates")
+  accessibilityPref        UserAccessibilityPreference? @relation("UserAccessibilityPreferences")
+  updatedPlatformSettings  PlatformSetting[]          @relation("UpdatedPlatformSettings")
+  configChanges            ConfigurationChangeLog[]   @relation("UserConfigChanges")
+  reportedIncidents        OperationalIncident[]      @relation("ReportedIncidents")
+  assignedIncidents        OperationalIncident[]      @relation("AssignedIncidents")
+  resolvedIncidents        OperationalIncident[]      @relation("ResolvedIncidents")
+
+  // Module 17: Contractor & Tendering Relationships
+  createdTenders           Tender[]                   @relation("CreatedTenders")
+  submittedBids            TenderBid[]                @relation("SubmittedBids")
+  evaluatedBids            TenderBid[]                @relation("EvaluatedBids")
+  submittedWorkStarts      WorkStartDeclaration[]     @relation("SubmittedWorkStarts")
+  verifiedWorkStarts       WorkStartDeclaration[]     @relation("VerifiedWorkStarts")
+  claimedMilestones        ContractMilestone[]        @relation("ClaimedMilestones")
+  reviewedMilestones       ContractMilestone[]        @relation("ReviewedMilestones")
+  reportedDefects          DefectWarrantyRequest[]    @relation("ReportedDefects")
+  verifiedDefects          DefectWarrantyRequest[]    @relation("VerifiedDefects")
+  verifiedContractors      Contractor[]               @relation("VerifiedContractors")
+
+  @@index([role])
+  @@index([departmentId])
+  @@index([contractorId])
+  @@map("users")
+}
+
+// ==========================================
+// B. COMPLAINTS
+// ==========================================
+
+model Complaint {
+  id                   String            @id @default(uuid()) @db.Uuid
+  trackingId           String            @unique @db.VarChar(32)
+  title                String            @db.VarChar(255)
+  description          String            @db.Text
+  categoryId           String            @db.Uuid
+  category             ComplaintCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  priority             ComplaintPriority @default(MEDIUM)
+  status               ComplaintStatus   @default(SUBMITTED)
+  citizenId            String?           @db.Uuid
+  citizen              User?             @relation("CitizenComplaints", fields: [citizenId], references: [id], onDelete: SetNull)
+  assignedDepartmentId String?           @db.Uuid
+  assignedDepartment   Department?       @relation("DepartmentComplaints", fields: [assignedDepartmentId], references: [id], onDelete: SetNull)
+  assignedOfficialId   String?           @db.Uuid
+  assignedOfficial     User?             @relation("OfficialComplaints", fields: [assignedOfficialId], references: [id], onDelete: SetNull)
+  locationAddress      String            @db.Text
+  locality             String            @db.VarChar(255)
+  ward                 String?           @db.VarChar(100)
+  latitude             Decimal?          @db.Decimal(10, 7)
+  longitude            Decimal?          @db.Decimal(10, 7)
+  locationSource       String?           @db.VarChar(50)
+  locationAccuracy     Float?
+  isLocationPublic     Boolean           @default(true)
+  rejectionReason      String?           @db.Text
+  resolutionNotes      String?           @db.Text
+  reviewedAt           DateTime?
+  assignedAt           DateTime?
+  resolvedAt           DateTime?
+  verifiedAt           DateTime?
+  closedAt             DateTime?
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+
+  // Relationships
+  statusHistory       ComplaintStatusHistory[]
+  civicWorkLinks      CivicWorkComplaint[]
+  inspections         SiteInspection[]
+  assessments         TechnicalAssessment[]
+  documents           Document[]
+  messages            ComplaintMessage[]         @relation("ComplaintMessages")
+  sla                 ComplaintSla?
+  escalations         ComplaintEscalation[]
+  extensionRequests   SlaExtensionRequest[]
+
+  // Module 14: Moderation & Duplicate Linking
+  isModerated           Boolean                    @default(false)
+  moderationReason      String?                    @db.Text
+  primaryDuplicateLinks ComplaintDuplicateLink[]   @relation("PrimaryComplaintDuplicates")
+  duplicateLinks        ComplaintDuplicateLink[]   @relation("DuplicateComplaintLinks")
+
+  @@index([trackingId])
+  @@index([status])
+  @@index([categoryId])
+  @@index([citizenId])
+  @@index([assignedDepartmentId])
+  @@index([assignedOfficialId])
+  @@index([createdAt])
+  @@index([locality])
+  @@index([ward])
+  @@index([latitude, longitude])
+  @@index([isLocationPublic])
+  @@map("complaints")
+}
+
+// ==========================================
+// C. PROJECTS / CIVIC WORKS
+// ==========================================
+
+model CivicWork {
+  id                   String          @id @default(uuid()) @db.Uuid
+  workOrderNumber      String          @unique @db.VarChar(64)
+  title                String          @db.VarChar(255)
+  description          String          @db.Text
+  workType             String          @db.VarChar(100)
+  departmentId         String          @db.Uuid
+  department           Department      @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+  location             String          @db.VarChar(255)
+  ward                 String?         @db.VarChar(100)
+  estimatedBudget      Decimal         @db.Decimal(14, 2)
+  sanctionedAmount     Decimal?        @db.Decimal(14, 2)
+  plannedStartDate     DateTime?
+  plannedEndDate       DateTime?
+  actualStartDate      DateTime?
+  actualCompletionDate DateTime?
+  workStatus           CivicWorkStatus @default(PROPOSED)
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+
+  // Relationships
+  complaintLinks       CivicWorkComplaint[]
+  inspections          SiteInspection[]
+  assessments          TechnicalAssessment[]
+  estimates            Estimate[]
+  approvals            ApprovalSanction[]
+  workOrders           WorkOrder[]
+  financialRecords     FinancialTransaction[]
+  tenders              Tender[]
+
+  @@index([workOrderNumber])
+  @@index([departmentId])
+  @@index([workStatus])
+  @@map("civic_works")
+}
+
+// Association Table between Civic Works and Complaints (M:N)
+model CivicWorkComplaint {
+  id          String     @id @default(uuid()) @db.Uuid
+  civicWorkId String     @db.Uuid
+  civicWork   CivicWork  @relation(fields: [civicWorkId], references: [id], onDelete: Cascade)
+  complaintId String     @db.Uuid
+  complaint   Complaint  @relation(fields: [complaintId], references: [id], onDelete: Restrict)
+  linkedAt    DateTime   @default(now())
+  notes       String?    @db.Text
+
+  @@unique([civicWorkId, complaintId])
+  @@index([civicWorkId])
+  @@index([complaintId])
+  @@map("civic_work_complaints")
+}
+
+// ==========================================
+// D. SITE INSPECTIONS
+// ==========================================
+
+model SiteInspection {
+  id              String            @id @default(uuid()) @db.Uuid
+  complaintId     String?           @db.Uuid
+  complaint       Complaint?        @relation(fields: [complaintId], references: [id], onDelete: SetNull)
+  civicWorkId     String?           @db.Uuid
+  civicWork       CivicWork?        @relation(fields: [civicWorkId], references: [id], onDelete: SetNull)
+  inspectorId     String            @db.Uuid
+  inspector       User              @relation("InspectorInspections", fields: [inspectorId], references: [id], onDelete: Restrict)
+  inspectionDate  DateTime          @default(now())
+  outcome         InspectionOutcome
+  observations    String            @db.Text
+  measurements    String?           @db.Text
+  notes           String?           @db.Text
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  documents       Document[]
+
+  @@index([complaintId])
+  @@index([civicWorkId])
+  @@index([inspectorId])
+  @@map("site_inspections")
+}
+
+// ==========================================
+// E. TECHNICAL ASSESSMENTS
+// ==========================================
+
+model TechnicalAssessment {
+  id                String                @id @default(uuid()) @db.Uuid
+  complaintId       String?               @db.Uuid
+  complaint         Complaint?            @relation(fields: [complaintId], references: [id], onDelete: SetNull)
+  civicWorkId       String?               @db.Uuid
+  civicWork         CivicWork?            @relation(fields: [civicWorkId], references: [id], onDelete: SetNull)
+  assessorId        String                @db.Uuid
+  assessor          User                  @relation("AssessorAssessments", fields: [assessorId], references: [id], onDelete: Restrict)
+  assessmentDate    DateTime              @default(now())
+  technicalFindings String                @db.Text
+  requiredWork      String                @db.Text
+  estimatedScope    String?               @db.Text
+  feasibility       FeasibilityAssessment @default(FEASIBLE)
+  recommendation    String                @db.Text
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+
+  documents         Document[]
+
+  @@index([complaintId])
+  @@index([civicWorkId])
+  @@index([assessorId])
+  @@map("technical_assessments")
+}
+
+// ==========================================
+// F. ESTIMATES & DETAILED PROJECT REPORTS
+// ==========================================
+
+model Estimate {
+  id              String             @id @default(uuid()) @db.Uuid
+  estimateNumber  String             @unique @db.VarChar(64)
+  civicWorkId     String             @db.Uuid
+  civicWork       CivicWork          @relation(fields: [civicWorkId], references: [id], onDelete: Restrict)
+  version         Int                @default(1)
+  preparedById    String             @db.Uuid
+  preparedBy      User               @relation("EstimatePreparer", fields: [preparedById], references: [id], onDelete: Restrict)
+  preparationDate DateTime           @default(now())
+  description     String             @db.Text
+  status          EstimateStatus     @default(DRAFT)
+  totalAmount     Decimal            @db.Decimal(14, 2)
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  lineItems       EstimateLineItem[]
+  approvals       ApprovalSanction[]
+  documents       Document[]
+
+  @@unique([civicWorkId, version])
+  @@index([estimateNumber])
+  @@index([civicWorkId])
+  @@index([preparedById])
+  @@map("estimates")
+}
+
+model EstimateLineItem {
+  id                String   @id @default(uuid()) @db.Uuid
+  estimateId        String   @db.Uuid
+  estimate          Estimate @relation(fields: [estimateId], references: [id], onDelete: Cascade)
+  itemNumber        Int
+  description       String   @db.VarChar(500)
+  quantity          Decimal  @db.Decimal(10, 2)
+  unitOfMeasurement String   @db.VarChar(50)
+  unitRate          Decimal  @db.Decimal(12, 2)
+  totalAmount       Decimal  @db.Decimal(14, 2)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([estimateId, itemNumber])
+  @@index([estimateId])
+  @@map("estimate_line_items")
+}
+
+// ==========================================
+// G. APPROVALS / SANCTIONS
+// ==========================================
+
+model ApprovalSanction {
+  id               String           @id @default(uuid()) @db.Uuid
+  referenceNumber  String?          @unique @db.VarChar(64)
+  civicWorkId      String           @db.Uuid
+  civicWork        CivicWork        @relation(fields: [civicWorkId], references: [id], onDelete: Restrict)
+  estimateId       String?          @db.Uuid
+  estimate         Estimate?        @relation(fields: [estimateId], references: [id], onDelete: SetNull)
+  approvalType     ApprovalType
+  approverId       String           @db.Uuid
+  approver         User             @relation("ApproverSanctions", fields: [approverId], references: [id], onDelete: Restrict)
+  decision         ApprovalDecision @default(PENDING)
+  decisionDate     DateTime?
+  sanctionedAmount Decimal?         @db.Decimal(14, 2)
+  remarks          String?          @db.Text
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  documents        Document[]
+
+  @@index([civicWorkId])
+  @@index([estimateId])
+  @@index([approverId])
+  @@index([decision])
+  @@map("approval_sanctions")
+}
+
+// ==========================================
+// H. CONTRACTORS & EXECUTION
+// ==========================================
+
+model Contractor {
+  id                 String           @id @default(uuid()) @db.Uuid
+  name               String           @db.VarChar(255)
+  registrationNumber String?          @unique @db.VarChar(100)
+  contactPerson      String?          @db.VarChar(255)
+  email              String?          @db.VarChar(255)
+  phone              String?          @db.VarChar(50)
+  status             ContractorStatus @default(ACTIVE)
+  businessAddress    String?          @db.Text
+  operatingRegion    String?          @db.VarChar(255)
+  licenseClass       String?          @default("CLASS_B") @db.VarChar(50)
+  panOrTaxId         String?          @db.VarChar(50)
+  workCategories     String[]         @default([])
+  isVerified         Boolean          @default(false)
+  verifiedAt         DateTime?
+  verifiedById       String?          @db.Uuid
+  verifiedBy         User?            @relation("VerifiedContractors", fields: [verifiedById], references: [id], onDelete: SetNull)
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  users                 User[]                  @relation("ContractorUsers")
+  workOrders            WorkOrder[]
+  bids                  TenderBid[]
+  workStartDeclarations WorkStartDeclaration[]
+  defects               DefectWarrantyRequest[]
+  financialTransactions FinancialTransaction[]
+
+  @@map("contractors")
+}
+
+model WorkOrder {
+  id                   String          @id @default(uuid()) @db.Uuid
+  workOrderNumber      String          @unique @db.VarChar(64)
+  civicWorkId          String          @db.Uuid
+  civicWork            CivicWork       @relation(fields: [civicWorkId], references: [id], onDelete: Restrict)
+  contractorId         String          @db.Uuid
+  contractor           Contractor      @relation(fields: [contractorId], references: [id], onDelete: Restrict)
+  tenderId             String?         @db.Uuid
+  tender               Tender?         @relation(fields: [tenderId], references: [id], onDelete: SetNull)
+  tenderBidId          String?         @unique @db.Uuid
+  tenderBid            TenderBid?      @relation(fields: [tenderBidId], references: [id], onDelete: SetNull)
+  workOrderDate        DateTime        @default(now())
+  contractAmount       Decimal         @db.Decimal(14, 2)
+  startDate            DateTime?
+  expectedCompletionDate DateTime?
+  actualCompletionDate DateTime?
+  executionStatus      ExecutionStatus @default(AWARDED)
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+
+  progressUpdates       ExecutionProgressUpdate[]
+  workStartDeclarations WorkStartDeclaration[]
+  milestones            ContractMilestone[]
+  defects               DefectWarrantyRequest[]
+  financialTransactions FinancialTransaction[]   @relation("WorkOrderFinancials")
+
+  @@index([civicWorkId])
+  @@index([contractorId])
+  @@index([executionStatus])
+  @@index([tenderId])
+  @@map("work_orders")
+}
+
+model ExecutionProgressUpdate {
+  id                         String    @id @default(uuid()) @db.Uuid
+  workOrderId                String    @db.Uuid
+  workOrder                  WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Restrict)
+  loggedById                 String    @db.Uuid
+  loggedBy                   User      @relation("LoggedProgressUpdates", fields: [loggedById], references: [id], onDelete: Restrict)
+  updateDate                 DateTime  @default(now())
+  physicalProgressPercentage Decimal   @db.Decimal(5, 2)
+  financialProgressAmount    Decimal?  @db.Decimal(14, 2)
+  progressNotes              String    @db.Text
+  milestoneReached           String?   @db.VarChar(255)
+  createdAt                  DateTime  @default(now())
+  updatedAt                  DateTime  @updatedAt
+
+  documents Document[]
+
+  @@index([workOrderId])
+  @@index([loggedById])
+  @@map("execution_progress_updates")
+}
+
+// ==========================================
+// I. FINANCIAL RECORDS
+// ==========================================
+
+model FinancialTransaction {
+  id               String               @id @default(uuid()) @db.Uuid
+  civicWorkId      String               @db.Uuid
+  civicWork        CivicWork            @relation(fields: [civicWorkId], references: [id], onDelete: Restrict)
+  workOrderId      String?              @db.Uuid
+  workOrder        WorkOrder?           @relation("WorkOrderFinancials", fields: [workOrderId], references: [id], onDelete: SetNull)
+  contractorId     String?              @db.Uuid
+  contractor       Contractor?          @relation(fields: [contractorId], references: [id], onDelete: SetNull)
+  recordType       FinancialRecordType
+  amount           Decimal              @db.Decimal(14, 2)
+  paymentDate      DateTime?
+  paymentReference String?              @db.VarChar(100)
+  paymentStatus    PaymentStatus        @default(PLANNED)
+  remarks          String?              @db.Text
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+
+  documents Document[]
+
+  @@index([civicWorkId])
+  @@index([workOrderId])
+  @@index([contractorId])
+  @@index([recordType])
+  @@index([paymentStatus])
+  @@map("financial_transactions")
+}
+
+// ==========================================
+// J. DOCUMENTS / MEDIA METADATA
+// ==========================================
+
+model Document {
+  id                     String                   @id @default(uuid()) @db.Uuid
+  fileName               String                   @db.VarChar(255)
+  storageKey             String                   @db.VarChar(500)
+  mimeType               String                   @db.VarChar(100)
+  fileSize               BigInt
+  documentCategory       DocumentCategory
+  uploaderId             String?                  @db.Uuid
+  uploader               User?                    @relation("UploadedDocuments", fields: [uploaderId], references: [id], onDelete: SetNull)
+  visibility             DocumentVisibility       @default(PUBLIC)
+  description            String?                  @db.Text
+
+  // Explicit referential integrity relations
+  complaintId            String?                  @db.Uuid
+  complaint              Complaint?               @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  siteInspectionId       String?                  @db.Uuid
+  siteInspection         SiteInspection?          @relation(fields: [siteInspectionId], references: [id], onDelete: Cascade)
+  technicalAssessmentId  String?                  @db.Uuid
+  technicalAssessment    TechnicalAssessment?     @relation(fields: [technicalAssessmentId], references: [id], onDelete: Cascade)
+  estimateId             String?                  @db.Uuid
+  estimate               Estimate?                @relation(fields: [estimateId], references: [id], onDelete: Cascade)
+  approvalSanctionId     String?                  @db.Uuid
+  approvalSanction       ApprovalSanction?        @relation(fields: [approvalSanctionId], references: [id], onDelete: Cascade)
+  progressUpdateId       String?                  @db.Uuid
+  progressUpdate         ExecutionProgressUpdate? @relation(fields: [progressUpdateId], references: [id], onDelete: Cascade)
+  financialTransactionId String?                  @db.Uuid
+  financialTransaction   FinancialTransaction?    @relation(fields: [financialTransactionId], references: [id], onDelete: Cascade)
+
+  // Module 17: Tender & Execution Relations
+  tenderId               String?                  @db.Uuid
+  tender                 Tender?                  @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+  tenderBidId            String?                  @db.Uuid
+  tenderBid              TenderBid?               @relation(fields: [tenderBidId], references: [id], onDelete: Cascade)
+  workStartId            String?                  @db.Uuid
+  workStart              WorkStartDeclaration?    @relation(fields: [workStartId], references: [id], onDelete: Cascade)
+  milestoneId            String?                  @db.Uuid
+  milestone              ContractMilestone?       @relation(fields: [milestoneId], references: [id], onDelete: Cascade)
+  defectRequestId        String?                  @db.Uuid
+  defectRequest          DefectWarrantyRequest?   @relation(fields: [defectRequestId], references: [id], onDelete: Cascade)
+
+  uploadTimestamp        DateTime                 @default(now())
+  createdAt              DateTime                 @default(now())
+
+  // Module 12: Evidence Purpose, Verification & Review Tracking
+  evidencePurpose        EvidencePurpose          @default(CITIZEN_SUPPORTING)
+  reviewStatus           EvidenceReviewStatus     @default(PENDING_REVIEW)
+  sha256Checksum         String?                  @db.VarChar(64)
+  reviewedById           String?                  @db.Uuid
+  reviewedBy             User?                    @relation("ReviewedDocuments", fields: [reviewedById], references: [id], onDelete: SetNull)
+  reviewedAt             DateTime?
+  reviewNotes            String?                  @db.Text
+  rejectionReason        String?                  @db.Text
+  resubmissionGuidance   String?                  @db.Text
+  replacedDocumentId     String?                  @db.Uuid
+  replacedDocument       Document?                @relation("DocumentReplacements", fields: [replacedDocumentId], references: [id], onDelete: SetNull)
+  replacementDocuments   Document[]               @relation("DocumentReplacements")
+  isQuarantined          Boolean                  @default(false)
+  quarantineReason       String?                  @db.Text
+
+  reviewLogs             EvidenceReviewLog[]
+
+  @@index([complaintId])
+  @@index([siteInspectionId])
+  @@index([technicalAssessmentId])
+  @@index([estimateId])
+  @@index([approvalSanctionId])
+  @@index([progressUpdateId])
+  @@index([financialTransactionId])
+  @@index([tenderId])
+  @@index([tenderBidId])
+  @@index([workStartId])
+  @@index([milestoneId])
+  @@index([defectRequestId])
+  @@index([documentCategory])
+  @@index([visibility])
+  @@index([reviewStatus])
+  @@index([evidencePurpose])
+  @@index([reviewedById])
+  @@index([isQuarantined])
+  @@map("documents")
+}
+
+model EvidenceReviewLog {
+  id              String                @id @default(uuid()) @db.Uuid
+  documentId      String                @db.Uuid
+  document        Document              @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  reviewerId      String?               @db.Uuid
+  reviewer        User?                 @relation("UserEvidenceReviewLogs", fields: [reviewerId], references: [id], onDelete: SetNull)
+  fromStatus      EvidenceReviewStatus?
+  toStatus        EvidenceReviewStatus
+  decisionReason  String?               @db.Text
+  guidance        String?               @db.Text
+  createdAt       DateTime              @default(now())
+
+  @@index([documentId])
+  @@index([reviewerId])
+  @@index([createdAt])
+  @@map("evidence_review_logs")
+}
+
+// ==========================================
+// K. AUDIT & STATUS HISTORY (APPEND-ONLY)
+// ==========================================
+
+model ComplaintStatusHistory {
+  id              String           @id @default(uuid()) @db.Uuid
+  complaintId     String           @db.Uuid
+  complaint       Complaint        @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  fromStatus      ComplaintStatus?
+  toStatus        ComplaintStatus
+  changedById     String?          @db.Uuid
+  changedBy       User?            @relation("StatusChangedBy", fields: [changedById], references: [id], onDelete: SetNull)
+  reasonOrRemarks String?          @db.Text
+  createdAt       DateTime         @default(now())
+
+  @@index([complaintId])
+  @@index([createdAt])
+  @@map("complaint_status_history")
+}
+
+model AuditEvent {
+  id         String   @id @default(uuid()) @db.Uuid
+  entityType String   @db.VarChar(50)
+  entityId   String   @db.Uuid
+  action     String   @db.VarChar(50)
+  actorId    String?  @db.Uuid
+  actor      User?    @relation("UserAuditEvents", fields: [actorId], references: [id], onDelete: SetNull)
+  details    Json?
+  ipAddress  String?  @db.VarChar(45)
+  userAgent  String?  @db.VarChar(255)
+  createdAt  DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([actorId])
+  @@index([createdAt])
+  @@map("audit_events")
+}
+
+// ==========================================
+// L. NOTIFICATIONS & COMMUNICATION
+// ==========================================
+
+model Notification {
+  id         String           @id @default(uuid()) @db.Uuid
+  userId     String           @db.Uuid
+  user       User             @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
+  type       NotificationType
+  title      String           @db.VarChar(255)
+  message    String           @db.Text
+  entityType String?          @db.VarChar(50)
+  entityId   String?          @db.Uuid
+  actionUrl  String?          @db.VarChar(255)
+  isRead     Boolean          @default(false)
+  readAt     DateTime?
+  createdAt  DateTime         @default(now())
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
+  @@map("notifications")
+}
+
+model NotificationPreference {
+  id                   String   @id @default(uuid()) @db.Uuid
+  userId               String   @unique @db.Uuid
+  user                 User     @relation("UserNotificationPreferences", fields: [userId], references: [id], onDelete: Cascade)
+  emailNotifications   Boolean  @default(false)
+  statusChangeAlerts   Boolean  @default(true)
+  progressUpdateAlerts Boolean  @default(true)
+  assignmentAlerts     Boolean  @default(true)
+  messageAlerts        Boolean  @default(true)
+  resolutionAlerts     Boolean  @default(true)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@map("notification_preferences")
+}
+
+model UserAccessibilityPreference {
+  id            String   @id @default(uuid()) @db.Uuid
+  userId        String   @unique @db.Uuid
+  user          User     @relation("UserAccessibilityPreferences", fields: [userId], references: [id], onDelete: Cascade)
+  language      String   @default("en") @db.VarChar(10)
+  textSize      String   @default("normal") @db.VarChar(20)
+  reducedMotion Boolean  @default(false)
+  highContrast  Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("user_accessibility_preferences")
+}
+
+model ComplaintMessage {
+  id          String    @id @default(uuid()) @db.Uuid
+  complaintId String    @db.Uuid
+  complaint   Complaint @relation("ComplaintMessages", fields: [complaintId], references: [id], onDelete: Cascade)
+  senderId    String    @db.Uuid
+  sender      User      @relation("SentComplaintMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  message     String    @db.Text
+  isInternal  Boolean   @default(false)
+  isRead      Boolean   @default(false)
+  readAt      DateTime?
+  createdAt   DateTime  @default(now())
+
+  // Module 14: Moderation
+  isModerated      Boolean   @default(false)
+  moderationReason String?   @db.VarChar(255)
+
+  @@index([complaintId, createdAt])
+  @@index([senderId])
+  @@map("complaint_messages")
+}
+
+// ==========================================
+// M. CIVIC ENGAGEMENT, PROPOSALS & POLLS
+// ==========================================
+
+model CommunityProposal {
+  id                      String            @id @default(uuid()) @db.Uuid
+  trackingId              String            @unique @db.VarChar(32)
+  title                   String            @db.VarChar(255)
+  description             String            @db.Text
+  problemStatement        String?           @db.Text
+  suggestedSolution       String?           @db.Text
+  categoryId              String            @db.Uuid
+  category                ComplaintCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  locality                String?           @db.VarChar(255)
+  status                  ProposalStatus    @default(SUBMITTED)
+  submitterId             String            @db.Uuid
+  submitter               User              @relation("CitizenProposals", fields: [submitterId], references: [id], onDelete: Cascade)
+  moderatedById           String?           @db.Uuid
+  moderatedBy             User?             @relation("ModeratedProposals", fields: [moderatedById], references: [id], onDelete: SetNull)
+  moderatedAt             DateTime?
+  internalModerationNotes String?           @db.Text
+  publicExplanation       String?           @db.Text
+  officialResponse        String?           @db.Text
+  officialResponseById    String?           @db.Uuid
+  officialResponseBy      User?             @relation("OfficialResponseProposals", fields: [officialResponseById], references: [id], onDelete: SetNull)
+  officialResponseAt      DateTime?
+  supportCount            Int               @default(0)
+  createdAt               DateTime          @default(now())
+  updatedAt               DateTime          @updatedAt
+
+  supports                ProposalSupport[]
+  comments                ProposalComment[]
+
+  // Module 14: Moderation flag
+  isModerated             Boolean           @default(false)
+
+  @@index([status])
+  @@index([categoryId])
+  @@index([submitterId])
+  @@index([createdAt])
+  @@map("community_proposals")
+}
+
+model ProposalSupport {
+  id         String            @id @default(uuid()) @db.Uuid
+  proposalId String            @db.Uuid
+  proposal   CommunityProposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  userId     String            @db.Uuid
+  user       User              @relation("UserProposalSupports", fields: [userId], references: [id], onDelete: Cascade)
+  createdAt  DateTime          @default(now())
+
+  @@unique([proposalId, userId])
+  @@index([proposalId])
+  @@index([userId])
+  @@map("proposal_supports")
+}
+
+model ProposalComment {
+  id               String            @id @default(uuid()) @db.Uuid
+  proposalId       String            @db.Uuid
+  proposal         CommunityProposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  authorId         String            @db.Uuid
+  author           User              @relation("UserProposalComments", fields: [authorId], references: [id], onDelete: Cascade)
+  content          String            @db.Text
+  isModerated      Boolean           @default(false)
+  moderationReason String?           @db.VarChar(255)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  @@index([proposalId, createdAt])
+  @@index([authorId])
+  @@map("proposal_comments")
+}
+
+model PublicPoll {
+  id             String             @id @default(uuid()) @db.Uuid
+  title          String             @db.VarChar(255)
+  question       String             @db.VarChar(500)
+  description    String?            @db.Text
+  categoryId     String?            @db.Uuid
+  category       ComplaintCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  locality       String?            @db.VarChar(255)
+  status         PollStatus         @default(DRAFT)
+  pollType       PollType           @default(SINGLE_CHOICE)
+  maxSelections  Int                @default(1)
+  visibilityRule PollVisibilityRule @default(ALWAYS_VISIBLE)
+  startDate      DateTime
+  endDate        DateTime
+  isAdvisory     Boolean            @default(true)
+  createdById    String?            @db.Uuid
+  createdBy      User?              @relation("UserCreatedPolls", fields: [createdById], references: [id], onDelete: SetNull)
+  totalVotes     Int                @default(0)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+
+  options        PollOption[]
+  votes          PollVote[]
+  participations PollParticipation[]
+
+  @@index([status])
+  @@index([startDate, endDate])
+  @@index([categoryId])
+  @@map("public_polls")
+}
+
+model PollOption {
+  id         String     @id @default(uuid()) @db.Uuid
+  pollId     String     @db.Uuid
+  poll       PublicPoll @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  text       String     @db.VarChar(255)
+  orderIndex Int        @default(0)
+  voteCount  Int        @default(0)
+  createdAt  DateTime   @default(now())
+
+  votes      PollVote[]
+
+  @@index([pollId, orderIndex])
+  @@map("poll_options")
+}
+
+model PollVote {
+  id        String     @id @default(uuid()) @db.Uuid
+  pollId    String     @db.Uuid
+  poll      PublicPoll @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  userId    String     @db.Uuid
+  user      User       @relation("UserPollVotes", fields: [userId], references: [id], onDelete: Cascade)
+  optionId  String     @db.Uuid
+  option    PollOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  createdAt DateTime   @default(now())
+
+  @@unique([pollId, userId, optionId])
+  @@index([pollId])
+  @@index([userId])
+  @@index([optionId])
+  @@map("poll_votes")
+}
+
+model PollParticipation {
+  id        String     @id @default(uuid()) @db.Uuid
+  pollId    String     @db.Uuid
+  poll      PublicPoll @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  userId    String     @db.Uuid
+  user      User       @relation("UserPollParticipations", fields: [userId], references: [id], onDelete: Cascade)
+  votedAt   DateTime   @default(now())
+
+  @@unique([pollId, userId])
+  @@index([pollId])
+  @@index([userId])
+  @@map("poll_participations")
+}
+
+// ==========================================
+// N. SERVICE-LEVEL AGREEMENTS (SLAs) & ESCALATIONS
+// ==========================================
+
+model SlaPolicy {
+  id                       String             @id @default(uuid()) @db.Uuid
+  name                     String             @db.VarChar(255)
+  description              String?            @db.Text
+  categoryId               String?            @db.Uuid
+  category                 ComplaintCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  priority                 ComplaintPriority?
+  responseTargetHours      Int                @default(24)
+  resolutionTargetHours    Int                @default(72)
+  warningThresholdHours    Int                @default(12)
+  escalationThresholdHours Int                @default(24)
+  isActive                 Boolean            @default(true)
+  isDefault                Boolean            @default(false)
+  effectiveStartDate       DateTime           @default(now())
+  effectiveEndDate         DateTime?
+  createdById              String?            @db.Uuid
+  createdBy                User?              @relation("CreatedSlaPolicies", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedById              String?            @db.Uuid
+  updatedBy                User?              @relation("UpdatedSlaPolicies", fields: [updatedById], references: [id], onDelete: SetNull)
+  createdAt                DateTime           @default(now())
+  updatedAt                DateTime           @updatedAt
+
+  complaintSlas            ComplaintSla[]
+
+  @@index([categoryId])
+  @@index([priority])
+  @@index([isActive])
+  @@index([isDefault])
+  @@map("sla_policies")
+}
+
+model ComplaintSla {
+  id                          String                @id @default(uuid()) @db.Uuid
+  complaintId                 String                @unique @db.Uuid
+  complaint                   Complaint             @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  policyId                    String?               @db.Uuid
+  policy                      SlaPolicy?            @relation(fields: [policyId], references: [id], onDelete: SetNull)
+  policyName                  String                @db.VarChar(255)
+  responseTargetHours         Int
+  resolutionTargetHours       Int
+  clockStartedAt              DateTime              @default(now())
+  originalResponseDeadline    DateTime
+  originalResolutionDeadline  DateTime
+  currentResponseDeadline     DateTime
+  currentResolutionDeadline   DateTime
+  respondedAt                 DateTime?
+  isResponseOverdue           Boolean               @default(false)
+  isResolutionOverdue         Boolean               @default(false)
+  slaStatus                   SlaStatus             @default(ON_TRACK)
+  estimatedCompletionDate     DateTime?
+  estimatedCompletionNotes    String?               @db.Text
+  warningSentAt               DateTime?
+  breachNotificationSentAt    DateTime?
+  lastEvaluatedAt             DateTime              @default(now())
+  createdAt                   DateTime              @default(now())
+  updatedAt                   DateTime              @updatedAt
+
+  extensionRequests           SlaExtensionRequest[]
+
+  @@index([slaStatus])
+  @@index([currentResolutionDeadline])
+  @@index([currentResponseDeadline])
+  @@index([isResolutionOverdue])
+  @@map("complaint_slas")
+}
+
+model ComplaintEscalation {
+  id                      String              @id @default(uuid()) @db.Uuid
+  complaintId             String              @db.Uuid
+  complaint               Complaint           @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  escalationLevel         EscalationLevel     @default(LEVEL_1_OFFICIAL)
+  triggerReason           EscalationTrigger
+  notes                   String              @db.Text
+  status                  EscalationStatus    @default(ACTIVE)
+  escalatedToDepartmentId String?             @db.Uuid
+  escalatedToDepartment   Department?         @relation("DepartmentEscalations", fields: [escalatedToDepartmentId], references: [id], onDelete: SetNull)
+  escalatedToOfficialId   String?             @db.Uuid
+  escalatedToOfficial     User?               @relation("EscalatedToOfficial", fields: [escalatedToOfficialId], references: [id], onDelete: SetNull)
+  escalatedById           String?             @db.Uuid
+  escalatedBy             User?               @relation("EscalatedBy", fields: [escalatedById], references: [id], onDelete: SetNull)
+  isSystemGenerated       Boolean             @default(true)
+  acknowledgedById        String?             @db.Uuid
+  acknowledgedBy          User?               @relation("EscalationAcknowledgedBy", fields: [acknowledgedById], references: [id], onDelete: SetNull)
+  acknowledgedAt          DateTime?
+  actionPlan              String?             @db.Text
+  actionPlanRecordedAt    DateTime?
+  actionPlanRecordedById  String?             @db.Uuid
+  actionPlanRecordedBy    User?               @relation("EscalationActionPlanBy", fields: [actionPlanRecordedById], references: [id], onDelete: SetNull)
+  resolvedAt              DateTime?
+  resolvedById            String?             @db.Uuid
+  resolvedBy              User?               @relation("EscalationResolvedBy", fields: [resolvedById], references: [id], onDelete: SetNull)
+  resolutionReason        String?             @db.Text
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
+
+  actionLogs              EscalationActionLog[]
+
+  @@index([complaintId])
+  @@index([status])
+  @@index([escalationLevel])
+  @@index([escalatedToDepartmentId])
+  @@index([escalatedToOfficialId])
+  @@map("complaint_escalations")
+}
+
+model EscalationActionLog {
+  id           String              @id @default(uuid()) @db.Uuid
+  escalationId String              @db.Uuid
+  escalation   ComplaintEscalation @relation(fields: [escalationId], references: [id], onDelete: Cascade)
+  actorId      String?             @db.Uuid
+  actor        User?               @relation("UserEscalationLogs", fields: [actorId], references: [id], onDelete: SetNull)
+  action       String              @db.VarChar(100)
+  notes        String?             @db.Text
+  createdAt    DateTime            @default(now())
+
+  @@index([escalationId])
+  @@index([createdAt])
+  @@map("escalation_action_logs")
+}
+
+model SlaExtensionRequest {
+  id                          String                 @id @default(uuid()) @db.Uuid
+  complaintId                 String                 @db.Uuid
+  complaint                   Complaint              @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  complaintSlaId              String                 @db.Uuid
+  complaintSla                ComplaintSla           @relation(fields: [complaintSlaId], references: [id], onDelete: Cascade)
+  requestedByOfficialId       String                 @db.Uuid
+  requestedByOfficial         User                   @relation("RequestedSlaExtensions", fields: [requestedByOfficialId], references: [id], onDelete: Cascade)
+  previousResolutionDeadline  DateTime
+  requestedResolutionDeadline DateTime
+  reason                      String                 @db.Text
+  status                      ExtensionRequestStatus @default(PENDING)
+  decisionById                String?                @db.Uuid
+  decisionBy                  User?                  @relation("DecidedSlaExtensions", fields: [decisionById], references: [id], onDelete: SetNull)
+  decisionNotes               String?                @db.Text
+  decisionAt                  DateTime?
+  createdAt                   DateTime               @default(now())
+  updatedAt                   DateTime               @updatedAt
+
+  @@index([complaintId])
+  @@index([status])
+  @@index([requestedByOfficialId])
+  @@map("sla_extension_requests")
+}
+
+// ==========================================
+// O. CONTENT MODERATION, FRAUD & ABUSE PREVENTION
+// ==========================================
+
+model AbuseReport {
+  id                  String            @id @default(uuid()) @db.Uuid
+  trackingId          String            @unique @db.VarChar(32)
+  targetType          ReportTargetType
+  targetId            String            @db.Uuid
+  reporterId          String?           @db.Uuid
+  reporter            User?             @relation("UserReportedAbuse", fields: [reporterId], references: [id], onDelete: SetNull)
+  reason              AbuseReportReason
+  explanation         String?           @db.Text
+  status              AbuseReportStatus @default(PENDING)
+  caseId              String?           @db.Uuid
+  case                ModerationCase?   @relation(fields: [caseId], references: [id], onDelete: SetNull)
+  ipAddress           String?           @db.VarChar(45)
+  assignedModeratorId String?           @db.Uuid
+  assignedModerator   User?             @relation("AssignedAbuseReports", fields: [assignedModeratorId], references: [id], onDelete: SetNull)
+  reviewedAt          DateTime?
+  resolutionNotes     String?           @db.Text
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+
+  @@index([targetType, targetId])
+  @@index([status])
+  @@index([reporterId])
+  @@index([caseId])
+  @@index([assignedModeratorId])
+  @@index([createdAt])
+  @@map("abuse_reports")
+}
+
+model ModerationCase {
+  id                  String               @id @default(uuid()) @db.Uuid
+  caseNumber          String               @unique @db.VarChar(32)
+  targetType          ReportTargetType
+  targetId            String               @db.Uuid
+  targetOwnerId       String?              @db.Uuid
+  targetOwner         User?                @relation("TargetedModerationCases", fields: [targetOwnerId], references: [id], onDelete: SetNull)
+  status              ModerationCaseStatus @default(OPEN)
+  priority            ModerationPriority   @default(MEDIUM)
+  riskScore           Int                  @default(0)
+  riskFactors         Json?
+  assignedModeratorId String?              @db.Uuid
+  assignedModerator   User?                @relation("AssignedModerationCases", fields: [assignedModeratorId], references: [id], onDelete: SetNull)
+  internalNotes       String?              @db.Text
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+
+  reports             AbuseReport[]
+  actions             ModerationAction[]
+  appeals             ModerationAppeal[]
+
+  @@index([targetType, targetId])
+  @@index([status])
+  @@index([priority])
+  @@index([assignedModeratorId])
+  @@index([targetOwnerId])
+  @@index([createdAt])
+  @@map("moderation_cases")
+}
+
+model ModerationAction {
+  id             String               @id @default(uuid()) @db.Uuid
+  caseId         String               @db.Uuid
+  case           ModerationCase       @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  moderatorId    String?              @db.Uuid
+  moderator      User?                @relation("UserModerationActions", fields: [moderatorId], references: [id], onDelete: SetNull)
+  actionType     ModerationActionType
+  reason         String               @db.Text
+  internalNotes  String?              @db.Text
+  targetSnapshot Json?
+  isAutomated    Boolean              @default(false)
+  createdAt      DateTime             @default(now())
+
+  @@index([caseId])
+  @@index([moderatorId])
+  @@index([actionType])
+  @@index([createdAt])
+  @@map("moderation_actions")
+}
+
+model ModerationAppeal {
+  id             String         @id @default(uuid()) @db.Uuid
+  caseId         String         @db.Uuid
+  case           ModerationCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  appellantId    String         @db.Uuid
+  appellant      User           @relation("UserAppeals", fields: [appellantId], references: [id], onDelete: Cascade)
+  reason         String         @db.Text
+  status         AppealStatus   @default(PENDING)
+  reviewerId     String?        @db.Uuid
+  reviewer       User?          @relation("ReviewedAppeals", fields: [reviewerId], references: [id], onDelete: SetNull)
+  decisionReason String?        @db.Text
+  reviewedAt     DateTime?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  @@index([caseId])
+  @@index([appellantId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("moderation_appeals")
+}
+
+model UserRestriction {
+  id              String              @id @default(uuid()) @db.Uuid
+  userId          String              @db.Uuid
+  user            User                @relation("TargetUserRestrictions", fields: [userId], references: [id], onDelete: Cascade)
+  restrictionType UserRestrictionType
+  reason          String              @db.Text
+  expiresAt       DateTime?
+  isActive        Boolean             @default(true)
+  createdById     String?             @db.Uuid
+  createdBy       User?               @relation("CreatedUserRestrictions", fields: [createdById], references: [id], onDelete: SetNull)
+  liftedAt        DateTime?
+  liftedById      String?             @db.Uuid
+  liftedBy        User?               @relation("LiftedUserRestrictions", fields: [liftedById], references: [id], onDelete: SetNull)
+  liftReason      String?             @db.Text
+  createdAt       DateTime            @default(now())
+
+  @@index([userId, isActive])
+  @@index([restrictionType])
+  @@index([expiresAt])
+  @@map("user_restrictions")
+}
+
+model ComplaintDuplicateLink {
+  id                   String    @id @default(uuid()) @db.Uuid
+  primaryComplaintId   String    @db.Uuid
+  primaryComplaint     Complaint @relation("PrimaryComplaintDuplicates", fields: [primaryComplaintId], references: [id], onDelete: Cascade)
+  duplicateComplaintId String    @db.Uuid
+  duplicateComplaint   Complaint @relation("DuplicateComplaintLinks", fields: [duplicateComplaintId], references: [id], onDelete: Cascade)
+  similarityScore      Float     @default(0.0)
+  reason               String?   @db.Text
+  linkedById           String?   @db.Uuid
+  linkedBy             User?     @relation("UserLinkedDuplicates", fields: [linkedById], references: [id], onDelete: SetNull)
+  createdAt            DateTime  @default(now())
+
+  @@unique([primaryComplaintId, duplicateComplaintId])
+  @@index([primaryComplaintId])
+  @@index([duplicateComplaintId])
+  @@map("complaint_duplicate_links")
+}
+
+// ==========================================
+// R. SYSTEM ADMINISTRATION & OPERATIONAL HEALTH
+// ==========================================
+
+model PlatformSetting {
+  id          String   @id @default(uuid()) @db.Uuid
+  key         String   @unique @db.VarChar(100)
+  value       String   @db.Text
+  category    String   @default("GENERAL") @db.VarChar(50)
+  description String?  @db.Text
+  isPublic    Boolean  @default(false)
+  updatedById String?  @db.Uuid
+  updatedBy   User?    @relation("UpdatedPlatformSettings", fields: [updatedById], references: [id], onDelete: SetNull)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  changeLogs ConfigurationChangeLog[]
+
+  @@index([category])
+  @@map("platform_settings")
+}
+
+model ConfigurationChangeLog {
+  id            String          @id @default(uuid()) @db.Uuid
+  settingId     String          @db.Uuid
+  setting       PlatformSetting @relation(fields: [settingId], references: [id], onDelete: Cascade)
+  key           String          @db.VarChar(100)
+  previousValue String?         @db.Text
+  newValue      String          @db.Text
+  reason        String?         @db.Text
+  changedById   String?         @db.Uuid
+  changedBy     User?           @relation("UserConfigChanges", fields: [changedById], references: [id], onDelete: SetNull)
+  createdAt     DateTime        @default(now())
+
+  @@index([key])
+  @@index([createdAt])
+  @@map("configuration_change_logs")
+}
+
+model OperationalIncident {
+  id              String    @id @default(uuid()) @db.Uuid
+  incidentNumber  String    @unique @db.VarChar(50)
+  title           String    @db.VarChar(255)
+  description     String    @db.Text
+  severity        String    @default("MEDIUM") @db.VarChar(50)
+  subsystem       String    @db.VarChar(100)
+  status          String    @default("OPEN") @db.VarChar(50)
+  reportedById    String?   @db.Uuid
+  reportedBy      User?     @relation("ReportedIncidents", fields: [reportedById], references: [id], onDelete: SetNull)
+  assignedToId    String?   @db.Uuid
+  assignedTo      User?     @relation("AssignedIncidents", fields: [assignedToId], references: [id], onDelete: SetNull)
+  resolutionNotes String?   @db.Text
+  resolvedAt      DateTime?
+  resolvedById    String?   @db.Uuid
+  resolvedBy      User?     @relation("ResolvedIncidents", fields: [resolvedById], references: [id], onDelete: SetNull)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([status])
+  @@index([severity])
+  @@index([createdAt])
+  @@map("operational_incidents")
+}
+
+// ==========================================
+// P. TENDERS, BIDS & WORK EXECUTION (MODULE 17)
+// ==========================================
+
+model Tender {
+  id                     String        @id @default(uuid()) @db.Uuid
+  tenderNumber           String        @unique @db.VarChar(64)
+  title                  String        @db.VarChar(255)
+  description            String        @db.Text
+  departmentId           String        @db.Uuid
+  department             Department    @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+  civicWorkId            String?       @db.Uuid
+  civicWork              CivicWork?    @relation(fields: [civicWorkId], references: [id], onDelete: SetNull)
+  categoryCode           String        @db.VarChar(50)
+  location               String        @db.VarChar(255)
+  ward                   String?       @db.VarChar(100)
+  estimatedBudget        Decimal       @db.Decimal(14, 2)
+  earnestMoneyDeposit    Decimal?      @db.Decimal(14, 2)
+  minimumContractorClass String?       @default("ANY") @db.VarChar(50)
+  status                 TenderStatus  @default(DRAFT)
+  publicationDate        DateTime?
+  submissionDeadline     DateTime
+  expectedDurationDays   Int?
+  eligibilityCriteria    String?       @db.Text
+  scopeOfWork            String?       @db.Text
+  createdById            String        @db.Uuid
+  createdBy              User          @relation("CreatedTenders", fields: [createdById], references: [id], onDelete: Restrict)
+  awardedBidId           String?       @unique @db.Uuid
+  awardedBid             TenderBid?    @relation("AwardedTenderBid", fields: [awardedBidId], references: [id], onDelete: SetNull)
+  createdAt              DateTime      @default(now())
+  updatedAt              DateTime      @updatedAt
+
+  bids                   TenderBid[]   @relation("TenderBids")
+  workOrders             WorkOrder[]
+  documents              Document[]
+
+  @@index([tenderNumber])
+  @@index([status])
+  @@index([departmentId])
+  @@index([civicWorkId])
+  @@index([categoryCode])
+  @@index([submissionDeadline])
+  @@map("tenders")
+}
+
+model TenderBid {
+  id                      String      @id @default(uuid()) @db.Uuid
+  bidNumber               String      @unique @db.VarChar(64)
+  tenderId                String      @db.Uuid
+  tender                  Tender      @relation("TenderBids", fields: [tenderId], references: [id], onDelete: Cascade)
+  contractorId            String      @db.Uuid
+  contractor              Contractor  @relation(fields: [contractorId], references: [id], onDelete: Restrict)
+  submittedById           String      @db.Uuid
+  submittedBy             User        @relation("SubmittedBids", fields: [submittedById], references: [id], onDelete: Restrict)
+  bidAmount               Decimal     @db.Decimal(14, 2)
+  proposedDurationDays    Int
+  technicalProposal       String      @db.Text
+  methodology             String?     @db.Text
+  declarationAccepted     Boolean     @default(true)
+  status                  BidStatus   @default(SUBMITTED)
+  officialEvaluationNotes String?     @db.Text
+  evaluatedById           String?     @db.Uuid
+  evaluatedBy             User?       @relation("EvaluatedBids", fields: [evaluatedById], references: [id], onDelete: SetNull)
+  evaluatedAt             DateTime?
+  createdAt               DateTime    @default(now())
+  updatedAt               DateTime    @updatedAt
+
+  awardedTender           Tender?     @relation("AwardedTenderBid")
+  workOrder               WorkOrder?
+  documents               Document[]
+
+  @@unique([tenderId, contractorId])
+  @@index([tenderId])
+  @@index([contractorId])
+  @@index([submittedById])
+  @@index([status])
+  @@map("tender_bids")
+}
+
+model WorkStartDeclaration {
+  id                String          @id @default(uuid()) @db.Uuid
+  workOrderId       String          @db.Uuid
+  workOrder         WorkOrder       @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  contractorId      String          @db.Uuid
+  contractor        Contractor      @relation(fields: [contractorId], references: [id], onDelete: Restrict)
+  submittedById     String          @db.Uuid
+  submittedBy       User            @relation("SubmittedWorkStarts", fields: [submittedById], references: [id], onDelete: Restrict)
+  declaredStartDate DateTime
+  siteAddress       String          @db.Text
+  latitude          Decimal?        @db.Decimal(10, 7)
+  longitude         Decimal?        @db.Decimal(10, 7)
+  siteNotes         String          @db.Text
+  status            WorkStartStatus @default(SUBMITTED)
+  verifiedById      String?         @db.Uuid
+  verifiedBy        User?           @relation("VerifiedWorkStarts", fields: [verifiedById], references: [id], onDelete: SetNull)
+  verifiedAt        DateTime?
+  reviewNotes       String?         @db.Text
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  documents         Document[]
+
+  @@index([workOrderId])
+  @@index([contractorId])
+  @@index([status])
+  @@map("work_start_declarations")
+}
+
+model ContractMilestone {
+  id                        String          @id @default(uuid()) @db.Uuid
+  workOrderId               String          @db.Uuid
+  workOrder                 WorkOrder       @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  milestoneNumber           Int
+  title                     String          @db.VarChar(255)
+  description               String          @db.Text
+  targetPhysicalPercentage  Decimal         @db.Decimal(5, 2)
+  targetAmount              Decimal?        @db.Decimal(14, 2)
+  targetDueDate             DateTime?
+  status                    MilestoneStatus @default(PENDING)
+  claimedDate               DateTime?
+  claimedPhysicalPercentage Decimal?        @db.Decimal(5, 2)
+  claimedNotes              String?         @db.Text
+  claimedById               String?         @db.Uuid
+  claimedBy                 User?           @relation("ClaimedMilestones", fields: [claimedById], references: [id], onDelete: SetNull)
+  reviewedById              String?         @db.Uuid
+  reviewedBy                User?           @relation("ReviewedMilestones", fields: [reviewedById], references: [id], onDelete: SetNull)
+  reviewedAt                DateTime?
+  reviewerRemarks           String?         @db.Text
+  rejectionReason           String?         @db.Text
+  createdAt                 DateTime        @default(now())
+  updatedAt                 DateTime        @updatedAt
+
+  documents                 Document[]
+
+  @@unique([workOrderId, milestoneNumber])
+  @@index([workOrderId])
+  @@index([status])
+  @@map("contract_milestones")
+}
+
+model DefectWarrantyRequest {
+  id                 String       @id @default(uuid()) @db.Uuid
+  trackingId         String       @unique @db.VarChar(32)
+  workOrderId        String       @db.Uuid
+  workOrder          WorkOrder    @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  contractorId       String       @db.Uuid
+  contractor         Contractor   @relation(fields: [contractorId], references: [id], onDelete: Restrict)
+  reportedById       String       @db.Uuid
+  reportedBy         User         @relation("ReportedDefects", fields: [reportedById], references: [id], onDelete: Restrict)
+  title              String       @db.VarChar(255)
+  description        String       @db.Text
+  location           String       @db.VarChar(255)
+  severity           String       @default("MEDIUM") @db.VarChar(50)
+  status             DefectStatus @default(REPORTED)
+  isWarrantyCovered  Boolean      @default(true)
+  rectificationNotes String?      @db.Text
+  rectifiedAt        DateTime?
+  verifiedById       String?      @db.Uuid
+  verifiedBy         User?        @relation("VerifiedDefects", fields: [verifiedById], references: [id], onDelete: SetNull)
+  verifiedAt         DateTime?
+  closureRemarks     String?      @db.Text
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  documents          Document[]
+
+  @@index([trackingId])
+  @@index([workOrderId])
+  @@index([contractorId])
+  @@index([status])
+  @@map("defect_warranty_requests")
+}
+
