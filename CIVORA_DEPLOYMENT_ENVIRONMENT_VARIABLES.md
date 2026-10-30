@@ -41,7 +41,7 @@ Civora is deployed using a decoupled, enterprise cloud architecture designed for
 |---|---|---|---|---|---|---|---|
 | `PORT` | Render | Optional (Render injects) | Runtime | Public | Express HTTP port binding (`server/src/index.ts:4`) | Integer (`10000` or `5000`) | `AUTO (Render)` |
 | `NODE_ENV` | Render | **Required** | Runtime | Public | Sets production optimizations, cookie security, disables stacktraces (`server/src/index.ts:8`) | `production` | `READY` |
-| `CLIENT_ORIGIN` | Render | **Required** | Runtime | Public | CORS allowed origin for HTTP credentials/cookies (`server/src/app.ts:22`) | URL (`https://civora.vercel.app`) | `PENDING (Vercel Domain)` |
+| `CLIENT_ORIGIN` | Render | **Required** | Runtime | Public | CORS allowed origin for HTTP credentials/cookies (`server/src/app.ts:22`) | URL (`https://civora-tau.vercel.app`) | `READY (https://civora-tau.vercel.app)` |
 | `DATABASE_URL` | Render | **Required** | Runtime | **Secret** | Pooled PostgreSQL connection via Supavisor port 6543 for app queries (`schema.prisma:10`) | `postgresql://postgres.[REF]:[PASS]@[HOST]:6543/postgres?pgbouncer=true` | `PENDING (Supabase Pooler)` |
 | `DIRECT_URL` | Render | **Required** | Build/Deploy | **Secret** | Direct PostgreSQL connection via port 5432 for `prisma migrate deploy` (`schema.prisma:11`) | `postgresql://postgres.[REF]:[PASS]@[HOST]:5432/postgres` | `PENDING (Supabase Direct)` |
 | `JWT_SECRET` | Render | **Required** | Runtime | **Secret** | HMAC-SHA256 signature key for auth cookies/tokens (`server/src/lib/jwt.ts:4`) | 64-character hexadecimal (32 random bytes) | `GENERATED (deployment/.env.production.secrets)` |
@@ -76,11 +76,15 @@ The Civora frontend is configured with a unified `vercel.json` file in `client/`
   "trailingSlash": false,
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "https://YOUR_RENDER_SERVICE_NAME.onrender.com/api/:path*"
+      "source": "/api",
+      "destination": "https://civora-l06w.onrender.com/api"
     },
     {
-      "source": "/(.*)",
+      "source": "/api/:path*",
+      "destination": "https://civora-l06w.onrender.com/api/:path*"
+    },
+    {
+      "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
   ]
