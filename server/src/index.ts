@@ -1,5 +1,6 @@
 import app from './app.js';
 import { prisma } from './lib/prisma.js';
+import { ensureBaselineMetadata } from './lib/metadataBootstrap.js';
 
 const PORT = process.env.PORT || 5000;
 
@@ -9,6 +10,11 @@ if (process.env.NODE_ENV !== 'test') {
   server = app.listen(PORT, () => {
     console.log(`[Civora Backend] Server running on http://localhost:${PORT}`);
     console.log(`[Civora Backend] Health endpoint: http://localhost:${PORT}/api/health`);
+
+    // Ensure baseline municipal metadata asynchronously on startup
+    ensureBaselineMetadata().catch((err) => {
+      console.warn('[Civora Backend] Background metadata bootstrap deferred:', err?.message || err);
+    });
   });
 
   const handleShutdown = async (signal: string) => {

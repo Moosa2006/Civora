@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Container } from '../components/layout/Container';
 import { PageHeading } from '../components/ui/PageHeading';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/Card';
@@ -138,31 +138,27 @@ export function ReportIssuePage() {
   };
 
   // Fetch active categories on mount
-  useEffect(() => {
-    let isMounted = true;
-    async function loadCategories() {
-      try {
-        const res = await fetch('/api/meta/categories');
-        const json = await res.json();
-        if (isMounted && json.success && Array.isArray(json.data)) {
-          setCategories(json.data);
-          if (json.data.length > 0) {
-            setCategoryId(json.data[0].id);
-          }
+  const loadCategories = useCallback(async () => {
+    setLoadingCategories(true);
+    try {
+      const res = await fetch('/api/meta/categories');
+      const json = await res.json();
+      if (json.success && Array.isArray(json.data)) {
+        setCategories(json.data);
+        if (json.data.length > 0) {
+          setCategoryId((prev) => prev || json.data[0].id);
         }
-      } catch {
-        if (isMounted) {
-          setErrorMsg('Failed to load categories. Please check your internet connection.');
-        }
-      } finally {
-        if (isMounted) setLoadingCategories(false);
       }
+    } catch {
+      setErrorMsg('Failed to load categories. Please check your internet connection.');
+    } finally {
+      setLoadingCategories(false);
     }
-    loadCategories();
-    return () => {
-      isMounted = false;
-    };
   }, []);
+
+  useEffect(() => {
+    void loadCategories();
+  }, [loadCategories]);
 
   // Module 14: Debounced duplicate detection
   useEffect(() => {
@@ -608,6 +604,18 @@ export function ReportIssuePage() {
                       }))}
                       disabled={loadingCategories}
                     />
+                    {!loadingCategories && categories.length === 0 && (
+                      <div className="mt-2 flex items-center justify-between rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+                        <span>Municipal complaint categories are initializing...</span>
+                        <button
+                          type="button"
+                          onClick={() => void loadCategories()}
+                          className="font-semibold text-emerald-700 underline hover:text-emerald-900"
+                        >
+                          Retry
+                        </button>
+                      </div>
+                    )}
                   </FormField>
 
                   <FormField
