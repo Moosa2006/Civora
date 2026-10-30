@@ -20,6 +20,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return;
         }
       }
+      if (res.status === 401) {
+        localStorage.removeItem('civora_token');
+      }
       setUser(null);
     } catch {
       setUser(null);
@@ -43,6 +46,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setUser(json.data.user);
             return;
           }
+        }
+        if (res.status === 401) {
+          localStorage.removeItem('civora_token');
         }
         if (isMounted) setUser(null);
       } catch {
@@ -70,24 +76,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify({ email, password }),
       });
 
-      const data: AuthResponse = await res.json();
-
-      if (!res.ok || !data.success || !data.data) {
+      let data: AuthResponse | null = null;
+      try {
+        data = await res.json();
+      } catch {
         return {
           success: false,
-          error: data.error?.message || 'Login failed. Please check your credentials.',
-          errorCode: data.error?.code,
-          details: data.error?.details,
+          error: res.status >= 500
+            ? 'The backend server is warming up or temporarily unavailable. Please retry in a few seconds.'
+            : 'Authentication server response could not be parsed.',
         };
       }
 
+      if (!res.ok || !data?.success || !data?.data) {
+        return {
+          success: false,
+          error: data?.error?.message || 'Login failed. Please check your credentials.',
+          errorCode: data?.error?.code,
+          details: data?.error?.details,
+        };
+      }
+
+      if (data.data.token) {
+        localStorage.setItem('civora_token', data.data.token);
+      }
       setUser(data.data.user);
       return { success: true, user: data.data.user };
 
     } catch {
       return {
         success: false,
-        error: 'Unable to connect to the authentication server. Please try again.',
+        error: 'Unable to connect to the authentication server. Please check your network and try again.',
       };
     }
   };
@@ -104,15 +123,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify({ name, email, password, phone }),
       });
 
-      const data: AuthResponse = await res.json();
-
-      if (!res.ok || !data.success || !data.data) {
+      let data: AuthResponse | null = null;
+      try {
+        data = await res.json();
+      } catch {
         return {
           success: false,
-          error: data.error?.message || 'Registration failed. Please check your inputs.',
+          error: 'Registration server is currently unavailable. Please try again shortly.',
         };
       }
 
+      if (!res.ok || !data?.success || !data?.data) {
+        return {
+          success: false,
+          error: data?.error?.message || 'Registration failed. Please check your inputs.',
+        };
+      }
+
+      if (data.data?.token) {
+        localStorage.setItem('civora_token', data.data.token);
+      }
       setUser(data.data.user);
       return { success: true };
     } catch {
@@ -125,6 +155,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     try {
+      localStorage.removeItem('civora_token');
       await fetch('/api/auth/logout', {
         method: 'POST',
         credentials: 'include',
