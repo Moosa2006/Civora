@@ -39,6 +39,33 @@ export const loginSchema = z.object({
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 
+export const bootstrapAdminSchema = z.object({
+  setupSecret: z.string().trim().optional(),
+  email: z
+    .string()
+    .trim()
+    .email('Please provide a valid administrator email address.')
+    .max(255, 'Email must not exceed 255 characters.')
+    .toLowerCase(),
+  password: z
+    .string()
+    .min(8, 'Administrator password must be at least 8 characters long.')
+    .max(128, 'Password must not exceed 128 characters.'),
+  name: z
+    .string()
+    .trim()
+    .min(2, 'Administrator name must be at least 2 characters long.')
+    .max(100, 'Name must not exceed 100 characters.')
+    .default('Platform Administrator'),
+  phone: z
+    .string()
+    .trim()
+    .max(50, 'Phone number must not exceed 50 characters.')
+    .optional(),
+});
+
+export type BootstrapAdminInput = z.infer<typeof bootstrapAdminSchema>;
+
 export const registerContractorSchema = z.object({
   // Contact Account Details
   name: z

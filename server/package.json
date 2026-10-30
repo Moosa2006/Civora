@@ -17,6 +17,7 @@
     "admin:bootstrap": "tsx src/scripts/bootstrapAdmin.ts",
     "metadata:bootstrap": "tsx src/scripts/bootstrapProductionMetadata.ts",
     "test:reliability": "tsx src/scripts/verifyReliability.ts",
+    "test:bootstrap": "tsx src/scripts/verifyAdminBootstrap.ts",
     "test:verify": "tsx src/scripts/verifyApplication.ts",
     "test": "tsx --test --test-concurrency=4 test/**/*.test.ts"
   },
