@@ -1,6 +1,7 @@
 import app from './app.js';
 import { prisma } from './lib/prisma.js';
 import { ensureBaselineMetadata } from './lib/metadataBootstrap.js';
+import { ensureDatabaseSchema } from './lib/schemaSynchronizer.js';
 
 const PORT = process.env.PORT || 5000;
 
@@ -11,21 +12,27 @@ if (process.env.NODE_ENV !== 'test') {
     console.log(`[Civora Backend] Server running on http://localhost:${PORT}`);
     console.log(`[Civora Backend] Health endpoint: http://localhost:${PORT}/api/health`);
 
-    // Ensure baseline municipal metadata asynchronously on startup
-    ensureBaselineMetadata()
-      .then((res) => {
-        if (res.seeded) {
+    // Ensure database schema synchronization and baseline metadata asynchronously on startup
+    ensureDatabaseSchema()
+      .then((schemaRes) => {
+        console.log(
+          `[Civora Backend] Database schema verified: ${schemaRes.statementsExecuted} statements executed in ${schemaRes.durationMs}ms.`
+        );
+        return ensureBaselineMetadata();
+      })
+      .then((metaRes) => {
+        if (metaRes.seeded) {
           console.log(
-            `[Civora Backend] Baseline municipal metadata initialized: ${res.departments} departments, ${res.categories} categories.`
+            `[Civora Backend] Baseline municipal metadata initialized: ${metaRes.departments} departments, ${metaRes.categories} categories.`
           );
         } else {
           console.log(
-            `[Civora Backend] Baseline municipal metadata verified in database (${res.categories} active categories).`
+            `[Civora Backend] Baseline municipal metadata verified in database (${metaRes.categories} active categories).`
           );
         }
       })
       .catch((err) => {
-        console.error('[Civora Backend Error] Background metadata initialization failed:', err?.message || err);
+        console.error('[Civora Backend Error] Background initialization failed:', err?.message || err);
       });
   });
 

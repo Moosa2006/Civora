@@ -264,6 +264,7 @@ export function AdminSystemPage() {
   const [editSettingValue, setEditSettingValue] = useState('');
   const [editSettingReason, setEditSettingReason] = useState('');
   const [savingSetting, setSavingSetting] = useState(false);
+  const [syncingSchema, setSyncingSchema] = useState(false);
 
   // Maintenance confirmation modal
   const [maintenanceModalOpen, setMaintenanceModalOpen] = useState(false);
@@ -592,6 +593,29 @@ export function AdminSystemPage() {
     if (activeTab === 'contractors') await fetchContractorApps();
     if (activeTab === 'audit') await fetchAuditLogs();
     if (activeTab === 'incidents') await fetchIncidents();
+  };
+
+  const handleSyncSchema = async () => {
+    setSyncingSchema(true);
+    setErrorMsg(null);
+    setSuccessMsg(null);
+    try {
+      const res = await fetch('/api/admin/system/sync-schema', {
+        method: 'POST',
+        headers: getAuthHeaders({ 'Content-Type': 'application/json', Accept: 'application/json' }),
+        credentials: 'include',
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error?.message || 'Database schema synchronization failed.');
+      }
+      setSuccessMsg(`Database schema successfully synchronized (${data.data.statementsExecuted} statements verified in ${data.data.durationMs}ms).`);
+      handleRefresh();
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : 'Database schema synchronization failed.');
+    } finally {
+      setSyncingSchema(false);
+    }
   };
 
 
@@ -1949,6 +1973,32 @@ export function AdminSystemPage() {
               </CardContent>
             </Card>
           </div>
+
+          {/* Database Schema Synchronization & Health */}
+          <Card className="border-[#DED8CB] dark:border-[#283931]">
+            <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2">
+              <div>
+                <CardTitle as="h3">Database Schema Synchronization & Migration Integrity</CardTitle>
+                <CardDescription>
+                  Verify and apply idempotent database schema updates directly across Supabase pooler connections.
+                </CardDescription>
+              </div>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={handleSyncSchema}
+                disabled={syncingSchema}
+                className="shrink-0"
+              >
+                {syncingSchema ? 'Synchronizing...' : 'Sync Schema Now'}
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <p className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
+                Ensures all tables, additive columns (AI verification, fraud risk scores, complaint consolidation, contractor extensions), and foreign key indexes are aligned with the Prisma data model without downtime or destructive resets.
+              </p>
+            </CardContent>
+          </Card>
 
           <Card variant="subtle">
             <CardContent className="py-4">

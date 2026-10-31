@@ -534,6 +534,17 @@ export function AdminComplaintsPage() {
                     >
                       Public View
                     </Button>
+                    {c.isDuplicate && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleSeparateReport(c.id, c.trackingId)}
+                        className="text-xs text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-700"
+                        disabled={actionLoading}
+                      >
+                        Separate Report
+                      </Button>
+                    )}
                   </div>
                 </div>
               </CardContent>

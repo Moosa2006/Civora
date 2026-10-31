@@ -31,6 +31,7 @@ import {
   exportWorkflowCsv,
   exportIncidentsCsv,
 } from '../controllers/adminReports.controller.js';
+import { ensureDatabaseSchema } from '../lib/schemaSynchronizer.js';
 
 const router = Router();
 
@@ -71,5 +72,19 @@ router.patch('/incidents/:id', updateAdminIncident);
 router.get('/reports/audit-export', exportAuditLogsCsv);
 router.get('/reports/workflow-export', exportWorkflowCsv);
 router.get('/reports/incidents-export', exportIncidentsCsv);
+
+// 7. System & Database Integrity Maintenance
+router.post('/system/sync-schema', async (_req, res, next) => {
+  try {
+    const result = await ensureDatabaseSchema();
+    return res.status(200).json({
+      success: true,
+      message: 'Database schema synchronization executed successfully.',
+      data: result,
+    });
+  } catch (err) {
+    return next(err);
+  }
+});
 
 export default router;
