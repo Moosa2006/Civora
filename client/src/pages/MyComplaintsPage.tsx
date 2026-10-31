@@ -8,6 +8,7 @@ import { Alert } from '../components/ui/Alert';
 import { EmptyState } from '../components/ui/EmptyState';
 import { LoadingIndicator } from '../components/ui/LoadingIndicator';
 import { useAuth } from '../context/useAuth';
+import { useTranslation } from '../context/useTranslation';
 import { useRouter } from '../router';
 import { getStatusBadgeVariant } from '../utils/status';
 import type { Complaint } from '../types/complaint';
@@ -15,6 +16,7 @@ import type { Complaint } from '../types/complaint';
 export function MyComplaintsPage() {
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const { navigate } = useRouter();
+  const { t, formatDate } = useTranslation();
 
   const [complaints, setComplaints] = useState<Complaint[]>([]);
   const [loading, setLoading] = useState(true);
@@ -64,19 +66,6 @@ export function MyComplaintsPage() {
     }
   }, [isAuthenticated, fetchMyComplaints]);
 
-  const formatDate = (isoString: string) => {
-    try {
-      const d = new Date(isoString);
-      return d.toLocaleDateString('en-IN', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-      });
-    } catch {
-      return isoString;
-    }
-  };
-
   if (!authLoading && !isAuthenticated) {
     return (
       <Container size="md" className="py-12 space-y-6">
@@ -111,15 +100,15 @@ export function MyComplaintsPage() {
   }
 
   const filterTabs = [
-    { label: 'All Issues', value: 'ALL' },
-    { label: 'Submitted', value: 'SUBMITTED' },
-    { label: 'Under Review', value: 'UNDER_REVIEW' },
-    { label: 'Assigned', value: 'ASSIGNED' },
-    { label: 'In Progress', value: 'IN_PROGRESS' },
-    { label: 'Resolved (Pending Verification)', value: 'RESOLVED' },
-    { label: 'Verified', value: 'VERIFIED' },
-    { label: 'Reopened', value: 'REOPENED' },
-    { label: 'Rejected', value: 'REJECTED' },
+    { label: t('myComplaints.allTab'), value: 'ALL' },
+    { label: t('status.SUBMITTED'), value: 'SUBMITTED' },
+    { label: t('status.UNDER_REVIEW'), value: 'UNDER_REVIEW' },
+    { label: t('status.ASSIGNED'), value: 'ASSIGNED' },
+    { label: t('status.IN_PROGRESS'), value: 'IN_PROGRESS' },
+    { label: t('status.RESOLVED'), value: 'RESOLVED' },
+    { label: t('status.VERIFIED'), value: 'VERIFIED' },
+    { label: t('status.REOPENED'), value: 'REOPENED' },
+    { label: t('status.REJECTED'), value: 'REJECTED' },
   ];
 
   return (
@@ -127,11 +116,11 @@ export function MyComplaintsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <PageHeading
-          title="My Civic Complaints"
-          description={`Logged as ${user?.name || 'Citizen'} • ${totalCount} total ${totalCount === 1 ? 'grievance' : 'grievances'} lodged`}
+          title={t('myComplaints.title')}
+          description={`${user?.name || t('roles.citizen')} • ${totalCount} ${totalCount === 1 ? 'grievance' : 'grievances'}`}
           badge={
             <Badge variant="default" size="md">
-              Citizen Portal
+              {t('roles.citizen')}
             </Badge>
           }
         />
@@ -140,7 +129,7 @@ export function MyComplaintsPage() {
           onClick={() => navigate('/report')}
           className="shrink-0 cursor-pointer"
         >
-          Report New Issue
+          {t('myComplaints.fileComplaintBtn')}
         </Button>
       </div>
 
@@ -185,15 +174,15 @@ export function MyComplaintsPage() {
       ) : complaints.length === 0 ? (
         /* Empty State */
         <EmptyState
-          title={statusFilter === 'ALL' ? 'No Complaints Lodged Yet' : `No complaints with status "${statusFilter}"`}
+          title={statusFilter === 'ALL' ? t('myComplaints.noComplaintsTitle') : `${t('common.status')}: ${statusFilter}`}
           description={
             statusFilter === 'ALL'
-              ? 'You have not reported any civic infrastructure or sanitation issues yet. Notice a pothole or dark streetlight? Lodge it now to get it repaired!'
-              : 'Try clearing your status filter to see other filings.'
+              ? t('myComplaints.noComplaintsDesc')
+              : ''
           }
           action={
             <Button variant="primary" onClick={() => navigate('/report')}>
-              Report a Civic Issue
+              {t('myComplaints.fileComplaintBtn')}
             </Button>
           }
         />
@@ -217,7 +206,7 @@ export function MyComplaintsPage() {
                         {c.trackingId}
                       </span>
                       <Badge variant={getStatusBadgeVariant(c.status)} size="sm" hasDot>
-                        {c.status.replace('_', ' ')}
+                        {t(`status.${c.status}`) || c.status.replace('_', ' ')}
                       </Badge>
                       <span className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
                         • {c.category?.name || 'General Civic Issue'}

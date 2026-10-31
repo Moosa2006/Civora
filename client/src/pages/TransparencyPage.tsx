@@ -29,6 +29,7 @@ import {
   MapPinIcon,
 } from '../components/ui/icons';
 import { useRouter } from '../router';
+import { useTranslation } from '../context/useTranslation';
 import { getStatusBadgeVariant } from '../utils/status';
 import type {
   TransparencyMetricsData,
@@ -57,6 +58,7 @@ function getTabFromUrl(path: string): TransparencyTab {
 
 export function TransparencyPage() {
   const { currentPath, navigate } = useRouter();
+  const { t } = useTranslation();
 
   const [activeTab, setActiveTab] = useState<TransparencyTab>(() => getTabFromUrl(currentPath));
 
@@ -316,11 +318,11 @@ export function TransparencyPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <PageHeading
-          title="Public Transparency & Accountability Dashboard"
-          description="Open municipal performance metrics, real-time grievance tracking, department scorecards, and formal civic works project monitoring."
+          title={t('transparency.title')}
+          description={t('transparency.subtitle')}
           badge={
             <Badge variant="success" size="md" hasDot>
-              Live Civic Transparency
+              {t('nav.transparency')}
             </Badge>
           }
         />
@@ -332,7 +334,7 @@ export function TransparencyPage() {
             leftIcon={<MapPinIcon className="w-3.5 h-3.5 text-[#173D32] dark:text-[#7BC4B2]" />}
             className="text-xs cursor-pointer"
           >
-            Explore Geographic Map
+            {t('nav.civicMap')}
           </Button>
           <Button
             variant="outline"
@@ -341,7 +343,7 @@ export function TransparencyPage() {
             leftIcon={<RefreshCwIcon className="w-3.5 h-3.5" />}
             className="text-xs cursor-pointer"
           >
-            Refresh Data
+            {t('adminSystem.refreshBtn')}
           </Button>
         </div>
       </div>

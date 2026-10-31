@@ -22,6 +22,7 @@ import {
   ChatBubbleIcon,
 } from '../components/ui/icons';
 import { useAuth } from '../context/useAuth';
+import { useTranslation } from '../context/useTranslation';
 import { useRouter } from '../router';
 import { getStatusBadgeVariant } from '../utils/status';
 import type { Complaint } from '../types/complaint';
@@ -33,6 +34,7 @@ type ActionModalType = 'PROGRESS' | 'INSPECTION' | 'EVIDENCE' | 'RESOLUTION' | '
 export function OfficialWorkspacePage() {
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const { navigate } = useRouter();
+  const { t } = useTranslation();
 
   const [complaints, setComplaints] = useState<Complaint[]>([]);
   const [loading, setLoading] = useState(true);
@@ -288,11 +290,11 @@ export function OfficialWorkspacePage() {
       {/* Page Heading */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <PageHeading
-          title="Official Department Workspace"
-          description={`Logged as ${user?.name} • ${deptLabel} • ${totalCount} active department grievances`}
+          title={t('nav.fieldOps')}
+          description={`Logged as ${user?.name} • ${deptLabel} • ${totalCount} grievances`}
           badge={
             <Badge variant="warning" size="md">
-              Field Operations
+              {t('roles.official')}
             </Badge>
           }
         />
@@ -301,7 +303,7 @@ export function OfficialWorkspacePage() {
           onClick={() => fetchOfficialComplaints()}
           className="shrink-0 text-xs"
         >
-          Refresh Queue
+          {t('adminSystem.refreshBtn')}
         </Button>
       </div>
 

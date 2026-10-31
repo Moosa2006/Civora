@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { useRouter } from '../router';
 import { useAuth } from '../context/useAuth';
+import { useTranslation } from '../context/useTranslation';
 import { getRoleLandingPage } from '../config/navigation';
 import { Container } from '../components/layout/Container';
 import { Card } from '../components/ui/Card';
@@ -13,6 +14,7 @@ import { PageHeading } from '../components/ui/PageHeading';
 export function LoginPage() {
   const { login, isAuthenticated, user } = useAuth();
   const { navigate } = useRouter();
+  const { t } = useTranslation();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -77,9 +79,17 @@ export function LoginPage() {
 
   return (
     <Container size="sm" className="py-12">
+      <div className="flex justify-center mb-4">
+        <img
+          src="/civora_icon.jpeg"
+          alt="Civora"
+          className="w-14 h-14 rounded-2xl object-contain bg-white p-1 shadow-xs border border-gray-100"
+        />
+      </div>
+
       <PageHeading
-        title="Sign In to Civora"
-        description="Access your civic complaint tracker, contractor workspace, official department queue, or administrative dashboard."
+        title={t('auth.signInTitle')}
+        description={t('auth.signInDesc')}
         className="text-center mb-8"
       />
 
@@ -110,27 +120,27 @@ export function LoginPage() {
         ) : null}
 
         <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-          <FormField label="Email Address" required id="login-email">
+          <FormField label={t('auth.emailLabel')} required id="login-email">
             <TextInput
               id="login-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="e.g., citizen@example.com"
+              placeholder={t('auth.emailPlaceholder')}
               autoComplete="email"
               required
               disabled={isSubmitting}
             />
           </FormField>
 
-          <FormField label="Password" required id="login-password">
+          <FormField label={t('auth.passwordLabel')} required id="login-password">
             <div className="relative">
               <TextInput
                 id="login-password"
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
+                placeholder="••••••••"
                 autoComplete="current-password"
                 required
                 disabled={isSubmitting}
@@ -154,7 +164,7 @@ export function LoginPage() {
             className="w-full mt-2"
             isLoading={isSubmitting}
           >
-            Sign In
+            {t('auth.submitSignIn')}
           </Button>
         </form>
 

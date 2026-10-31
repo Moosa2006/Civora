@@ -8,7 +8,7 @@ import { MenuIcon, CloseIcon, ChevronDownIcon, ShieldCheckIcon, ActivityIcon, Se
 import { NotificationDropdown } from './NotificationDropdown.js';
 import { LanguageSelector } from './LanguageSelector.js';
 import { AccessibilitySettingsModal } from './AccessibilitySettingsModal.js';
-import { getRolePrimaryNav, getRoleSecondaryNav } from '../../config/navigation.js';
+import { getRolePrimaryNav, getRoleSecondaryNav, getRoleLandingPage } from '../../config/navigation.js';
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -81,21 +81,34 @@ export function Navbar() {
   const formatRoleLabel = (userRole?: string) => {
     switch (userRole) {
       case 'ADMIN':
-        return 'Admin';
+        return t('roles.admin');
       case 'GOVERNMENT_OFFICIAL':
-        return 'Official';
+        return t('roles.official');
       case 'CONTRACTOR':
-        return 'Contractor';
+        return t('roles.contractor');
       default:
-        return 'Citizen';
+        return t('roles.citizen');
     }
   };
 
   const getDropdownLabel = () => {
-    if (role === 'CONTRACTOR') return 'Execution';
-    if (role === 'ADMIN') return 'Governance';
-    if (role === 'GOVERNMENT_OFFICIAL') return 'Operations';
-    return 'More';
+    if (role === 'CONTRACTOR') return t('nav.dropdownExecution');
+    if (role === 'ADMIN') return t('nav.dropdownGovernance');
+    if (role === 'GOVERNMENT_OFFICIAL') return t('nav.dropdownOperations');
+    return t('nav.dropdownMore');
+  };
+
+  const getNavLabel = (item: { label: string; translationKey?: string }) => {
+    if (item.translationKey) {
+      const translated = t(item.translationKey);
+      if (translated && translated !== item.translationKey) return translated;
+    }
+    return item.label;
+  };
+
+  const getLogoDestination = () => {
+    if (!isAuthenticated || !user) return '/';
+    return getRoleLandingPage(user.role);
   };
 
   const getDropdownIcon = () => {
@@ -117,14 +130,16 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16 gap-2 lg:gap-4">
           {/* 1. Civora Brand Logo & Name */}
           <NavLink
-            to="/"
+            to={getLogoDestination()}
             onClick={closeMobileMenu}
             className="flex items-center space-x-2.5 sm:space-x-3 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A8BFAE] rounded-lg p-1 min-h-[44px] shrink-0"
             aria-label={`${t('nav.brand')} - ${t('nav.tagline')}`}
           >
-            <div className="w-9 h-9 rounded-xl bg-[#F4F0E6] text-[#173D32] flex items-center justify-center font-heading font-bold shadow-xs text-lg transition-transform group-hover:scale-105 shrink-0 border border-[#DED8CB]">
-              C
-            </div>
+            <img
+              src="/civora_icon.jpeg"
+              alt="Civora Emblem"
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg object-contain bg-white p-0.5 shadow-xs transition-transform group-hover:scale-105 shrink-0"
+            />
             <div className="hidden sm:block text-left">
               <span className="text-lg font-heading font-bold tracking-tight text-[#F4F0E6] block leading-none">
                 {t('nav.brand')}
@@ -151,7 +166,7 @@ export function Navbar() {
                     className={navLinkBase}
                     activeClassName={navLinkActive}
                   >
-                    {item.label}
+                    {getNavLabel(item)}
                   </NavLink>
                 ))}
 
@@ -186,7 +201,7 @@ export function Navbar() {
                         className="absolute right-0 mt-2 w-56 rounded-xl bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] shadow-xl z-50 p-1.5 space-y-1"
                       >
                         <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-[#54625A] dark:text-[#94A79D] border-b border-[#EAE5D9] dark:border-[#283931]">
-                          {getDropdownLabel()} Actions
+                          {getDropdownLabel()} {t('common.actions')}
                         </div>
                         {secondaryNavItems.map((subItem) => (
                           <NavLink
@@ -196,7 +211,7 @@ export function Navbar() {
                             className="flex items-center px-3 py-2 text-xs font-medium text-[#202522] dark:text-[#F5F2EA] hover:bg-[#ECE7DB] dark:hover:bg-[#1C2823] rounded-lg transition-colors"
                             activeClassName="text-[#173D32] dark:text-[#7BC4B2] bg-[#ECE7DB] dark:bg-[#1C2823] font-semibold"
                           >
-                            {subItem.label}
+                            {getNavLabel(subItem)}
                           </NavLink>
                         ))}
                       </div>
@@ -290,7 +305,7 @@ export function Navbar() {
             {/* Primary Mobile Links */}
             <div className="space-y-1">
               <span className="text-[10px] font-bold uppercase tracking-wider text-[#A8BFAE] px-3.5 block mb-1">
-                Main Menu
+                {t('nav.mainMenu')}
               </span>
               {primaryNavItems.map((item) => (
                 <NavLink
@@ -300,7 +315,7 @@ export function Navbar() {
                   className={`block ${navLinkBase}`}
                   activeClassName={navLinkActive}
                 >
-                  {item.label}
+                  {getNavLabel(item)}
                 </NavLink>
               ))}
             </div>
@@ -309,7 +324,7 @@ export function Navbar() {
             {secondaryNavItems.length > 0 && (
               <div className="pt-2 border-t border-[#112F26] space-y-1">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#C5D4C9] px-3.5 block mb-1">
-                  {getDropdownLabel()} Actions
+                  {getDropdownLabel()} {t('common.actions')}
                 </span>
                 {secondaryNavItems.map((item) => (
                   <NavLink
@@ -319,7 +334,7 @@ export function Navbar() {
                     className={`block ${navLinkBase}`}
                     activeClassName={navLinkActive}
                   >
-                    {item.label}
+                    {getNavLabel(item)}
                   </NavLink>
                 ))}
               </div>

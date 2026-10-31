@@ -19,6 +19,7 @@ import {
   FileTextIcon,
 } from '../components/ui/icons';
 import { useAuth } from '../context/useAuth';
+import { useTranslation } from '../context/useTranslation';
 import { useRouter } from '../router';
 import { getStatusBadgeVariant } from '../utils/status';
 import type { Complaint } from '../types/complaint';
@@ -28,6 +29,7 @@ import { EvidenceSection } from '../components/evidence/EvidenceSection';
 export function TrackComplaintPage() {
   const { user, isAuthenticated } = useAuth();
   const { currentPath, navigate } = useRouter();
+  const { t } = useTranslation();
 
   const [trackingId, setTrackingId] = useState('');
   const [loading, setLoading] = useState(false);
@@ -220,11 +222,11 @@ export function TrackComplaintPage() {
     <Container size="lg" className="space-y-8">
       {/* Header */}
       <PageHeading
-        title="Track Complaint Status"
-        description="Monitor real-time municipal inspection progress, department assignment, and citizen verification for any lodged civic grievance."
+        title={t('tracking.heading')}
+        description={t('tracking.subheading')}
         badge={
           <Badge variant="info" size="md" hasDot>
-            Live Tracking
+            {t('common.status')}
           </Badge>
         }
       />
@@ -232,21 +234,21 @@ export function TrackComplaintPage() {
       {/* Tracking Input Card */}
       <Card>
         <CardHeader>
-          <CardTitle>Enter Complaint Tracking ID</CardTitle>
+          <CardTitle>{t('tracking.heading')}</CardTitle>
           <CardDescription>
-            Input the unique tracking ID generated when the civic issue was submitted (e.g. CIV-2026-XXXXX).
+            {t('tracking.subheading')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSearch} className="max-w-2xl space-y-2">
             <label htmlFor="tracking-id-input" className="block text-sm font-medium text-[#3E4B44] dark:text-[#C5D4C9]">
-              Tracking Identifier
+              {t('tracking.inputPlaceholder')}
             </label>
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               <div className="flex-1 min-w-0">
                 <TextInput
                   id="tracking-id-input"
-                  placeholder="e.g. CIV-2026-00142"
+                  placeholder={t('tracking.inputPlaceholder')}
                   value={trackingId}
                   onChange={(e) => setTrackingId(e.target.value.toUpperCase())}
                   leftIcon={<SearchIcon className="w-4 h-4 text-[#54625A] dark:text-[#C5D4C9]" />}

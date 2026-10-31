@@ -270,6 +270,14 @@ export function RegisterPage() {
 
   return (
     <Container size="md" className="py-12">
+      <div className="flex justify-center mb-4">
+        <img
+          src="/civora_icon.jpeg"
+          alt="Civora"
+          className="w-14 h-14 rounded-2xl object-contain bg-white p-1 shadow-xs border border-gray-100"
+        />
+      </div>
+
       <PageHeading
         title="Civora Registration & Onboarding"
         description="Create your citizen account to report and track neighborhood issues, or register your engineering firm for municipal civic works procurement."

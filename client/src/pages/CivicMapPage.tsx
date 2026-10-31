@@ -10,10 +10,12 @@ import { Alert } from '../components/ui/Alert';
 import { CivicMap } from '../components/map/CivicMap';
 import { MapPinIcon } from '../components/ui/icons';
 import { useRouter } from '../router';
+import { useTranslation } from '../context/useTranslation';
 import type { GeoComplaintMarker, GeoHotspot, KnownLocality } from '../types';
 
 export const CivicMapPage: React.FC = () => {
   const { navigate } = useRouter();
+  const { t } = useTranslation();
 
   // View state: 'map' | 'list'
   const [viewMode, setViewMode] = useState<'map' | 'list'>('map');
@@ -193,11 +195,11 @@ export const CivicMapPage: React.FC = () => {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <PageHeading
-          title="Civic Complaint Explorer & Map"
-          description="Explore public grievances, discover nearby issues, and identify geographic problem areas across the city."
+          title={t('civicMap.title')}
+          description={t('civicMap.subtitle')}
           badge={
             <Badge variant="info" size="md" hasDot>
-              Geographic Intelligence
+              {t('nav.civicMap')}
             </Badge>
           }
         />
@@ -214,7 +216,7 @@ export const CivicMapPage: React.FC = () => {
             }`}
           >
             <MapPinIcon className="w-3.5 h-3.5" />
-            Interactive Map
+            {t('civicMap.mapViewToggle')}
           </button>
           <button
             type="button"
@@ -228,7 +230,7 @@ export const CivicMapPage: React.FC = () => {
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
             </svg>
-            List View ({markers.length})
+            {t('civicMap.listViewToggle')} ({markers.length})
           </button>
         </div>
       </div>

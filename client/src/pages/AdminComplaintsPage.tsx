@@ -13,6 +13,7 @@ import { EmptyState } from '../components/ui/EmptyState';
 import { LoadingIndicator } from '../components/ui/LoadingIndicator';
 import { SearchIcon, CloseIcon } from '../components/ui/icons';
 import { useAuth } from '../context/useAuth';
+import { useTranslation } from '../context/useTranslation';
 import { useRouter } from '../router';
 import { getStatusBadgeVariant } from '../utils/status';
 import type { Complaint, Department } from '../types/complaint';
@@ -21,6 +22,7 @@ import { EvidenceReviewQueue } from '../components/evidence/EvidenceReviewQueue'
 export function AdminComplaintsPage() {
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const { navigate } = useRouter();
+  const { t } = useTranslation();
 
   // Top level tab
   const [mainTab, setMainTab] = useState<'COMPLAINTS' | 'EVIDENCE'>('COMPLAINTS');
@@ -286,11 +288,11 @@ export function AdminComplaintsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <PageHeading
-          title="Complaint Management & Triage"
-          description={`Logged as ${user?.name} (${user?.role}) • ${totalCount} master grievances in queue`}
+          title={t('nav.triageDashboard')}
+          description={`Logged as ${user?.name} (${user?.role}) • ${totalCount} grievances`}
           badge={
             <Badge variant="warning" size="md">
-              Staff Portal
+              {t('roles.admin')}
             </Badge>
           }
         />
@@ -299,7 +301,7 @@ export function AdminComplaintsPage() {
           onClick={() => (mainTab === 'COMPLAINTS' ? fetchAdminComplaints() : undefined)}
           className="shrink-0 text-xs cursor-pointer"
         >
-          Refresh Queue
+          {t('adminSystem.refreshBtn')}
         </Button>
       </div>
 

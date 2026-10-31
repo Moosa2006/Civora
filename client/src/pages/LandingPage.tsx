@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useRouter } from '../router/index.js';
+import { useTranslation } from '../context/useTranslation.js';
 import { Container } from '../components/layout/Container.js';
 import { Button } from '../components/ui/Button.js';
 import {
@@ -11,6 +12,7 @@ import {
 
 export function LandingPage() {
   const { navigate } = useRouter();
+  const { t } = useTranslation();
 
   // Handle smooth scroll to section if hash exists in URL on mount
   useEffect(() => {
@@ -46,7 +48,7 @@ export function LandingPage() {
               onClick={() => navigate('/report')}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-md text-sm sm:text-base font-medium text-white bg-[#0B3D2E] hover:bg-[#072B20] transition-colors shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0B3D2E] cursor-pointer"
             >
-              Report an Issue
+              {t('home.reportCta')}
               <span aria-hidden="true">→</span>
             </button>
 
@@ -55,7 +57,7 @@ export function LandingPage() {
               onClick={() => navigate('/transparency')}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-md text-sm sm:text-base font-medium text-[#1A1A1A] bg-white border border-gray-200 hover:bg-gray-50 transition-colors shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-300 cursor-pointer"
             >
-              Explore Transparency
+              {t('nav.transparency')}
               <span aria-hidden="true">→</span>
             </button>
           </div>

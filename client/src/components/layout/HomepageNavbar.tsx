@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { NavLink } from '../../router/NavLink.js';
 import { useRouter } from '../../router/index.js';
 import { useAuth } from '../../context/useAuth.js';
+import { useTranslation } from '../../context/useTranslation.js';
 import { LanguageSelector } from './LanguageSelector.js';
 
 export function HomepageNavbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, isAuthenticated } = useAuth();
   const { currentPath } = useRouter();
+  const { t } = useTranslation();
 
   // Close mobile drawer on route change or Escape key
   useEffect(() => {
@@ -47,7 +49,7 @@ export function HomepageNavbar() {
           {/* 1. Left: Civora Icon (As shown in reference screenshot) */}
           <div className="flex items-center">
             <NavLink
-              to="/"
+              to={isAuthenticated && user ? getUserWorkspacePath() : '/'}
               onClick={() => setMobileMenuOpen(false)}
               className="flex items-center py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0B3D2E] rounded-md"
               aria-label="Civora Home"
@@ -67,21 +69,21 @@ export function HomepageNavbar() {
               className={navLinkBase}
               activeClassName={navLinkActive}
             >
-              Home
+              {t('nav.home')}
             </NavLink>
             <NavLink
               to="/transparency"
               className={navLinkBase}
               activeClassName={navLinkActive}
             >
-              Transparency
+              {t('nav.transparency')}
             </NavLink>
             <NavLink
               to="/engagement"
               className={navLinkBase}
               activeClassName={navLinkActive}
             >
-              Civic Engagement
+              {t('nav.civicEngagement')}
             </NavLink>
             <a
               href="#about"
@@ -94,7 +96,7 @@ export function HomepageNavbar() {
                 }
               }}
             >
-              About Civora
+              {t('nav.aboutCivora')}
             </a>
           </nav>
 
@@ -111,14 +113,14 @@ export function HomepageNavbar() {
                 to={getUserWorkspacePath()}
                 className="hidden sm:inline-block px-3.5 py-1.5 rounded-md text-sm font-medium text-[#2D3748] hover:text-[#0B3D2E] transition-colors"
               >
-                Dashboard
+                {t('nav.dashboard')}
               </NavLink>
             ) : (
               <NavLink
                 to="/login"
                 className="hidden sm:inline-block px-2.5 py-1.5 text-sm font-medium text-[#2D3748] hover:text-[#0B3D2E] transition-colors"
               >
-                Sign In
+                {t('nav.signIn')}
               </NavLink>
             )}
 
@@ -127,14 +129,14 @@ export function HomepageNavbar() {
               to="/report"
               className="hidden sm:inline-flex items-center justify-center px-4 py-2 rounded-md text-sm font-medium text-white bg-[#0B3D2E] hover:bg-[#072B20] transition-colors shadow-2xs"
             >
-              Report Issue
+              {t('nav.reportIssue')}
             </NavLink>
 
             {/* Mobile Menu Hamburger Button */}
             <button
               type="button"
               onClick={() => setMobileMenuOpen((prev) => !prev)}
-              aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+              aria-label={mobileMenuOpen ? t('nav.closeMenu') : t('nav.openMenu')}
               aria-expanded={mobileMenuOpen}
               className="md:hidden p-2 rounded-md text-[#2D3748] hover:bg-gray-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0B3D2E]"
             >
@@ -166,21 +168,21 @@ export function HomepageNavbar() {
               onClick={() => setMobileMenuOpen(false)}
               className="px-3.5 py-2 rounded-lg text-sm font-medium text-[#2D3748] hover:bg-[#E5ECE8]"
             >
-              Home
+              {t('nav.home')}
             </NavLink>
             <NavLink
               to="/transparency"
               onClick={() => setMobileMenuOpen(false)}
               className="px-3.5 py-2 rounded-lg text-sm font-medium text-[#2D3748] hover:bg-[#E5ECE8]"
             >
-              Transparency
+              {t('nav.transparency')}
             </NavLink>
             <NavLink
               to="/engagement"
               onClick={() => setMobileMenuOpen(false)}
               className="px-3.5 py-2 rounded-lg text-sm font-medium text-[#2D3748] hover:bg-[#E5ECE8]"
             >
-              Civic Engagement
+              {t('nav.civicEngagement')}
             </NavLink>
             <a
               href="#about"
@@ -194,7 +196,7 @@ export function HomepageNavbar() {
               }}
               className="px-3.5 py-2 rounded-lg text-sm font-medium text-[#2D3748] hover:bg-[#E5ECE8]"
             >
-              About Civora
+              {t('nav.aboutCivora')}
             </a>
 
             <div className="pt-3 border-t border-gray-100 flex flex-col space-y-2.5">
@@ -203,7 +205,7 @@ export function HomepageNavbar() {
                 onClick={() => setMobileMenuOpen(false)}
                 className="w-full text-center px-4 py-2.5 rounded-md text-sm font-medium text-white bg-[#0B3D2E] hover:bg-[#072B20]"
               >
-                Report Issue
+                {t('nav.reportIssue')}
               </NavLink>
               {isAuthenticated ? (
                 <NavLink
@@ -211,7 +213,7 @@ export function HomepageNavbar() {
                   onClick={() => setMobileMenuOpen(false)}
                   className="w-full text-center px-4 py-2 rounded-md text-sm font-medium text-[#2D3748] hover:bg-gray-100"
                 >
-                  Dashboard
+                  {t('nav.dashboard')}
                 </NavLink>
               ) : (
                 <NavLink
@@ -219,7 +221,7 @@ export function HomepageNavbar() {
                   onClick={() => setMobileMenuOpen(false)}
                   className="w-full text-center px-4 py-2 rounded-md text-sm font-medium text-[#2D3748] hover:bg-gray-100"
                 >
-                  Sign In
+                  {t('nav.signIn')}
                 </NavLink>
               )}
             </div>

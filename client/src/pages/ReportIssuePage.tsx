@@ -43,13 +43,35 @@ export function ReportIssuePage() {
   // Form State
   const [title, setTitle] = useState('');
   const [categoryId, setCategoryId] = useState('');
-  const [priority, setPriority] = useState<ComplaintPriority>('MEDIUM');
+  const [priority, setPriority] = useState<ComplaintPriority>('LOW');
+  const [duration, setDuration] = useState<string>('JUST_NOTICED');
   const [locality, setLocality] = useState('');
   const [locationAddress, setLocationAddress] = useState('');
   const [ward, setWard] = useState('');
   const [description, setDescription] = useState('');
   const [latitude, setLatitude] = useState<string>('');
   const [longitude, setLongitude] = useState<string>('');
+
+  const mapDurationToPriority = (dur: string): ComplaintPriority => {
+    switch (dur) {
+      case 'JUST_NOTICED':
+        return 'LOW';
+      case 'DAYS_1_TO_7':
+      case 'WEEKS_1_TO_4':
+        return 'MEDIUM';
+      case 'MONTHS_1_TO_6':
+        return 'HIGH';
+      case 'MORE_THAN_6_MONTHS':
+        return 'URGENT';
+      default:
+        return 'MEDIUM';
+    }
+  };
+
+  const handleDurationChange = (val: string) => {
+    setDuration(val);
+    setPriority(mapDurationToPriority(val));
+  };
 
   // Evidence attachments state (Module 12 & AI Verification)
   const [evidenceFiles, setEvidenceFiles] = useState<File[]>([]);
@@ -90,7 +112,12 @@ export function ReportIssuePage() {
         if (parsed.title || parsed.description) {
           setTitle(parsed.title || '');
           if (parsed.categoryId) setCategoryId(parsed.categoryId);
-          if (parsed.priority) setPriority(parsed.priority);
+          if (parsed.duration) {
+            setDuration(parsed.duration);
+            setPriority(mapDurationToPriority(parsed.duration));
+          } else if (parsed.priority) {
+            setPriority(parsed.priority);
+          }
           setLocality(parsed.locality || '');
           setLocationAddress(parsed.locationAddress || '');
           setWard(parsed.ward || '');
@@ -116,6 +143,7 @@ export function ReportIssuePage() {
           title,
           categoryId,
           priority,
+          duration,
           locality,
           locationAddress,
           ward,
@@ -345,6 +373,17 @@ export function ReportIssuePage() {
       const token = typeof window !== 'undefined' ? localStorage.getItem('civora_token') : null;
       const primaryImg = analyzedImages[0];
 
+      const durationLabels: Record<string, string> = {
+        JUST_NOTICED: 'Just noticed',
+        DAYS_1_TO_7: '1–7 days',
+        WEEKS_1_TO_4: '1–4 weeks',
+        MONTHS_1_TO_6: '1–6 months',
+        MORE_THAN_6_MONTHS: 'More than 6 months',
+        NOT_SURE: 'Not sure',
+      };
+
+      const durationNote = `\n\n[Problem Duration: ${durationLabels[duration] || 'Not specified'}]`;
+
       const payload: any = {
         title: title.trim(),
         categoryId,
@@ -352,7 +391,7 @@ export function ReportIssuePage() {
         locality: locality.trim(),
         ward: ward.trim(),
         locationAddress: locationAddress.trim(),
-        description: description.trim(),
+        description: `${description.trim()}${durationNote}`,
         clientPerceptualHash: primaryImg?.perceptualHash || undefined,
         idempotencyKey: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : undefined,
       };
@@ -461,7 +500,8 @@ export function ReportIssuePage() {
   const handleResetForm = () => {
     setTitle('');
     if (categories.length > 0) setCategoryId(categories[0].id);
-    setPriority('MEDIUM');
+    setPriority('LOW');
+    setDuration('JUST_NOTICED');
     setLocality('');
     setLocationAddress('');
     setWard('');
@@ -684,19 +724,21 @@ export function ReportIssuePage() {
                   </FormField>
 
                   <FormField
-                    id="issue-priority"
-                    label="Citizen Urgency Assessment"
-                    helperText="Assists municipal triage priority"
+                    id="issue-duration"
+                    label={t('duration.question')}
+                    helperText={t('duration.helper')}
                   >
                     <Select
-                      id="issue-priority"
-                      value={priority}
-                      onChange={(e) => setPriority(e.target.value as ComplaintPriority)}
+                      id="issue-duration"
+                      value={duration}
+                      onChange={(e) => handleDurationChange(e.target.value)}
                       options={[
-                        { value: 'LOW', label: 'Low — General maintenance' },
-                        { value: 'MEDIUM', label: 'Medium — Normal attention' },
-                        { value: 'HIGH', label: 'High — Immediate hazard' },
-                        { value: 'URGENT', label: 'Urgent — Safety/structural emergency' },
+                        { value: 'JUST_NOTICED', label: t('duration.justNoticed') },
+                        { value: 'DAYS_1_TO_7', label: t('duration.days1to7') },
+                        { value: 'WEEKS_1_TO_4', label: t('duration.weeks1to4') },
+                        { value: 'MONTHS_1_TO_6', label: t('duration.months1to6') },
+                        { value: 'MORE_THAN_6_MONTHS', label: t('duration.moreThan6Months') },
+                        { value: 'NOT_SURE', label: t('duration.notSure') },
                       ]}
                     />
                   </FormField>
