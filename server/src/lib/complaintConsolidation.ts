@@ -289,15 +289,15 @@ export class ComplaintConsolidationService {
     let targetPriority = currentPriority;
     let escalationReason: string | null = null;
 
-    // RULE 1: Critical hazard escalation
+    // RULE 1: Urgent hazard escalation
     // If verified immediate safety hazard or >= 5 distinct reporters on a high-hazard civic infrastructure
     if (
       verifiedHazard ||
       (distinctReporters >= 5 && isHazardCategory) ||
       (distinctReporters >= 8)
     ) {
-      targetPriority = ComplaintPriority.CRITICAL;
-      escalationReason = `Escalated to CRITICAL due to high public impact (${distinctReporters} distinct citizens reporting across ${affectedReports} complaints) in a critical civic infrastructure domain.`;
+      targetPriority = ComplaintPriority.URGENT;
+      escalationReason = `Escalated to URGENT due to high public impact (${distinctReporters} distinct citizens reporting across ${affectedReports} complaints) in a critical civic infrastructure domain.`;
     }
     // RULE 2: High impact escalation
     // >= 3 distinct citizens reporting, or >= 5 total reports with multiple citizens
@@ -319,7 +319,7 @@ export class ComplaintConsolidationService {
       LOW: 1,
       MEDIUM: 2,
       HIGH: 3,
-      CRITICAL: 4,
+      URGENT: 4,
     };
 
     const escalated = priorityWeight[targetPriority] > priorityWeight[currentPriority];
@@ -339,7 +339,7 @@ export class ComplaintConsolidationService {
     subordinateId: string;
     officialUser: { id: string; name: string; role: string };
     separationReason: string;
-    prisma?: PrismaClient | Prisma.TransactionClient;
+    prisma?: PrismaClient;
   }) {
     const client = params.prisma || defaultPrisma;
 
@@ -362,7 +362,7 @@ export class ComplaintConsolidationService {
     const master = subordinate.primaryComplaint;
 
     // Execute atomic unlinking
-    const result = await client.$transaction(async (tx) => {
+    const result = await client.$transaction(async (tx: Prisma.TransactionClient) => {
       // 1. Restore subordinate as an independent master complaint
       const restored = await tx.complaint.update({
         where: { id: subordinate.id },
