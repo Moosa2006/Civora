@@ -49,11 +49,24 @@ export function AdminComplaintsPage() {
   const [selectedDeptId, setSelectedDeptId] = useState<string>('');
   const [actionLoading, setActionLoading] = useState(false);
 
+  // Helper to get authenticated headers
+  const getAuthHeaders = (extra: Record<string, string> = {}) => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('civora_token') : null;
+    const headers: Record<string, string> = { ...extra };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    return headers;
+  };
+
   // Fetch departments for assignment dropdown
   useEffect(() => {
     async function loadDepartments() {
       try {
-        const res = await fetch('/api/meta/departments');
+        const res = await fetch('/api/meta/departments', {
+          headers: getAuthHeaders({ Accept: 'application/json' }),
+          credentials: 'include',
+        });
         const json = await res.json();
         if (json.success && Array.isArray(json.data)) {
           setDepartments(json.data);
@@ -79,7 +92,7 @@ export function AdminComplaintsPage() {
       }
 
       const res = await fetch(url, {
-        headers: { Accept: 'application/json' },
+        headers: getAuthHeaders({ Accept: 'application/json' }),
         credentials: 'include',
       });
 
@@ -96,7 +109,7 @@ export function AdminComplaintsPage() {
         setTotalCount(json.data.pagination.total || 0);
       }
     } catch {
-      setErrorMsg('Failed to connect to administrative server.');
+      setErrorMsg('Failed to connect to administrative server. Please check network connection.');
     } finally {
       setLoading(false);
     }
@@ -125,10 +138,10 @@ export function AdminComplaintsPage() {
     try {
       const res = await fetch(`/api/admin/complaints/${selectedComplaint.id}/status`, {
         method: 'PATCH',
-        headers: {
+        headers: getAuthHeaders({
           'Content-Type': 'application/json',
           Accept: 'application/json',
-        },
+        }),
         credentials: 'include',
         body: JSON.stringify({
           status: newStatus,
@@ -174,10 +187,10 @@ export function AdminComplaintsPage() {
     try {
       const res = await fetch(`/api/admin/complaints/${selectedComplaint.id}/assign`, {
         method: 'PATCH',
-        headers: {
+        headers: getAuthHeaders({
           'Content-Type': 'application/json',
           Accept: 'application/json',
-        },
+        }),
         credentials: 'include',
         body: JSON.stringify({
           departmentId: selectedDeptId,
@@ -199,6 +212,45 @@ export function AdminComplaintsPage() {
       fetchAdminComplaints();
     } catch {
       setErrorMsg('An unexpected error occurred while assigning department.');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Handle separating a consolidated report back into an independent complaint
+  const handleSeparateReport = async (subordinateId: string, trackingId: string) => {
+    const reason = window.prompt(
+      `Enter reason to unlink report ${trackingId} from master issue:`,
+      'Distinct physical defect or separate location confirmed by reviewer.'
+    );
+    if (!reason || !reason.trim()) return;
+
+    setActionLoading(true);
+    setErrorMsg(null);
+    setSuccessMsg(null);
+
+    try {
+      const res = await fetch(`/api/admin/complaints/${subordinateId}/separate`, {
+        method: 'POST',
+        headers: getAuthHeaders({
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        }),
+        credentials: 'include',
+        body: JSON.stringify({ reason: reason.trim() }),
+      });
+
+      const json = await res.json();
+
+      if (!res.ok || !json.success) {
+        setErrorMsg(json.error?.message || 'Failed to separate report.');
+        return;
+      }
+
+      setSuccessMsg(`Report ${trackingId} successfully separated into an independent master issue.`);
+      fetchAdminComplaints();
+    } catch {
+      setErrorMsg('Network error while attempting to separate report.');
     } finally {
       setActionLoading(false);
     }
@@ -235,7 +287,7 @@ export function AdminComplaintsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <PageHeading
           title="Complaint Management & Triage"
-          description={`Logged as ${user?.name} (${user?.role}) • ${totalCount} grievances in queue`}
+          description={`Logged as ${user?.name} (${user?.role}) • ${totalCount} master grievances in queue`}
           badge={
             <Badge variant="warning" size="md">
               Staff Portal
@@ -245,7 +297,7 @@ export function AdminComplaintsPage() {
         <Button
           variant="outline"
           onClick={() => (mainTab === 'COMPLAINTS' ? fetchAdminComplaints() : undefined)}
-          className="shrink-0 text-xs"
+          className="shrink-0 text-xs cursor-pointer"
         >
           Refresh Queue
         </Button>
@@ -332,6 +384,21 @@ export function AdminComplaintsPage() {
           <LoadingIndicator size="lg" label="Loading queue" />
           <span className="text-xs text-[#54625A] dark:text-[#C5D4C9] mt-3">Loading grievances queue...</span>
         </div>
+      ) : errorMsg ? (
+        <div className="py-8 space-y-4">
+          <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 text-sm text-red-700 dark:text-red-300">
+            <p className="font-semibold mb-1">Administrative Queue Error</p>
+            <p className="text-xs mb-3">{errorMsg}</p>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => fetchAdminComplaints()}
+              className="cursor-pointer text-xs"
+            >
+              Retry Loading Queue
+            </Button>
+          </div>
+        </div>
       ) : complaints.length === 0 ? (
         <EmptyState
           title="No Grievances Found"
@@ -354,9 +421,14 @@ export function AdminComplaintsPage() {
                       <Badge variant="neutral" size="sm">
                         {c.priority} Priority
                       </Badge>
+                      {c.affectedReportCount && c.affectedReportCount > 1 && (
+                        <Badge variant="info" size="sm">
+                          Consolidated ({c.affectedReportCount} reports &bull; {c.distinctReporterCount || 1} citizens)
+                        </Badge>
+                      )}
                       {c.isDuplicate && (
                         <Badge variant="warning" size="sm">
-                          Duplicate ({Math.round((c.duplicateConfidence || 0.8) * 100)}%)
+                          Subordinate Report
                         </Badge>
                       )}
                       {c.aiRiskLevel === 'HIGH' && (

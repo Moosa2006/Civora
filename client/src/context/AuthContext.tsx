@@ -8,8 +8,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const refreshUser = async () => {
     try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('civora_token') : null;
+      const headers: Record<string, string> = { Accept: 'application/json' };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       const res = await fetch('/api/auth/me', {
-        headers: { Accept: 'application/json' },
+        headers,
         credentials: 'include',
       });
 
@@ -35,8 +41,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let isMounted = true;
     const fetchInitialSession = async () => {
       try {
+        const token = typeof window !== 'undefined' ? localStorage.getItem('civora_token') : null;
+        const headers: Record<string, string> = { Accept: 'application/json' };
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+
         const res = await fetch('/api/auth/me', {
-          headers: { Accept: 'application/json' },
+          headers,
           credentials: 'include',
         });
 

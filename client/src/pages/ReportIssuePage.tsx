@@ -30,7 +30,6 @@ import {
   type ClientImageAnalysis,
 } from '../lib/clientImageVerification';
 import type { ComplaintCategory, ComplaintPriority } from '../types/complaint';
-import type { DuplicateCandidate } from '../types/moderation';
 
 export function ReportIssuePage() {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
@@ -68,10 +67,6 @@ export function ReportIssuePage() {
   const [isMapPickerOpen, setIsMapPickerOpen] = useState(false);
   const [locationSource, setLocationSource] = useState<'GPS_DEVICE' | 'MAP_PICKER' | 'MANUAL_ENTRY'>('MANUAL_ENTRY');
   const [isLocationPublic, setIsLocationPublic] = useState(true);
-
-  // Module 14: Duplicate detection advisory state
-  const [duplicateCandidates, setDuplicateCandidates] = useState<DuplicateCandidate[]>([]);
-  const [duplicateWarningDismissed, setDuplicateWarningDismissed] = useState(false);
 
   // Success state
   const [submittedData, setSubmittedData] = useState<{
@@ -170,42 +165,6 @@ export function ReportIssuePage() {
   useEffect(() => {
     void loadCategories();
   }, [loadCategories]);
-
-  // Module 14: Debounced duplicate detection
-  useEffect(() => {
-    if (title.trim().length < 5 || description.trim().length < 8 || !categoryId) {
-      setDuplicateCandidates([]);
-      return;
-    }
-
-    const timer = setTimeout(async () => {
-      try {
-        const res = await fetch('/api/moderation/duplicates/check', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            title: title.trim(),
-            description: description.trim(),
-            categoryId,
-            locality: locality.trim() || undefined,
-            ward: ward.trim() || undefined,
-            latitude: latitude ? parseFloat(latitude) : undefined,
-            longitude: longitude ? parseFloat(longitude) : undefined,
-          }),
-        });
-        const data = await res.json();
-        if (data.success && data.data?.candidates?.length > 0) {
-          setDuplicateCandidates(data.data.candidates);
-        } else {
-          setDuplicateCandidates([]);
-        }
-      } catch {
-        // Non-blocking duplicate check
-      }
-    }, 600);
-
-    return () => clearTimeout(timer);
-  }, [title, description, categoryId, locality, ward, latitude, longitude]);
 
   // Geolocation handler (requested explicitly by user click)
   const handleGetLocation = () => {
@@ -383,6 +342,9 @@ export function ReportIssuePage() {
 
     setSubmitting(true);
     try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('civora_token') : null;
+      const primaryImg = analyzedImages[0];
+
       const payload: any = {
         title: title.trim(),
         categoryId,
@@ -391,6 +353,8 @@ export function ReportIssuePage() {
         ward: ward.trim(),
         locationAddress: locationAddress.trim(),
         description: description.trim(),
+        clientPerceptualHash: primaryImg?.perceptualHash || undefined,
+        idempotencyKey: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : undefined,
       };
 
       if (latitude && !isNaN(Number(latitude))) {
@@ -402,12 +366,17 @@ export function ReportIssuePage() {
         payload.longitude = parseFloat(longitude);
       }
 
+      const reqHeaders: Record<string, string> = {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      };
+      if (token) {
+        reqHeaders['Authorization'] = `Bearer ${token}`;
+      }
+
       const res = await fetch('/api/complaints', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
+        headers: reqHeaders,
         credentials: 'include',
         body: JSON.stringify(payload),
       });
@@ -434,8 +403,6 @@ export function ReportIssuePage() {
             'Photographic evidence submitted during complaint filing with capture verification.'
           );
 
-          // Pass client image metadata from primary evidence image
-          const primaryImg = analyzedImages[0];
           if (primaryImg) {
             if (primaryImg.perceptualHash) {
               formData.append('clientPerceptualHash', primaryImg.perceptualHash);
@@ -455,8 +422,14 @@ export function ReportIssuePage() {
             }
           }
 
+          const uploadHeaders: Record<string, string> = {};
+          if (token) {
+            uploadHeaders['Authorization'] = `Bearer ${token}`;
+          }
+
           await fetch(`/api/evidence/complaints/${json.data.complaint.id}/upload`, {
             method: 'POST',
+            headers: uploadHeaders,
             credentials: 'include',
             body: formData,
           });
@@ -1000,40 +973,6 @@ export function ReportIssuePage() {
                     </div>
                   )}
                 </div>
-
-                {/* Module 14: Duplicate Complaint Advisory Banner */}
-                {duplicateCandidates.length > 0 && !duplicateWarningDismissed && (
-                  <div className="p-4 rounded-xl bg-[#FDF6ED] dark:bg-[#281D0E] border border-[#F2D7A5] dark:border-[#533916] text-[#854F0B] dark:text-[#F3BA6C] text-xs space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="font-semibold text-[#854F0B] dark:text-[#F3BA6C] flex items-center gap-1.5">
-                        Notice: Similar civic reports found in this area
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => setDuplicateWarningDismissed(true)}
-                        className="text-[#854F0B] dark:text-[#F3BA6C] hover:underline text-xs font-semibold cursor-pointer"
-                      >
-                        Dismiss Notice
-                      </button>
-                    </div>
-                    <p className="text-[#3E4B44] dark:text-[#C5D4C9] leading-relaxed">
-                      We detected {duplicateCandidates.length} existing public complaint(s) with matching details. Multiple reports reinforce community demand and accelerate resolution! If your issue adds fresh details or photos, you are encouraged to submit.
-                    </p>
-                    <div className="space-y-1.5 pt-1">
-                      {duplicateCandidates.slice(0, 2).map((dc) => (
-                        <div
-                          key={dc.id}
-                          className="p-2 rounded bg-white dark:bg-[#16201C] border border-[#F2D7A5] dark:border-[#533916] flex items-center justify-between"
-                        >
-                          <span className="font-medium text-[#202522] dark:text-[#E8F0EC] truncate pr-2">{dc.title}</span>
-                          <span className="text-[11px] text-[#854F0B] dark:text-[#F3BA6C] font-mono shrink-0">
-                            {dc.trackingId} &bull; {Math.round(dc.similarityScore * 100)}% match
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
 
                 {/* Submission CTA */}
                 <div className="pt-4 flex items-center justify-end gap-3">

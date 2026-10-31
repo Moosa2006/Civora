@@ -46,6 +46,10 @@ export const createComplaintSchema = z.object({
     .max(180, 'Longitude must be between -180 and 180.')
     .optional()
     .nullable(),
+  locationSource: z.string().trim().max(50).optional().nullable(),
+  isLocationPublic: z.boolean().optional().default(true),
+  clientPerceptualHash: z.string().trim().max(64).optional().nullable(),
+  idempotencyKey: z.string().trim().max(128).optional().nullable(),
 });
 
 export const updateComplaintStatusSchema = z.object({

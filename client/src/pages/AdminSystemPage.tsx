@@ -335,6 +335,16 @@ export function AdminSystemPage() {
   // Export progress
   const [exportingReport, setExportingReport] = useState<string | null>(null);
 
+  // Helper to attach authorization headers for cross-device & cross-origin compatibility
+  const getAuthHeaders = useCallback((extra: Record<string, string> = {}) => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('civora_token') : null;
+    const headers: Record<string, string> = { ...extra };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    return headers;
+  }, []);
+
   // Initial Fetcher
   const fetchDashboardData = useCallback(async () => {
     try {
@@ -342,8 +352,14 @@ export function AdminSystemPage() {
       const [healthRes, readyRes, diagRes, overviewRes] = await Promise.all([
         fetch('/api/health'),
         fetch('/api/health/ready'),
-        fetch('/api/health/diagnostics', { credentials: 'include' }),
-        fetch('/api/admin/dashboard/overview', { credentials: 'include' }),
+        fetch('/api/health/diagnostics', {
+          headers: getAuthHeaders({ Accept: 'application/json' }),
+          credentials: 'include',
+        }),
+        fetch('/api/admin/dashboard/overview', {
+          headers: getAuthHeaders({ Accept: 'application/json' }),
+          credentials: 'include',
+        }),
       ]);
 
       if (healthRes.ok) {
@@ -359,25 +375,29 @@ export function AdminSystemPage() {
       if (overviewRes.ok) {
         const ovData = await overviewRes.json();
         if (ovData.success && ovData.data) {
-          const raw = ovData.data;
+          const raw = ovData.data || {};
+          const rawMetrics = raw.metrics || {};
+          const rawUsers = raw.users || {};
+          const rawComplaints = raw.complaints || {};
+          const rawIncidents = raw.incidents || {};
           const normalized: DashboardOverviewData = {
             ...raw,
-            metrics: raw.metrics || {
-              totalUsers: raw.users?.total ?? 0,
-              activeUsers: raw.users?.active ?? 0,
+            metrics: {
+              totalUsers: Number(rawMetrics.totalUsers ?? rawUsers.total ?? 0),
+              activeUsers: Number(rawMetrics.activeUsers ?? rawUsers.active ?? 0),
               usersByRole: {
-                CITIZEN: raw.users?.citizens ?? 0,
-                OFFICIAL: raw.users?.officials ?? 0,
-                ADMIN: raw.users?.admins ?? 0,
+                CITIZEN: Number(rawMetrics.usersByRole?.CITIZEN ?? rawUsers.citizens ?? 0),
+                OFFICIAL: Number(rawMetrics.usersByRole?.OFFICIAL ?? rawUsers.officials ?? 0),
+                ADMIN: Number(rawMetrics.usersByRole?.ADMIN ?? rawUsers.admins ?? 0),
               },
-              totalComplaints: raw.complaints?.total ?? 0,
-              complaintsAwaitingAction: raw.complaints?.awaitingAction ?? 0,
-              complaintsInProgress: raw.complaints?.activeBacklog ?? 0,
-              complaintsResolved: raw.complaints?.resolved ?? 0,
-              complaintsRejected: raw.complaints?.rejected ?? 0,
-              complaintsOverdue: raw.complaints?.overdue ?? 0,
-              openIncidents: raw.incidents?.openCount ?? 0,
-              recentAuditActionsCount: raw.recentAuditEvents?.length ?? 0,
+              totalComplaints: Number(rawMetrics.totalComplaints ?? rawComplaints.total ?? 0),
+              complaintsAwaitingAction: Number(rawMetrics.complaintsAwaitingAction ?? rawComplaints.awaitingAction ?? 0),
+              complaintsInProgress: Number(rawMetrics.complaintsInProgress ?? rawComplaints.activeBacklog ?? 0),
+              complaintsResolved: Number(rawMetrics.complaintsResolved ?? rawComplaints.resolved ?? 0),
+              complaintsRejected: Number(rawMetrics.complaintsRejected ?? rawComplaints.rejected ?? 0),
+              complaintsOverdue: Number(rawMetrics.complaintsOverdue ?? rawComplaints.overdue ?? 0),
+              openIncidents: Number(rawMetrics.openIncidents ?? rawIncidents.openCount ?? 0),
+              recentAuditActionsCount: Number(rawMetrics.recentAuditActionsCount ?? (Array.isArray(raw.recentAuditEvents) ? raw.recentAuditEvents.length : 0)),
             },
             recentAuditEvents: Array.isArray(raw.recentAuditEvents) ? raw.recentAuditEvents : [],
             recentIncidents: Array.isArray(raw.recentIncidents) ? raw.recentIncidents : [],
@@ -391,14 +411,20 @@ export function AdminSystemPage() {
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [getAuthHeaders]);
 
   // Fetch Config
   const fetchConfig = useCallback(async () => {
     try {
       const [cfgRes, histRes] = await Promise.all([
-        fetch('/api/admin/config', { credentials: 'include' }),
-        fetch('/api/admin/config/history', { credentials: 'include' }),
+        fetch('/api/admin/config', {
+          headers: getAuthHeaders({ Accept: 'application/json' }),
+          credentials: 'include',
+        }),
+        fetch('/api/admin/config/history', {
+          headers: getAuthHeaders({ Accept: 'application/json' }),
+          credentials: 'include',
+        }),
       ]);
       if (cfgRes.ok) {
         const cfgData = await cfgRes.json();
@@ -411,7 +437,7 @@ export function AdminSystemPage() {
     } catch (err: unknown) {
       setErrorMsg(err instanceof Error ? err.message : 'Failed to load configuration');
     }
-  }, []);
+  }, [getAuthHeaders]);
 
   // Fetch Users
   const fetchUsers = useCallback(async () => {
@@ -424,7 +450,10 @@ export function AdminSystemPage() {
       if (userRoleFilter !== 'ALL') params.append('role', userRoleFilter);
       if (userStatusFilter !== 'ALL') params.append('status', userStatusFilter);
 
-      const res = await fetch(`/api/admin/users?${params.toString()}`, { credentials: 'include' });
+      const res = await fetch(`/api/admin/users?${params.toString()}`, {
+        headers: getAuthHeaders({ Accept: 'application/json' }),
+        credentials: 'include',
+      });
       if (res.ok) {
         const data = await res.json();
         if (data.success) {
@@ -435,7 +464,7 @@ export function AdminSystemPage() {
     } catch (err: unknown) {
       setErrorMsg(err instanceof Error ? err.message : 'Failed to load users');
     }
-  }, [userPage, userSearch, userRoleFilter, userStatusFilter]);
+  }, [userPage, userSearch, userRoleFilter, userStatusFilter, getAuthHeaders]);
 
   // Fetch Audit Logs
   const fetchAuditLogs = useCallback(async () => {
@@ -447,7 +476,10 @@ export function AdminSystemPage() {
       if (auditActionFilter !== 'ALL') params.append('action', auditActionFilter);
       if (auditSearch.trim()) params.append('search', auditSearch.trim());
 
-      const res = await fetch(`/api/admin/audit?${params.toString()}`, { credentials: 'include' });
+      const res = await fetch(`/api/admin/audit?${params.toString()}`, {
+        headers: getAuthHeaders({ Accept: 'application/json' }),
+        credentials: 'include',
+      });
       if (res.ok) {
         const data = await res.json();
         if (data.success) {
@@ -458,7 +490,7 @@ export function AdminSystemPage() {
     } catch (err: unknown) {
       setErrorMsg(err instanceof Error ? err.message : 'Failed to load audit logs');
     }
-  }, [auditPage, auditActionFilter, auditSearch]);
+  }, [auditPage, auditActionFilter, auditSearch, getAuthHeaders]);
 
   // Fetch Incidents
   const fetchIncidents = useCallback(async () => {
@@ -467,7 +499,10 @@ export function AdminSystemPage() {
       if (incidentSeverityFilter !== 'ALL') params.append('severity', incidentSeverityFilter);
       if (incidentStatusFilter !== 'ALL') params.append('status', incidentStatusFilter);
 
-      const res = await fetch(`/api/admin/incidents?${params.toString()}`, { credentials: 'include' });
+      const res = await fetch(`/api/admin/incidents?${params.toString()}`, {
+        headers: getAuthHeaders({ Accept: 'application/json' }),
+        credentials: 'include',
+      });
       if (res.ok) {
         const data = await res.json();
         if (data.success) {
@@ -477,12 +512,15 @@ export function AdminSystemPage() {
     } catch (err: unknown) {
       setErrorMsg(err instanceof Error ? err.message : 'Failed to load operational incidents');
     }
-  }, [incidentSeverityFilter, incidentStatusFilter]);
+  }, [incidentSeverityFilter, incidentStatusFilter, getAuthHeaders]);
 
   // Fetch Departments
   const fetchDepartments = useCallback(async () => {
     try {
-      const res = await fetch('/api/meta/departments');
+      const res = await fetch('/api/meta/departments', {
+        headers: getAuthHeaders({ Accept: 'application/json' }),
+        credentials: 'include',
+      });
       if (res.ok) {
         const json = await res.json();
         if (json.success && Array.isArray(json.data)) {
@@ -492,7 +530,7 @@ export function AdminSystemPage() {
     } catch {
       // Non-blocking
     }
-  }, []);
+  }, [getAuthHeaders]);
 
   // Fetch Contractor Applications
   const fetchContractorApps = useCallback(async () => {
@@ -505,7 +543,10 @@ export function AdminSystemPage() {
       if (contractorAppStatusFilter !== 'ALL') params.append('status', contractorAppStatusFilter);
       if (contractorAppSearch.trim()) params.append('q', contractorAppSearch.trim());
 
-      const res = await fetch(`/api/admin/contractor-applications?${params.toString()}`, { credentials: 'include' });
+      const res = await fetch(`/api/admin/contractor-applications?${params.toString()}`, {
+        headers: getAuthHeaders({ Accept: 'application/json' }),
+        credentials: 'include',
+      });
       if (res.ok) {
         const json = await res.json();
         if (json.success) {
@@ -518,7 +559,7 @@ export function AdminSystemPage() {
     } finally {
       setLoadingContractors(false);
     }
-  }, [contractorAppPage, contractorAppStatusFilter, contractorAppSearch]);
+  }, [contractorAppPage, contractorAppStatusFilter, contractorAppSearch, getAuthHeaders]);
 
   // Initial load
   useEffect(() => {
@@ -561,7 +602,7 @@ export function AdminSystemPage() {
     try {
       const res = await fetch('/api/sla/evaluate-all', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         credentials: 'include',
       });
       const data = await res.json();
@@ -586,7 +627,7 @@ export function AdminSystemPage() {
     try {
       const res = await fetch(`/api/admin/config/${encodeURIComponent(editingSetting.key)}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         credentials: 'include',
         body: JSON.stringify({
           value: editSettingValue,
@@ -615,7 +656,7 @@ export function AdminSystemPage() {
     try {
       const res = await fetch('/api/admin/config/maintenance_mode_enabled', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         credentials: 'include',
         body: JSON.stringify({
           value: maintenanceTargetValue ? 'true' : 'false',
@@ -650,7 +691,7 @@ export function AdminSystemPage() {
     try {
       const res = await fetch(`/api/admin/users/${selectedUserForRole.id}/role`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         credentials: 'include',
         body: JSON.stringify({
           role: newUserRole,
@@ -684,7 +725,7 @@ export function AdminSystemPage() {
     try {
       const res = await fetch(`/api/admin/contractors/${selectedContractorForApprove.id}/approve`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         credentials: 'include',
         body: JSON.stringify({ notes: approveNotes.trim() || undefined }),
       });
@@ -716,7 +757,7 @@ export function AdminSystemPage() {
     try {
       const res = await fetch(`/api/admin/contractors/${selectedContractorForReject.id}/reject`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         credentials: 'include',
         body: JSON.stringify({ reason: rejectReason.trim() }),
       });
@@ -749,7 +790,7 @@ export function AdminSystemPage() {
     try {
       const res = await fetch('/api/admin/officials', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         credentials: 'include',
         body: JSON.stringify({
           name: newOfficialName.trim(),
@@ -794,7 +835,7 @@ export function AdminSystemPage() {
     try {
       const res = await fetch(`/api/admin/users/${selectedUserForStatus.id}/status`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         credentials: 'include',
         body: JSON.stringify({
           status: newStatus,
@@ -829,7 +870,7 @@ export function AdminSystemPage() {
     try {
       const res = await fetch('/api/admin/incidents', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         credentials: 'include',
         body: JSON.stringify({
           title: incidentTitle.trim(),
@@ -868,7 +909,7 @@ export function AdminSystemPage() {
     try {
       const res = await fetch(`/api/admin/incidents/${selectedIncidentForUpdate.id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         credentials: 'include',
         body: JSON.stringify({
           status: updateIncidentStatus,
@@ -896,7 +937,10 @@ export function AdminSystemPage() {
     setExportingReport(label);
     setErrorMsg(null);
     try {
-      const res = await fetch(endpoint, { credentials: 'include' });
+      const res = await fetch(endpoint, {
+        headers: getAuthHeaders(),
+        credentials: 'include',
+      });
       if (!res.ok) {
         const errJson = await res.json().catch(() => null);
         throw new Error(errJson?.error?.message || `Export failed with HTTP ${res.status}`);
@@ -1820,14 +1864,14 @@ export function AdminSystemPage() {
             />
             <MetricCard
               label={t('adminSystem.heapUsed')}
-              value={diagnostics ? `${diagnostics.memory.heapUsedMb} MB` : 'Checking...'}
-              subtext={diagnostics ? `Total Heap: ${diagnostics.memory.heapTotalMb} MB` : ''}
+              value={diagnostics?.memory?.heapUsedMb != null ? `${diagnostics.memory.heapUsedMb} MB` : 'Checking...'}
+              subtext={diagnostics?.memory?.heapTotalMb != null ? `Total Heap: ${diagnostics.memory.heapTotalMb} MB` : ''}
               accentColor="purple"
               icon={<ServerIcon className="w-5 h-5 text-purple-400" />}
             />
             <MetricCard
               label={t('adminSystem.activeEscalations')}
-              value={diagnostics ? diagnostics.metrics.activeEscalationsCount : '0'}
+              value={diagnostics?.metrics?.activeEscalationsCount ?? '0'}
               subtext="Requiring supervisory attention"
               accentColor="amber"
               icon={<AlertTriangleIcon className="w-5 h-5 text-amber-400" />}
@@ -1844,27 +1888,27 @@ export function AdminSystemPage() {
                 <dl className="divide-y divide-[#DED8CB] dark:divide-[#283931] text-sm">
                   <div className="py-2.5 flex justify-between">
                     <dt className="text-[#54625A] dark:text-[#C5D4C9]">Total Grievance Complaints</dt>
-                    <dd className="font-semibold text-[#202522] dark:text-[#F5F2EA] font-mono">{diagnostics?.metrics.complaintsCount ?? 0}</dd>
+                    <dd className="font-semibold text-[#202522] dark:text-[#F5F2EA] font-mono">{diagnostics?.metrics?.complaintsCount ?? 0}</dd>
                   </div>
                   <div className="py-2.5 flex justify-between">
                     <dt className="text-[#54625A] dark:text-[#C5D4C9]">Registered Users</dt>
-                    <dd className="font-semibold text-[#202522] dark:text-[#F5F2EA] font-mono">{diagnostics?.metrics.usersCount ?? 0}</dd>
+                    <dd className="font-semibold text-[#202522] dark:text-[#F5F2EA] font-mono">{diagnostics?.metrics?.usersCount ?? 0}</dd>
                   </div>
                   <div className="py-2.5 flex justify-between">
                     <dt className="text-[#54625A] dark:text-[#C5D4C9]">Designated Departments</dt>
-                    <dd className="font-semibold text-[#202522] dark:text-[#F5F2EA] font-mono">{diagnostics?.metrics.departmentsCount ?? 0}</dd>
+                    <dd className="font-semibold text-[#202522] dark:text-[#F5F2EA] font-mono">{diagnostics?.metrics?.departmentsCount ?? 0}</dd>
                   </div>
                   <div className="py-2.5 flex justify-between">
                     <dt className="text-[#54625A] dark:text-[#C5D4C9]">Active SLA Policies</dt>
-                    <dd className="font-semibold text-[#202522] dark:text-[#F5F2EA] font-mono">{diagnostics?.metrics.slaPoliciesCount ?? 0}</dd>
+                    <dd className="font-semibold text-[#202522] dark:text-[#F5F2EA] font-mono">{diagnostics?.metrics?.slaPoliciesCount ?? 0}</dd>
                   </div>
                   <div className="py-2.5 flex justify-between">
                     <dt className="text-[#54625A] dark:text-[#C5D4C9]">Active Supervisory Escalations</dt>
-                    <dd className="font-semibold text-amber-700 dark:text-amber-300 font-mono">{diagnostics?.metrics.activeEscalationsCount ?? 0}</dd>
+                    <dd className="font-semibold text-amber-700 dark:text-amber-300 font-mono">{diagnostics?.metrics?.activeEscalationsCount ?? 0}</dd>
                   </div>
                   <div className="py-2.5 flex justify-between">
                     <dt className="text-[#54625A] dark:text-[#C5D4C9]">Open Operational Incidents</dt>
-                    <dd className="font-semibold text-rose-700 dark:text-rose-300 font-mono">{diagnostics?.metrics.openIncidentsCount ?? 0}</dd>
+                    <dd className="font-semibold text-rose-700 dark:text-rose-300 font-mono">{diagnostics?.metrics?.openIncidentsCount ?? 0}</dd>
                   </div>
                 </dl>
               </CardContent>
@@ -1887,7 +1931,7 @@ export function AdminSystemPage() {
                   </div>
                   <div className="py-2.5 flex justify-between">
                     <dt className="text-[#54625A] dark:text-[#C5D4C9]">Resident Set Size (RSS)</dt>
-                    <dd className="font-mono text-[#202522] dark:text-[#E8F0EC]">{diagnostics?.memory.rssMb ?? 0} MB</dd>
+                    <dd className="font-mono text-[#202522] dark:text-[#E8F0EC]">{diagnostics?.memory?.rssMb ?? 0} MB</dd>
                   </div>
                   <div className="py-2.5 flex justify-between">
                     <dt className="text-[#54625A] dark:text-[#C5D4C9]">Public Liveness Probe</dt>

@@ -67,6 +67,16 @@ export function OfficialWorkspacePage() {
   // Form state: Resolution Submission
   const [resolutionSummary, setResolutionSummary] = useState('');
 
+  // Helper to attach authorization headers for cross-device & cross-origin compatibility
+  const getAuthHeaders = useCallback((extra: Record<string, string> = {}) => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('civora_token') : null;
+    const headers: Record<string, string> = { ...extra };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    return headers;
+  }, []);
+
   const fetchOfficialComplaints = useCallback(async () => {
     setLoading(true);
     setErrorMsg(null);
@@ -78,7 +88,7 @@ export function OfficialWorkspacePage() {
       }
 
       const res = await fetch(url, {
-        headers: { Accept: 'application/json' },
+        headers: getAuthHeaders({ Accept: 'application/json' }),
         credentials: 'include',
       });
 
@@ -99,7 +109,7 @@ export function OfficialWorkspacePage() {
     } finally {
       setLoading(false);
     }
-  }, [page, statusFilter]);
+  }, [page, statusFilter, getAuthHeaders]);
 
   useEffect(() => {
     if (isAuthenticated && (user?.role === 'GOVERNMENT_OFFICIAL' || user?.role === 'ADMIN')) {
@@ -139,7 +149,7 @@ export function OfficialWorkspacePage() {
     try {
       const res = await fetch(`/api/complaints/${selectedComplaint.id}/progress`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json', Accept: 'application/json' }),
         credentials: 'include',
         body: JSON.stringify({
           title: progressTitle.trim(),
@@ -182,7 +192,7 @@ export function OfficialWorkspacePage() {
     try {
       const res = await fetch(`/api/complaints/${selectedComplaint.id}/inspections`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json', Accept: 'application/json' }),
         credentials: 'include',
         body: JSON.stringify({
           findings: inspFindings.trim(),
@@ -225,7 +235,7 @@ export function OfficialWorkspacePage() {
     try {
       const res = await fetch(`/api/complaints/${selectedComplaint.id}/resolution`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json', Accept: 'application/json' }),
         credentials: 'include',
         body: JSON.stringify({
           resolutionNotes: resolutionSummary.trim(),
@@ -334,6 +344,21 @@ export function OfficialWorkspacePage() {
           <LoadingIndicator size="lg" label="Loading department queue" />
           <span className="text-xs text-[#54625A] dark:text-[#C5D4C9] mt-3">Retrieving assigned departmental complaints...</span>
         </div>
+      ) : errorMsg ? (
+        <div className="py-8 space-y-4">
+          <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 text-sm text-red-700 dark:text-red-300">
+            <p className="font-semibold mb-1">Departmental Queue Error</p>
+            <p className="text-xs mb-3">{errorMsg}</p>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => fetchOfficialComplaints()}
+              className="cursor-pointer text-xs"
+            >
+              Retry Loading Queue
+            </Button>
+          </div>
+        </div>
       ) : complaints.length === 0 ? (
         <EmptyState
           title="No Department Complaints"
@@ -361,9 +386,14 @@ export function OfficialWorkspacePage() {
                       <Badge variant="neutral" size="sm">
                         {c.priority} Priority
                       </Badge>
+                      {c.affectedReportCount && c.affectedReportCount > 1 && (
+                        <Badge variant="info" size="sm">
+                          Consolidated ({c.affectedReportCount} reports &bull; {c.distinctReporterCount || 1} citizens)
+                        </Badge>
+                      )}
                       {c.isDuplicate && (
                         <Badge variant="warning" size="sm">
-                          Duplicate Advisory ({Math.round((c.duplicateConfidence || 0.8) * 100)}%)
+                          Subordinate Report
                         </Badge>
                       )}
                       {c.aiRiskLevel === 'HIGH' && (

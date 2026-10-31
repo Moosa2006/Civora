@@ -166,6 +166,22 @@ export interface Complaint {
   isDuplicate?: boolean;
   duplicateConfidence?: number | null;
   primaryComplaintId?: string | null;
+  isMaster?: boolean;
+  affectedReportCount?: number;
+  distinctReporterCount?: number;
+  consolidationReason?: string | null;
+  consolidatedAt?: string | null;
+  priorityEscalatedAt?: string | null;
+  priorityEscalationReason?: string | null;
+  subordinateComplaints?: Array<{
+    id: string;
+    trackingId: string;
+    title: string;
+    description?: string;
+    createdAt: string;
+    citizen?: { id: string; name: string; email?: string; phone?: string | null } | null;
+    documents?: EvidenceItem[];
+  }>;
   statusHistory?: ComplaintStatusHistoryItem[];
   timeline?: ComplaintStatusHistoryItem[];
   inspections?: SiteInspectionItem[];

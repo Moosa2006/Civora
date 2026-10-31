@@ -570,16 +570,25 @@ model Complaint {
   duplicateLinks        ComplaintDuplicateLink[]   @relation("DuplicateComplaintLinks")
 
   // Module 18: AI Verification, Duplicate & Fraud Detection
-  aiAnalysisStatus      String?                    @default("PENDING") @db.VarChar(32)
-  aiRiskLevel           String?                    @db.VarChar(32)
-  aiRiskScore           Int?                       @default(0)
-  aiFindings            Json?
-  aiAnalyzedAt          DateTime?
-  isDuplicate           Boolean                    @default(false)
-  duplicateConfidence   Float?
-  primaryComplaintId    String?                    @db.Uuid
-  primaryComplaint      Complaint?                 @relation("ComplaintHierarchy", fields: [primaryComplaintId], references: [id], onDelete: SetNull)
-  subordinateComplaints Complaint[]                @relation("ComplaintHierarchy")
+  aiAnalysisStatus         String?                    @default("PENDING") @db.VarChar(32)
+  aiRiskLevel              String?                    @db.VarChar(32)
+  aiRiskScore              Int?                       @default(0)
+  aiFindings               Json?
+  aiAnalyzedAt             DateTime?
+  isDuplicate              Boolean                    @default(false)
+  duplicateConfidence      Float?
+  primaryComplaintId       String?                    @db.Uuid
+  primaryComplaint         Complaint?                 @relation("ComplaintHierarchy", fields: [primaryComplaintId], references: [id], onDelete: SetNull)
+  subordinateComplaints    Complaint[]                @relation("ComplaintHierarchy")
+
+  // Complaint Consolidation & Master Issue Management
+  isMaster                 Boolean                    @default(true)
+  affectedReportCount      Int                        @default(1)
+  distinctReporterCount    Int                        @default(1)
+  consolidationReason      String?                    @db.Text
+  consolidatedAt           DateTime?
+  priorityEscalatedAt      DateTime?
+  priorityEscalationReason String?                    @db.Text
 
   @@index([trackingId])
   @@index([status])
@@ -596,6 +605,8 @@ model Complaint {
   @@index([aiRiskLevel])
   @@index([isDuplicate])
   @@index([primaryComplaintId])
+  @@index([isMaster])
+  @@index([affectedReportCount])
   @@map("complaints")
 }
 

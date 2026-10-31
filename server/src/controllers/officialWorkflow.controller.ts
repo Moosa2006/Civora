@@ -1083,7 +1083,9 @@ export async function getOfficialWorkspaceComplaints(req: Request, res: Response
     const status = req.query.status as ComplaintStatus | undefined;
     const search = (req.query.search as string | undefined)?.trim();
 
-    const whereClause: Prisma.ComplaintWhereInput = {};
+    const whereClause: Prisma.ComplaintWhereInput = {
+      isMaster: true,
+    };
 
     // Scope to official's department or assignments
     if (isOfficial) {
@@ -1118,6 +1120,14 @@ export async function getOfficialWorkspaceComplaints(req: Request, res: Response
           assignedDepartment: { select: { id: true, code: true, name: true } },
           assignedOfficial: { select: { id: true, name: true, email: true } },
           citizen: { select: { id: true, name: true, email: true, phone: true } },
+          subordinateComplaints: {
+            select: {
+              id: true,
+              trackingId: true,
+              title: true,
+              createdAt: true,
+            },
+          },
           inspections: {
             take: 1,
             orderBy: { inspectionDate: 'desc' },

@@ -5,6 +5,7 @@ import { generateUniqueTrackingId } from '../lib/trackingId.js';
 import { createComplaintSchema } from '../validation/complaint.validation.js';
 import { NotificationService } from '../lib/notificationService.js';
 import { SlaEngine } from '../lib/slaEngine.js';
+import { ComplaintConsolidationService } from '../lib/complaintConsolidation.js';
 
 export async function createComplaint(req: Request, res: Response, next: NextFunction) {
   try {
@@ -41,6 +42,9 @@ export async function createComplaint(req: Request, res: Response, next: NextFun
       ward,
       latitude,
       longitude,
+      locationSource,
+      isLocationPublic,
+      clientPerceptualHash,
     } = parseResult.data;
 
     // Verify category exists and is active
@@ -59,18 +63,76 @@ export async function createComplaint(req: Request, res: Response, next: NextFun
       });
     }
 
+    // Idempotency safeguard: Prevent double-creation from rapid repeated button clicks
+    const thirtySecondsAgo = new Date(Date.now() - 30 * 1000);
+    const recentDuplicate = await prisma.complaint.findFirst({
+      where: {
+        citizenId: req.user.id,
+        title: title.trim(),
+        description: description.trim(),
+        categoryId,
+        createdAt: { gte: thirtySecondsAgo },
+      },
+      include: {
+        category: {
+          select: { id: true, code: true, name: true },
+        },
+      },
+    });
+
+    if (recentDuplicate) {
+      return res.status(200).json({
+        success: true,
+        message: 'Your civic issue report has been submitted successfully.',
+        data: {
+          complaint: recentDuplicate,
+          trackingId: recentDuplicate.trackingId,
+        },
+      });
+    }
+
+    // Evaluate multi-factor candidate consolidation in the backend
+    const consolidationDecision = await ComplaintConsolidationService.evaluateForConsolidation({
+      title,
+      description,
+      categoryId,
+      ward: ward || null,
+      locality,
+      locationAddress,
+      latitude: latitude ?? null,
+      longitude: longitude ?? null,
+      clientPerceptualHash: clientPerceptualHash || null,
+      citizenId: req.user.id,
+    });
+
     // Generate unique, collision-resistant tracking ID
     const trackingId = await generateUniqueTrackingId(prisma);
 
-    // Create complaint and initial status history atomically in a transaction
+    // Create complaint, link if consolidated, and update counters atomically
     const newComplaint = await prisma.$transaction(async (tx) => {
+      let isConsolidated = false;
+      let masterComplaint: any = null;
+
+      if (consolidationDecision.shouldConsolidate && consolidationDecision.masterComplaintId) {
+        masterComplaint = await tx.complaint.findUnique({
+          where: { id: consolidationDecision.masterComplaintId },
+          include: {
+            category: { select: { code: true, name: true } },
+            subordinateComplaints: { select: { citizenId: true } },
+          },
+        });
+        if (masterComplaint) {
+          isConsolidated = true;
+        }
+      }
+
       const complaint = await tx.complaint.create({
         data: {
           trackingId,
           title,
           description,
           categoryId,
-          priority,
+          priority: isConsolidated ? masterComplaint.priority : priority,
           status: ComplaintStatus.SUBMITTED,
           citizenId: req.user!.id,
           locationAddress,
@@ -78,6 +140,17 @@ export async function createComplaint(req: Request, res: Response, next: NextFun
           ward: ward || null,
           latitude: latitude !== undefined && latitude !== null ? latitude : null,
           longitude: longitude !== undefined && longitude !== null ? longitude : null,
+          locationSource: locationSource || null,
+          isLocationPublic: isLocationPublic ?? true,
+          // Intelligent Consolidation metadata
+          isMaster: !isConsolidated,
+          primaryComplaintId: isConsolidated ? masterComplaint.id : null,
+          isDuplicate: isConsolidated,
+          duplicateConfidence: isConsolidated ? consolidationDecision.confidence : null,
+          consolidationReason: isConsolidated ? consolidationDecision.matchReason : null,
+          consolidatedAt: isConsolidated ? new Date() : null,
+          affectedReportCount: 1,
+          distinctReporterCount: 1,
         },
         include: {
           category: {
@@ -97,22 +170,116 @@ export async function createComplaint(req: Request, res: Response, next: NextFun
           fromStatus: null,
           toStatus: ComplaintStatus.SUBMITTED,
           changedById: req.user!.id,
-          reasonOrRemarks: 'Complaint submitted by citizen.',
+          reasonOrRemarks: isConsolidated
+            ? `Report registered and automatically linked to master civic issue ${masterComplaint.trackingId}.`
+            : 'Complaint submitted by citizen.',
         },
       });
+
+      // If consolidated, link to master, update counters, and escalate priority if warranted
+      if (isConsolidated && masterComplaint) {
+        await tx.complaintDuplicateLink.create({
+          data: {
+            primaryComplaintId: masterComplaint.id,
+            duplicateComplaintId: complaint.id,
+            similarityScore: consolidationDecision.confidence,
+            reason: consolidationDecision.matchReason,
+            linkedById: req.user!.id,
+          },
+        });
+
+        // Compute updated distinct reporters
+        const existingCitizenIds = new Set<string>();
+        if (masterComplaint.citizenId) existingCitizenIds.add(masterComplaint.citizenId);
+        for (const sub of masterComplaint.subordinateComplaints) {
+          if (sub.citizenId) existingCitizenIds.add(sub.citizenId);
+        }
+        existingCitizenIds.add(req.user!.id);
+
+        const newAffectedCount = (masterComplaint.affectedReportCount || 1) + 1;
+        const newDistinctCount = existingCitizenIds.size;
+
+        // Deterministic Priority Escalation Check
+        const priorityResult = ComplaintConsolidationService.calculateEscalatedPriority({
+          currentPriority: masterComplaint.priority,
+          categoryCode: masterComplaint.category?.code,
+          affectedReports: newAffectedCount,
+          distinctReporters: newDistinctCount,
+        });
+
+        const masterUpdateData: any = {
+          affectedReportCount: newAffectedCount,
+          distinctReporterCount: newDistinctCount,
+        };
+
+        if (priorityResult.escalated) {
+          masterUpdateData.priority = priorityResult.newPriority;
+          masterUpdateData.priorityEscalatedAt = new Date();
+          masterUpdateData.priorityEscalationReason = priorityResult.reason;
+        }
+
+        await tx.complaint.update({
+          where: { id: masterComplaint.id },
+          data: masterUpdateData,
+        });
+
+        // Audit trails
+        await tx.auditEvent.create({
+          data: {
+            entityType: 'COMPLAINT',
+            entityId: masterComplaint.id,
+            action: 'COMPLAINT_CONSOLIDATED',
+            actorId: req.user!.id,
+            details: {
+              subordinateComplaintId: complaint.id,
+              subordinateTrackingId: complaint.trackingId,
+              similarityScore: consolidationDecision.confidence,
+              reason: consolidationDecision.matchReason,
+              newAffectedCount,
+              newDistinctCount,
+            },
+          },
+        });
+
+        if (priorityResult.escalated) {
+          await tx.auditEvent.create({
+            data: {
+              entityType: 'COMPLAINT',
+              entityId: masterComplaint.id,
+              action: 'COMPLAINT_PRIORITY_ESCALATED',
+              actorId: req.user!.id,
+              details: {
+                fromPriority: masterComplaint.priority,
+                toPriority: priorityResult.newPriority,
+                reason: priorityResult.reason,
+                affectedReportCount: newAffectedCount,
+                distinctReporterCount: newDistinctCount,
+              },
+            },
+          });
+        }
+      }
 
       return complaint;
     });
 
-    // Module 9: Asynchronous notification trigger for citizen
-    await NotificationService.notifyComplaintSubmitted(newComplaint);
+    // Asynchronous notification trigger for citizen (non-fatal)
+    try {
+      await NotificationService.notifyComplaintSubmitted(newComplaint);
+    } catch (notifErr) {
+      console.warn('[Notification non-fatal failure]:', notifErr);
+    }
 
-    // Module 11: Auto-bind applicable SLA policy and compute initial targets
-    await SlaEngine.calculateAndAttachSla(prisma, newComplaint.id);
+    // Auto-bind applicable SLA policy (non-fatal)
+    try {
+      await SlaEngine.calculateAndAttachSla(prisma, newComplaint.id);
+    } catch (slaErr) {
+      console.warn('[SLA Engine non-fatal failure]:', slaErr);
+    }
 
     return res.status(201).json({
       success: true,
-      message: 'Complaint lodged successfully.',
+      message: 'Your civic issue report has been submitted successfully.',
       data: {
         complaint: newComplaint,
         trackingId: newComplaint.trackingId,
@@ -262,6 +429,44 @@ const complaintWithDetailsArgs = Prisma.validator<Prisma.ComplaintDefaultArgs>()
       },
       orderBy: { inspectionDate: 'desc' },
     },
+    subordinateComplaints: {
+      include: {
+        citizen: { select: { id: true, name: true, email: true, phone: true } },
+        documents: {
+          select: {
+            id: true,
+            fileName: true,
+            mimeType: true,
+            fileSize: true,
+            documentCategory: true,
+            visibility: true,
+            sha256Checksum: true,
+            perceptualHash: true,
+            capturedAt: true,
+            browserCaptureTimestamp: true,
+            captureLatitude: true,
+            captureLongitude: true,
+            captureAccuracy: true,
+            isGpsVerified: true,
+            createdAt: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    },
+    primaryComplaint: {
+      select: {
+        id: true,
+        trackingId: true,
+        title: true,
+        status: true,
+      },
+    },
+    duplicateLinks: {
+      include: {
+        linkedBy: { select: { id: true, name: true, role: true } },
+      },
+    },
   },
 });
 
@@ -317,6 +522,16 @@ const complaintTrackArgs = Prisma.validator<Prisma.ComplaintDefaultArgs>()({
         captureAccuracy: true,
         isGpsVerified: true,
         createdAt: true,
+      },
+    },
+    primaryComplaint: {
+      select: {
+        id: true,
+        trackingId: true,
+        status: true,
+        resolutionNotes: true,
+        resolvedAt: true,
+        verifiedAt: true,
       },
     },
     sla: true,
@@ -427,6 +642,24 @@ export async function getComplaintById(req: Request, res: Response, next: NextFu
         captureLongitude: doc.captureLongitude ? Number(doc.captureLongitude) : null,
       }));
 
+    // For staff, include all subordinate evidence and linked report summaries
+    const sanitizedSubordinates = isStaff
+      ? complaint.subordinateComplaints.map((sub) => ({
+          id: sub.id,
+          trackingId: sub.trackingId,
+          title: sub.title,
+          description: sub.description,
+          createdAt: sub.createdAt,
+          citizen: sub.citizen ? { id: sub.citizen.id, name: sub.citizen.name, email: sub.citizen.email, phone: sub.citizen.phone } : null,
+          documents: sub.documents.map((d) => ({
+            ...d,
+            fileSize: Number(d.fileSize),
+            captureLatitude: d.captureLatitude ? Number(d.captureLatitude) : null,
+            captureLongitude: d.captureLongitude ? Number(d.captureLongitude) : null,
+          })),
+        }))
+      : [];
+
     return res.status(200).json({
       success: true,
       data: {
@@ -434,6 +667,8 @@ export async function getComplaintById(req: Request, res: Response, next: NextFu
           ...complaint,
           documents: filteredDocuments,
           progressUpdates,
+          subordinateComplaints: isStaff ? sanitizedSubordinates : undefined,
+          duplicateLinks: isStaff ? complaint.duplicateLinks : undefined,
         },
       },
     });
@@ -471,11 +706,14 @@ export async function trackComplaintByTrackingId(req: Request, res: Response, ne
       });
     }
 
+    // Determine target complaint ID for public progress updates (if linked, check master)
+    const effectiveTargetId = complaint.primaryComplaintId || complaint.id;
+
     // Fetch public progress updates
     const progressAudit = await prisma.auditEvent.findMany({
       where: {
         entityType: 'COMPLAINT',
-        entityId: complaint.id,
+        entityId: effectiveTargetId,
         action: 'OFFICIAL_PROGRESS_UPDATE',
       },
       include: {
@@ -505,6 +743,11 @@ export async function trackComplaintByTrackingId(req: Request, res: Response, ne
 
     const isOwner = req.user && (req.user.id === complaint.citizenId || req.user.role === 'ADMIN');
 
+    // Effective workflow status reflects master issue progress if linked
+    const effectiveStatus = complaint.primaryComplaint ? complaint.primaryComplaint.status : complaint.status;
+    const effectiveResolutionNotes = complaint.primaryComplaint ? complaint.primaryComplaint.resolutionNotes : complaint.resolutionNotes;
+    const effectiveResolvedAt = complaint.primaryComplaint ? complaint.primaryComplaint.resolvedAt : complaint.resolvedAt;
+
     // Return strictly privacy-safe fields: ZERO citizen PII (no name, no email, no phone)
     const publicRecord = {
       id: complaint.id,
@@ -513,7 +756,8 @@ export async function trackComplaintByTrackingId(req: Request, res: Response, ne
       title: complaint.title,
       description: complaint.description,
       priority: complaint.priority,
-      status: complaint.status,
+      status: effectiveStatus,
+      isConsolidatedReport: Boolean(complaint.primaryComplaintId),
       category: complaint.category,
       assignedDepartment: complaint.assignedDepartment,
       locationAddress: complaint.locationAddress,
@@ -523,9 +767,9 @@ export async function trackComplaintByTrackingId(req: Request, res: Response, ne
       updatedAt: complaint.updatedAt,
       reviewedAt: complaint.reviewedAt,
       assignedAt: complaint.assignedAt,
-      resolvedAt: complaint.resolvedAt,
+      resolvedAt: effectiveResolvedAt,
       verifiedAt: complaint.verifiedAt,
-      resolutionNotes: complaint.resolutionNotes,
+      resolutionNotes: effectiveResolutionNotes,
       timeline: complaint.statusHistory,
       progressUpdates: publicProgress,
       inspections: complaint.inspections,
