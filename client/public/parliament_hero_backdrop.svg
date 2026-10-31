@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="100%" height="100%" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#E8E2D4" stop-opacity="0.95" />
+      <stop offset="45%" stop-color="#F2EDE2" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#F4F0E6" stop-opacity="1" />
+    </linearGradient>
+    <linearGradient id="colonnadeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#173D32" stop-opacity="0.12" />
+      <stop offset="70%" stop-color="#173D32" stop-opacity="0.22" />
+      <stop offset="100%" stop-color="#173D32" stop-opacity="0.32" />
+    </linearGradient>
+    <linearGradient id="plinthGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2D4F44" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#173D32" stop-opacity="0.45" />
+    </linearGradient>
+    <linearGradient id="citizenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#173D32" stop-opacity="0.55" />
+      <stop offset="100%" stop-color="#112F26" stop-opacity="0.85" />
+    </linearGradient>
+  </defs>
+
+  <!-- Sky Canvas -->
+  <rect width="1920" height="1080" fill="url(#skyGrad)" />
+
+  <!-- Distant Parliament Dome / Upper Colonnade -->
+  <ellipse cx="960" cy="460" rx="420" ry="80" fill="#173D32" fill-opacity="0.08" />
+  <path d="M 540,460 Q 960,340 1380,460 Z" fill="#173D32" fill-opacity="0.10" />
+  <!-- Central Flag Mast -->
+  <line x1="960" y1="340" x2="960" y2="280" stroke="#173D32" stroke-width="3" stroke-opacity="0.4" />
+  <polygon points="960,280 990,295 960,310" fill="#173D32" fill-opacity="0.4" />
+
+  <!-- Circular Parliament Colonnade Entablature -->
+  <path d="M 240,480 Q 960,420 1680,480 L 1680,510 Q 960,450 240,510 Z" fill="url(#colonnadeGrad)" />
+
+  <!-- Monumental Columns (Classic 24-Column Symmetrical Perspective) -->
+  <g fill="url(#colonnadeGrad)">
+    <rect x="290" y="505" width="22" height="230" rx="3" />
+    <rect x="345" y="502" width="22" height="233" rx="3" />
+    <rect x="400" y="499" width="22" height="236" rx="3" />
+    <rect x="455" y="496" width="22" height="239" rx="3" />
+    <rect x="510" y="493" width="22" height="242" rx="3" />
+    <rect x="565" y="491" width="22" height="244" rx="3" />
+    <rect x="620" y="489" width="22" height="246" rx="3" />
+    <rect x="675" y="487" width="22" height="248" rx="3" />
+    <rect x="730" y="485" width="22" height="250" rx="3" />
+    <rect x="785" y="484" width="22" height="251" rx="3" />
+    <rect x="840" y="483" width="22" height="252" rx="3" />
+    <rect x="895" y="482" width="22" height="253" rx="3" />
+    <rect x="950" y="482" width="22" height="253" rx="3" />
+    <rect x="1005" y="482" width="22" height="253" rx="3" />
+    <rect x="1060" y="483" width="22" height="252" rx="3" />
+    <rect x="1115" y="484" width="22" height="251" rx="3" />
+    <rect x="1170" y="485" width="22" height="250" rx="3" />
+    <rect x="1225" y="487" width="22" height="248" rx="3" />
+    <rect x="1280" y="489" width="22" height="246" rx="3" />
+    <rect x="1335" y="491" width="22" height="244" rx="3" />
+    <rect x="1390" y="493" width="22" height="242" rx="3" />
+    <rect x="1445" y="496" width="22" height="239" rx="3" />
+    <rect x="1500" y="499" width="22" height="236" rx="3" />
+    <rect x="1555" y="502" width="22" height="233" rx="3" />
+    <rect x="1610" y="505" width="22" height="230" rx="3" />
+  </g>
+
+  <!-- Parliament Podium & Steps -->
+  <path d="M 180,735 Q 960,695 1740,735 L 1780,765 Q 960,725 140,765 Z" fill="url(#plinthGrad)" />
+  <path d="M 100,765 Q 960,725 1820,765 L 1860,800 Q 960,760 60,800 Z" fill="url(#plinthGrad)" opacity="0.8" />
+  <path d="M 0,800 Q 960,760 1920,800 L 1920,1080 L 0,1080 Z" fill="#F4F0E6" />
+
+  <!-- Citizens in the Foreground (Editorial Silhouettes of Ordinary People Gathering in Front of Governance) -->
+  <g fill="url(#citizenGrad)">
+    <!-- Citizen Group Left (Family / Youth conversing) -->
+    <!-- Person 1 -->
+    <circle cx="480" cy="810" r="14" />
+    <path d="M 466,828 Q 480,824 494,828 L 498,920 L 488,920 L 485,875 L 478,875 L 474,920 L 464,920 Z" />
+    <!-- Person 2 (Looking towards Parliament) -->
+    <circle cx="515" cy="805" r="13" />
+    <path d="M 503,822 Q 515,818 527,822 L 531,915 L 522,915 L 518,870 L 512,870 L 508,915 L 499,915 Z" />
+    <!-- Person 3 (Elderly Citizen / Walking) -->
+    <circle cx="550" cy="815" r="12" />
+    <path d="M 539,831 Q 550,828 561,831 L 564,910 L 536,910 Z" />
+
+    <!-- Citizen Group Center (Engaged Citizens with Tablet / Civic Dialogue) -->
+    <!-- Person 4 -->
+    <circle cx="920" cy="795" r="14" />
+    <path d="M 906,813 Q 920,809 934,813 L 938,935 L 928,935 L 924,880 L 918,880 L 914,935 L 904,935 Z" />
+    <!-- Person 5 (Woman holding documents / civic representation) -->
+    <circle cx="955" cy="798" r="13" />
+    <path d="M 943,815 Q 955,812 967,815 L 972,930 L 938,930 Z" />
+    <!-- Person 6 -->
+    <circle cx="990" cy="802" r="14" />
+    <path d="M 976,820 Q 990,816 1004,820 L 1008,935 L 998,935 L 994,880 L 988,880 L 984,935 L 974,935 Z" />
+
+    <!-- Citizen Group Right (Workers, Professionals, Everyday Public) -->
+    <!-- Person 7 -->
+    <circle cx="1380" cy="808" r="14" />
+    <path d="M 1366,826 Q 1380,822 1394,826 L 1398,920 L 1388,920 L 1384,875 L 1378,875 L 1374,920 L 1364,920 Z" />
+    <!-- Person 8 -->
+    <circle cx="1415" cy="802" r="13" />
+    <path d="M 1403,819 Q 1415,816 1427,819 L 1432,918 L 1398,918 Z" />
+    <!-- Person 9 -->
+    <circle cx="1450" cy="812" r="13" />
+    <path d="M 1438,829 Q 1450,825 1462,829 L 1466,915 L 1456,915 L 1452,870 L 1446,870 L 1442,915 L 1432,915 Z" />
+  </g>
+
+  <!-- Ambient Golden Hour / Civic Trust Sunlight Diffuser -->
+  <circle cx="960" cy="400" r="600" fill="#FAF5E8" fill-opacity="0.35" />
+</svg>
+
