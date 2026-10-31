@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%" height="100%" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="topWhiteFade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0" />
+      <stop offset="20%" stop-color="#FFFFFF" stop-opacity="0.2" />
+      <stop offset="45%" stop-color="#FFFFFF" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="1" />
+    </linearGradient>
+    <mask id="fadeMask">
+      <rect width="1600" height="900" fill="url(#topWhiteFade)" />
+    </mask>
+  </defs>
+  <rect width="1600" height="900" fill="#FFFFFF" />
+  <g mask="url(#fadeMask)">
+    <polygon points="800,540 -594.7,662.0 -600.0,544.9" fill="#CDE7F8" />
+    <polygon points="800,540 -594.7,418.0 -579.6,301.7" fill="#CDE7F8" />
+    <polygon points="800,540 -552.3,177.7 -517.2,65.8" fill="#CDE7F8" />
+    <polygon points="800,540 -468.8,-51.7 -414.9,-155.8" fill="#CDE7F8" />
+    <polygon points="800,540 -346.8,-263.0 -275.6,-356.2" fill="#CDE7F8" />
+    <polygon points="800,540 -189.9,-449.9 -103.6,-529.3" fill="#CDE7F8" />
+    <polygon points="800,540 -3.0,-606.8 95.8,-670.0" fill="#CDE7F8" />
+    <polygon points="800,540 208.3,-728.8 316.6,-773.9" fill="#CDE7F8" />
+    <polygon points="800,540 437.7,-812.3 552.1,-837.9" fill="#CDE7F8" />
+    <polygon points="800,540 678.0,-854.7 795.1,-860.0" fill="#CDE7F8" />
+    <polygon points="800,540 922.0,-854.7 1038.3,-839.6" fill="#CDE7F8" />
+    <polygon points="800,540 1162.3,-812.3 1274.2,-777.2" fill="#CDE7F8" />
+    <polygon points="800,540 1391.7,-728.8 1495.8,-674.9" fill="#CDE7F8" />
+    <polygon points="800,540 1603.0,-606.8 1696.2,-535.6" fill="#CDE7F8" />
+    <polygon points="800,540 1789.9,-449.9 1869.3,-363.6" fill="#CDE7F8" />
+    <polygon points="800,540 1946.8,-263.0 2010.0,-164.2" fill="#CDE7F8" />
+    <polygon points="800,540 2068.8,-51.7 2113.9,56.6" fill="#CDE7F8" />
+    <polygon points="800,540 2152.3,177.7 2177.9,292.1" fill="#CDE7F8" />
+    <polygon points="800,540 2194.7,418.0 2200.0,535.1" fill="#CDE7F8" />
+    <polygon points="800,540 2194.7,662.0 2179.6,778.3" fill="#CDE7F8" />
+  </g>
+</svg>

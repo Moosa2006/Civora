@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { NavLink } from '../../router/NavLink.js';
 import { useRouter } from '../../router/index.js';
 import { useAuth } from '../../context/useAuth.js';
-import { Container } from './Container.js';
 import { LanguageSelector } from './LanguageSelector.js';
 
 export function HomepageNavbar() {
@@ -23,7 +22,6 @@ export function HomepageNavbar() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // Determine user workspace route if already authenticated
   const getUserWorkspacePath = () => {
     if (!user) return '/my-complaints';
     switch (user.role) {
@@ -38,59 +36,56 @@ export function HomepageNavbar() {
     }
   };
 
-  const navLinkClass =
-    'px-3.5 py-1.5 rounded-full text-xs lg:text-sm font-medium text-[#202522] dark:text-[#E8F0EC] hover:text-[#173D32] dark:hover:text-[#7BC4B2] hover:bg-[#173D32]/5 dark:hover:bg-[#4F9B8B]/10 transition-colors font-sans';
-  const navLinkActive = 'text-[#173D32] dark:text-[#7BC4B2] font-semibold bg-[#173D32]/5 dark:bg-[#4F9B8B]/10';
+  const navLinkBase =
+    'px-3.5 py-1.5 rounded-full text-sm font-medium text-[#2D3748] hover:text-[#0B3D2E] transition-colors font-sans';
+  const navLinkActive = 'bg-[#E5ECE8] text-[#173D32] font-semibold';
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-[#DED8CB]/70 dark:border-[#283931]/70 bg-[#F4F0E6]/95 dark:bg-[#141C18]/95 backdrop-blur-md transition-colors">
-      <Container size="full" className="max-w-[1440px] px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-13 sm:h-14">
-          {/* 1. Left: Brand Emblem + Wordmark */}
-          <NavLink
-            to="/"
-            onClick={() => setMobileMenuOpen(false)}
-            className="flex items-center gap-2.5 sm:gap-3 py-1 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#173D32] rounded-md shrink-0"
-            aria-label="Civora Home"
-          >
-            <img
-              src="/civora_icon.jpeg"
-              alt="Civora Emblem"
-              className="h-6 sm:h-7 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
-            />
-            <img
-              src="/civora_text.jpeg"
-              alt="Civora"
-              className="h-3.5 sm:h-4 w-auto object-contain"
-            />
-          </NavLink>
+    <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-100/90 shadow-2xs transition-colors">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 sm:h-[68px]">
+          {/* 1. Left: Civora Icon (As shown in reference screenshot) */}
+          <div className="flex items-center">
+            <NavLink
+              to="/"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0B3D2E] rounded-md"
+              aria-label="Civora Home"
+            >
+              <img
+                src="/civora_icon.jpeg"
+                alt="Civora"
+                className="h-10 sm:h-11 w-auto object-contain transition-transform duration-200 hover:scale-105"
+              />
+            </NavLink>
+          </div>
 
-          {/* 2. Centre: Tesla-Inspired Minimalist Navigation */}
+          {/* 2. Centre: Clean Navigation Links Matching Screenshot */}
           <nav className="hidden md:flex items-center space-x-1 lg:space-x-2" aria-label="Primary Navigation">
             <NavLink
               to="/"
-              className={navLinkClass}
+              className={navLinkBase}
               activeClassName={navLinkActive}
             >
               Home
             </NavLink>
             <NavLink
               to="/transparency"
-              className={navLinkClass}
+              className={navLinkBase}
               activeClassName={navLinkActive}
             >
               Transparency
             </NavLink>
             <NavLink
               to="/engagement"
-              className={navLinkClass}
+              className={navLinkBase}
               activeClassName={navLinkActive}
             >
               Civic Engagement
             </NavLink>
             <a
               href="#about"
-              className={navLinkClass}
+              className={navLinkBase}
               onClick={(e) => {
                 const el = document.getElementById('about');
                 if (el) {
@@ -103,45 +98,45 @@ export function HomepageNavbar() {
             </a>
           </nav>
 
-          {/* 3. Right: Utility Controls & Auth Link */}
-          <div className="flex items-center space-x-2 sm:space-x-3">
-            {/* Minimal Language Utility */}
+          {/* 3. Right: Language Selector, Sign In, Report Issue */}
+          <div className="flex items-center space-x-3 sm:space-x-4">
+            {/* Language Selector in Forest-Green Pill */}
             <div className="hidden sm:block">
-              <LanguageSelector />
+              <LanguageSelector variant="forest-pill" />
             </div>
 
             {/* Authentication Action */}
             {isAuthenticated ? (
               <NavLink
                 to={getUserWorkspacePath()}
-                className="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#173D32] text-[#F4F0E6] hover:bg-[#112F26] transition-all shadow-xs"
+                className="hidden sm:inline-block px-3.5 py-1.5 rounded-md text-sm font-medium text-[#2D3748] hover:text-[#0B3D2E] transition-colors"
               >
                 Dashboard
               </NavLink>
             ) : (
-              <div className="hidden sm:flex items-center space-x-2">
-                <NavLink
-                  to="/login"
-                  className="px-3 py-1.5 rounded-full text-xs font-medium text-[#202522] dark:text-[#E8F0EC] hover:text-[#173D32] hover:bg-[#173D32]/5 transition-colors"
-                >
-                  Sign In
-                </NavLink>
-                <NavLink
-                  to="/report"
-                  className="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#173D32] text-[#F4F0E6] hover:bg-[#112F26] transition-all shadow-xs"
-                >
-                  Report Issue
-                </NavLink>
-              </div>
+              <NavLink
+                to="/login"
+                className="hidden sm:inline-block px-2.5 py-1.5 text-sm font-medium text-[#2D3748] hover:text-[#0B3D2E] transition-colors"
+              >
+                Sign In
+              </NavLink>
             )}
 
-            {/* Mobile Menu Toggle Button */}
+            {/* Primary Action Button: Report Issue */}
+            <NavLink
+              to="/report"
+              className="hidden sm:inline-flex items-center justify-center px-4 py-2 rounded-md text-sm font-medium text-white bg-[#0B3D2E] hover:bg-[#072B20] transition-colors shadow-2xs"
+            >
+              Report Issue
+            </NavLink>
+
+            {/* Mobile Menu Hamburger Button */}
             <button
               type="button"
               onClick={() => setMobileMenuOpen((prev) => !prev)}
               aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
               aria-expanded={mobileMenuOpen}
-              className="md:hidden p-1.5 rounded-lg text-[#202522] dark:text-[#E8F0EC] hover:bg-[#173D32]/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#173D32]"
+              className="md:hidden p-2 rounded-md text-[#2D3748] hover:bg-gray-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0B3D2E]"
             >
               {mobileMenuOpen ? (
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -149,41 +144,41 @@ export function HomepageNavbar() {
                 </svg>
               ) : (
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 7h16M4 17h16" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
               )}
             </button>
           </div>
         </div>
-      </Container>
+      </div>
 
-      {/* Mobile Drawer Navigation */}
+      {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div
           role="dialog"
           aria-modal="true"
           aria-label="Mobile Navigation Menu"
-          className="md:hidden border-t border-[#DED8CB]/60 dark:border-[#283931]/60 bg-[#F4F0E6] dark:bg-[#141C18] px-4 py-5 shadow-xl transition-all"
+          className="md:hidden border-t border-gray-100 bg-white px-5 py-5 shadow-lg space-y-3"
         >
-          <nav className="flex flex-col space-y-2.5">
+          <nav className="flex flex-col space-y-2">
             <NavLink
               to="/"
               onClick={() => setMobileMenuOpen(false)}
-              className="px-3.5 py-2.5 rounded-xl text-sm font-medium text-[#202522] dark:text-[#E8F0EC] hover:bg-[#173D32]/5 transition-colors"
+              className="px-3.5 py-2 rounded-lg text-sm font-medium text-[#2D3748] hover:bg-[#E5ECE8]"
             >
               Home
             </NavLink>
             <NavLink
               to="/transparency"
               onClick={() => setMobileMenuOpen(false)}
-              className="px-3.5 py-2.5 rounded-xl text-sm font-medium text-[#202522] dark:text-[#E8F0EC] hover:bg-[#173D32]/5 transition-colors"
+              className="px-3.5 py-2 rounded-lg text-sm font-medium text-[#2D3748] hover:bg-[#E5ECE8]"
             >
               Transparency
             </NavLink>
             <NavLink
               to="/engagement"
               onClick={() => setMobileMenuOpen(false)}
-              className="px-3.5 py-2.5 rounded-xl text-sm font-medium text-[#202522] dark:text-[#E8F0EC] hover:bg-[#173D32]/5 transition-colors"
+              className="px-3.5 py-2 rounded-lg text-sm font-medium text-[#2D3748] hover:bg-[#E5ECE8]"
             >
               Civic Engagement
             </NavLink>
@@ -197,32 +192,32 @@ export function HomepageNavbar() {
                   el.scrollIntoView({ behavior: 'smooth' });
                 }
               }}
-              className="px-3.5 py-2.5 rounded-xl text-sm font-medium text-[#202522] dark:text-[#E8F0EC] hover:bg-[#173D32]/5 transition-colors"
+              className="px-3.5 py-2 rounded-lg text-sm font-medium text-[#2D3748] hover:bg-[#E5ECE8]"
             >
               About Civora
             </a>
 
-            <div className="pt-3 border-t border-[#DED8CB]/50 dark:border-[#283931]/50 flex flex-col space-y-2">
+            <div className="pt-3 border-t border-gray-100 flex flex-col space-y-2.5">
               <NavLink
                 to="/report"
                 onClick={() => setMobileMenuOpen(false)}
-                className="w-full text-center px-4 py-2.5 rounded-xl text-sm font-semibold bg-[#173D32] text-[#F4F0E6] hover:bg-[#112F26] transition-colors"
+                className="w-full text-center px-4 py-2.5 rounded-md text-sm font-medium text-white bg-[#0B3D2E] hover:bg-[#072B20]"
               >
-                Report an Issue
+                Report Issue
               </NavLink>
               {isAuthenticated ? (
                 <NavLink
                   to={getUserWorkspacePath()}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full text-center px-4 py-2 rounded-xl text-sm font-medium text-[#202522] dark:text-[#E8F0EC] hover:bg-[#173D32]/5"
+                  className="w-full text-center px-4 py-2 rounded-md text-sm font-medium text-[#2D3748] hover:bg-gray-100"
                 >
-                  Go to Dashboard
+                  Dashboard
                 </NavLink>
               ) : (
                 <NavLink
                   to="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full text-center px-4 py-2 rounded-xl text-sm font-medium text-[#202522] dark:text-[#E8F0EC] hover:bg-[#173D32]/5"
+                  className="w-full text-center px-4 py-2 rounded-md text-sm font-medium text-[#2D3748] hover:bg-gray-100"
                 >
                   Sign In
                 </NavLink>
@@ -230,7 +225,7 @@ export function HomepageNavbar() {
             </div>
 
             <div className="pt-2 flex justify-center">
-              <LanguageSelector />
+              <LanguageSelector variant="forest-pill" />
             </div>
           </nav>
         </div>

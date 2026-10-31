@@ -23,105 +23,62 @@ export function LandingPage() {
   }, []);
 
   return (
-    <div className="w-full bg-[var(--color-background)] text-[var(--color-text-primary)]">
+    <div className="w-full bg-white text-[#1A1A1A]">
       {/* =========================================================================
-          HERO SECTION: THE MAIN VISUAL EXPERIENCE (Tesla-Inspired Minimalist Focus)
+          HERO SECTION: RECREATED EXACTLY FROM CIVORA REFERENCE SCREENSHOT
           ========================================================================= */}
       <section
-        className="relative w-full min-h-[calc(100vh-56px)] h-[90vh] min-h-[620px] max-h-[1080px] flex flex-col justify-between overflow-hidden"
+        className="relative w-full bg-white overflow-hidden flex flex-col justify-between pt-8 sm:pt-12 md:pt-14 pb-0"
         aria-label="Civora Hero"
       >
-        {/* Full-bleed Architectural Background with Subtle Readability Overlay */}
-        <div
-          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat transition-transform duration-1000 ease-out will-change-transform"
-          style={{
-            backgroundImage: `
-              linear-gradient(to bottom, rgba(244, 240, 230, 0.78) 0%, rgba(244, 240, 230, 0.55) 45%, rgba(244, 240, 230, 0.96) 100%),
-              url('/parliament_hero.jpg'),
-              url('/parliament_hero_backdrop.svg')
-            `,
-          }}
-          aria-hidden="true"
-        />
-
-        {/* Ambient Top Vignette for Contrast */}
-        <div
-          className="absolute inset-0 z-0 bg-radial-at-t from-transparent via-transparent to-[#173D32]/10 pointer-events-none"
-          aria-hidden="true"
-        />
-
-        {/* Center Hero Content */}
-        <div className="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto py-12 md:py-16">
-          {/* Restrained Civora Emblem Brand Insignia */}
-          <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/90 dark:bg-[#16201C]/90 border border-[#DED8CB] dark:border-[#283931] shadow-xs backdrop-blur-md mb-6 sm:mb-8 transition-transform hover:scale-[1.02]">
-            <img
-              src="/civora_icon.jpeg"
-              alt="Civora Emblem"
-              className="h-5 sm:h-5.5 w-auto object-contain"
-            />
-            <span className="text-[11px] font-semibold tracking-wider uppercase text-[#173D32] dark:text-[#7BC4B2] font-mono">
-              Public Accountability Platform
-            </span>
-          </div>
-
-          {/* Main Headline */}
-          <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-[5.25rem] font-heading font-extrabold tracking-tight text-[#173D32] dark:text-[#F4F0E6] leading-[1.06] max-w-4xl mx-auto drop-shadow-xs">
-            Your Voice. Your City.
+        {/* Upper Center Content: Headline & Action Buttons */}
+        <div className="relative z-20 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center">
+          {/* Centered Two-Tone Headline Matching Reference */}
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] font-bold tracking-tight leading-[1.12] max-w-4xl mx-auto font-sans">
+            <span className="block text-[#1A1A1A]">The Voice of the People,</span>
+            <span className="block text-[#0B6640] mt-1 sm:mt-2">The Will of the Nation.</span>
           </h1>
 
-          {/* Supporting Motto */}
-          <p className="text-lg sm:text-xl md:text-2xl font-medium text-[#202522] dark:text-[#C5D4C9] max-w-2xl mx-auto mt-4 sm:mt-5 leading-relaxed tracking-normal">
-            People First. Public Accountability Always.
-          </p>
-
-          {/* Minimal Purposeful Call-to-Actions */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-4 pt-8 sm:pt-10 w-full max-w-md mx-auto">
-            <Button
-              size="lg"
-              variant="primary"
+          {/* Action Buttons Directly Below Headline */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-4 mt-6 sm:mt-8 w-full max-w-md mx-auto">
+            <button
+              type="button"
               onClick={() => navigate('/report')}
-              className="w-full sm:w-auto px-8 py-3.5 text-sm sm:text-base font-semibold rounded-full shadow-md bg-[#173D32] hover:bg-[#112F26] text-[#F4F0E6] transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-md text-sm sm:text-base font-medium text-white bg-[#0B3D2E] hover:bg-[#072B20] transition-colors shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0B3D2E] cursor-pointer"
             >
               Report an Issue
-            </Button>
+              <span aria-hidden="true">→</span>
+            </button>
 
-            <Button
-              size="lg"
-              variant="secondary"
+            <button
+              type="button"
               onClick={() => navigate('/transparency')}
-              className="w-full sm:w-auto px-8 py-3.5 text-sm sm:text-base font-semibold rounded-full border border-[#DED8CB] bg-white/85 hover:bg-white text-[#173D32] dark:bg-[#1C2823] dark:text-[#F4F0E6] dark:border-[#283931] shadow-xs hover:shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-md text-sm sm:text-base font-medium text-[#1A1A1A] bg-white border border-gray-200 hover:bg-gray-50 transition-colors shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-300 cursor-pointer"
             >
               Explore Transparency
-            </Button>
+              <span aria-hidden="true">→</span>
+            </button>
           </div>
         </div>
 
-        {/* Subtle Bottom Scroll Cue */}
-        <div className="relative z-10 pb-6 sm:pb-8 flex flex-col items-center justify-center">
-          <a
-            href="#about"
-            onClick={(e) => {
-              e.preventDefault();
-              const el = document.getElementById('about');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
+        {/* Lower Composition: Sunburst Sky Rays + Parliament Illustration */}
+        <div className="relative w-full max-w-6xl mx-auto mt-2 sm:mt-4 px-2 sm:px-4 flex justify-center items-end">
+          {/* Radiating Light-Blue Rays Backdrop */}
+          <div
+            className="absolute inset-0 -top-16 sm:-top-24 md:-top-32 z-0 pointer-events-none bg-contain bg-bottom bg-no-repeat"
+            style={{
+              backgroundImage: "url('/parliament_sunburst.svg')",
             }}
-            className="group flex flex-col items-center gap-1.5 text-xs font-medium text-[#54625A] dark:text-[#A8BFAE] hover:text-[#173D32] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#173D32] rounded-full p-2"
-            aria-label="Scroll to About Civora section"
-          >
-            <span className="tracking-widest uppercase text-[10px] font-semibold opacity-80 group-hover:opacity-100">
-              Discover Civora
-            </span>
-            <svg
-              className="w-4 h-4 animate-bounce text-[#173D32] dark:text-[#7BC4B2]"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-              aria-hidden="true"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
-          </a>
+            aria-hidden="true"
+          />
+
+          {/* Parliament Building and Citizens Assembly Image */}
+          <img
+            src="/parliament.png"
+            alt="Parliament of India with Citizens Assembly"
+            className="relative z-10 w-full max-w-5xl h-auto object-contain select-none pointer-events-none"
+            loading="eager"
+          />
         </div>
       </section>
 
@@ -130,7 +87,7 @@ export function LandingPage() {
           ========================================================================= */}
       <section
         id="about"
-        className="w-full py-20 sm:py-28 border-t border-[#DED8CB]/70 dark:border-[#283931]/70 bg-[#FAF8F5] dark:bg-[#121A16]"
+        className="w-full py-20 sm:py-28 border-t border-gray-100 bg-[#FAF8F5] dark:bg-[#121A16]"
         aria-labelledby="about-civora-heading"
       >
         <Container size="lg" className="space-y-16">
