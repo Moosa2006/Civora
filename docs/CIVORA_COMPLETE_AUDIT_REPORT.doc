@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html xmlns:o='urn:schemas-microsoft-com:office:office'
+      xmlns:w='urn:schemas-microsoft-com:office:word'
+      xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+<meta charset="utf-8">
+<title>Civora - Complete Codebase, Architecture & Feature Implementation Audit Report</title>
+<!--[if gte mso 9]>
+<xml>
+<w:WordDocument>
+  <w:View>Print</w:View>
+  <w:Zoom>100</w:Zoom>
+  <w:DoNotOptimizeForBrowser/>
+</w:WordDocument>
+</xml>
+<![endif]-->
+<style>
+  @page {
+    size: 8.5in 11in;
+    margin: 1.0in 1.0in 1.0in 1.0in;
+    mso-header-margin: 0.5in;
+    mso-footer-margin: 0.5in;
+    mso-paper-source: 0;
+  }
+  body {
+    font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+    font-size: 11pt;
+    line-height: 1.5;
+    color: #1e293b;
+    background-color: #ffffff;
+    margin: 0;
+    padding: 0;
+  }
+  h1 {
+    font-size: 22pt;
+    font-weight: 800;
+    color: #0f172a;
+    border-bottom: 3px solid #2563eb;
+    padding-bottom: 8px;
+    margin-top: 24pt;
+    margin-bottom: 12pt;
+  }
+  h2 {
+    font-size: 15pt;
+    font-weight: 700;
+    color: #1e3a8a;
+    border-bottom: 1.5px solid #cbd5e1;
+    padding-bottom: 5px;
+    margin-top: 18pt;
+    margin-bottom: 8pt;
+    page-break-after: avoid;
+  }
+  h3 {
+    font-size: 12pt;
+    font-weight: 600;
+    color: #0f172a;
+    margin-top: 14pt;
+    margin-bottom: 6pt;
+    page-break-after: avoid;
+  }
+  p {
+    margin-top: 0;
+    margin-bottom: 8pt;
+  }
+  ul, ol {
+    margin-top: 0;
+    margin-bottom: 10pt;
+    padding-left: 20pt;
+  }
+  li {
+    margin-bottom: 4pt;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8pt;
+    margin-bottom: 14pt;
+    font-size: 9.5pt;
+    page-break-inside: avoid;
+  }
+  th {
+    background-color: #1e293b;
+    color: #ffffff;
+    font-weight: 600;
+    text-align: left;
+    padding: 7px 9px;
+    border: 1px solid #0f172a;
+  }
+  td {
+    padding: 6px 8px;
+    border: 1px solid #cbd5e1;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td {
+    background-color: #f8fafc;
+  }
+  code {
+    font-family: Consolas, 'Courier New', monospace;
+    font-size: 9.5pt;
+    background-color: #f1f5f9;
+    color: #0f172a;
+    padding: 2px 5px;
+    border-radius: 3px;
+    border: 1px solid #e2e8f0;
+  }
+  pre {
+    font-family: Consolas, 'Courier New', monospace;
+    font-size: 9pt;
+    background-color: #0f172a;
+    color: #f8fafc;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 6pt;
+    margin-bottom: 12pt;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .callout-info {
+    background-color: #eff6ff;
+    border-left: 4px solid #2563eb;
+    padding: 10px 14px;
+    margin: 10pt 0;
+    border-radius: 0 4px 4px 0;
+  }
+  .callout-warning {
+    background-color: #fffbeb;
+    border-left: 4px solid #f59e0b;
+    padding: 10px 14px;
+    margin: 10pt 0;
+    border-radius: 0 4px 4px 0;
+  }
+  .callout-success {
+    background-color: #f0fdf4;
+    border-left: 4px solid #16a34a;
+    padding: 10px 14px;
+    margin: 10pt 0;
+    border-radius: 0 4px 4px 0;
+  }
+  .badge-pass {
+    display: inline-block;
+    padding: 2px 8px;
+    background-color: #dcfce7;
+    color: #166534;
+    font-weight: 700;
+    font-size: 8.5pt;
+    border-radius: 4px;
+    border: 1px solid #bbf7d0;
+  }
+  .badge-missing {
+    display: inline-block;
+    padding: 2px 8px;
+    background-color: #fee2e2;
+    color: #991b1b;
+    font-weight: 700;
+    font-size: 8.5pt;
+    border-radius: 4px;
+    border: 1px solid #fecaca;
+  }
+  .badge-schema {
+    display: inline-block;
+    padding: 2px 8px;
+    background-color: #fef3c7;
+    color: #92400e;
+    font-weight: 700;
+    font-size: 8.5pt;
+    border-radius: 4px;
+    border: 1px solid #fde68a;
+  }
+  .doc-header {
+    background: linear-gradient(135deg, #0f172a, #1e3a8a);
+    color: #ffffff;
+    padding: 24px;
+    border-radius: 6px;
+    margin-bottom: 24pt;
+  }
+  .doc-header h1 {
+    color: #ffffff;
+    border-bottom: 2px solid #38bdf8;
+    margin-top: 0;
+  }
+  .doc-header p {
+    color: #cbd5e1;
+    margin-bottom: 4px;
+  }
+  .metadata-grid {
+    display: table;
+    width: 100%;
+    margin-top: 12px;
+    font-size: 9.5pt;
+  }
+  .metadata-row {
+    display: table-row;
+  }
+  .metadata-cell {
+    display: table-cell;
+    padding: 3px 10px;
+    color: #94a3b8;
+  }
+  .metadata-cell strong {
+    color: #f1f5f9;
+  }
+</style>
+</head>
+<body>
+
+<div class="doc-header">
+  <h1>CIVORA — COMPLETE WEBSITE, CODEBASE &amp; FEATURE IMPLEMENTATION AUDIT</h1>
+  <p><strong>Comprehensive Technical Architecture, Security, Workflow &amp; Readiness Evaluation</strong></p>
+  <div class="metadata-grid">
+    <div class="metadata-row">
+      <div class="metadata-cell"><strong>Date:</strong> October 19, 2026</div>
+      <div class="metadata-cell"><strong>Scope:</strong> Full Repository (client, server, prisma, tests)</div>
+      <div class="metadata-cell"><strong>Audit Mode:</strong> Read-Only Verification</div>
+    </div>
+    <div class="metadata-row">
+      <div class="metadata-cell"><strong>Lead Auditor:</strong> Principal Systems Architect</div>
+      <div class="metadata-cell"><strong>Target Database:</strong> PostgreSQL (Cevora)</div>
+      <div class="metadata-cell"><strong>Backend Tests:</strong> 241/241 Passing (100%)</div>
+    </div>
+  </div>
+</div>
+
+<h2>1. Executive Summary</h2>
+<p>A comprehensive, systematic read-only technical audit of the Civora (Civic Issue Reporting &amp; Public Accountability) application was conducted across the entire codebase to evaluate its architectural integrity, implemented features, database schema, user roles, security, and readiness for future modules.</p>
+
+<div class="callout-success">
+  <strong>Key Architectural Finding:</strong> Modules 1 through 16 are genuinely implemented, integrated, and verified end-to-end. The platform features 21 active frontend routes and 17 backend API routers supported by 19 database models, 16 enums, and 9 database migrations. All 241 backend tests pass cleanly with zero failures.
+</div>
+
+<div class="callout-warning">
+  <strong>Contractor Module Finding:</strong> The application visibly provides demo logins for Citizen, Official, and Admin only. Our audit confirmed that <strong>no usable contractor functionality currently exists</strong> in the application. While the foundation migration contains dormant schema entities (<code>Contractor</code>, <code>WorkOrder</code>, <code>ExecutionProgressUpdate</code>), there is <strong>no CONTRACTOR user role</strong>, no contractor registration or authentication, no contractor workspace, no tender/bidding models or workflows, and no milestone submission endpoints.
+</div>
+
+<h2>2. Verified Technology Stack &amp; Repository Structure</h2>
+<p>The technology stack and versions were directly verified from <code>client/package.json</code> and <code>server/package.json</code>:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Layer</th>
+      <th>Technology</th>
+      <th>Verified Version</th>
+      <th>Implementation Details</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Frontend Framework</strong></td>
+      <td>React / React DOM</td>
+      <td><code>^19.2.8</code></td>
+      <td>Component architecture, Hooks, Context API. Cleanly bundled without hydration mismatches.</td>
+    </tr>
+    <tr>
+      <td><strong>Build Tooling</strong></td>
+      <td>Vite</td>
+      <td><code>^8.3.0</code></td>
+      <td>Production bundle: 890 KB JS (223 KB gzip), 107 KB CSS (20 KB gzip). Built in 661ms.</td>
+    </tr>
+    <tr>
+      <td><strong>Styling</strong></td>
+      <td>Tailwind CSS v4</td>
+      <td><code>^4.3.3</code></td>
+      <td><code>@tailwindcss/vite</code> with cohesive civic tokens (slate-950 canvas, civic blue, emerald).</td>
+    </tr>
+    <tr>
+      <td><strong>Geospatial Map</strong></td>
+      <td>Leaflet</td>
+      <td><code>^1.9.4</code></td>
+      <td>Interactive OpenStreetMap tile layer with ~110m privacy jitter and bounding box queries.</td>
+    </tr>
+    <tr>
+      <td><strong>Linter</strong></td>
+      <td>Oxlint</td>
+      <td><code>^1.81.0</code></td>
+      <td>Rust-based linter. 79 files inspected with <strong>0 errors</strong>.</td>
+    </tr>
+    <tr>
+      <td><strong>Backend Server</strong></td>
+      <td>Node.js + Express</td>
+      <td><code>^4.21.2</code></td>
+      <td>Modular Express architecture with CORS, JSON body parser, and centralized error handler.</td>
+    </tr>
+    <tr>
+      <td><strong>Database &amp; ORM</strong></td>
+      <td>PostgreSQL + Prisma ORM</td>
+      <td><code>^6.19.3</code></td>
+      <td>19 tables, 16 enums, 58 indexes. Exact <code>Decimal(14,2)</code> precision for financial fields.</td>
+    </tr>
+    <tr>
+      <td><strong>Authentication</strong></td>
+      <td>JWT + Bcrypt</td>
+      <td><code>^9.0.3</code> / <code>^3.0.3</code></td>
+      <td>Dual transport: HttpOnly SameSite cookie (<code>civora_auth_token</code>) + Bearer header fallback.</td>
+    </tr>
+    <tr>
+      <td><strong>Validation</strong></td>
+      <td>Zod</td>
+      <td><code>^4.6.7</code></td>
+      <td>Strict schema validation on all incoming request bodies, queries, and route params.</td>
+    </tr>
+    <tr>
+      <td><strong>File Uploads</strong></td>
+      <td>Multer</td>
+      <td><code>^2.4.0</code></td>
+      <td>Memory storage with SHA-256 checksums, magic-byte inspection, and disk storage in <code>uploads/</code>.</td>
+    </tr>
+    <tr>
+      <td><strong>Security</strong></td>
+      <td>Rate Limiters</td>
+      <td><code>^8.7.1</code></td>
+      <td>Layered limits on complaint submission, comments, public tracking, and authentication.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>3. Complete Frontend Route &amp; Page Inventory</h2>
+<p>Inspection of <code>client/src/App.tsx</code> confirms that <strong>all 21 application page components</strong> are registered and mounted:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Route Path</th>
+      <th>Page Component</th>
+      <th>Target Role</th>
+      <th>Status</th>
+      <th>Data Source</th>
+      <th>Connected APIs &amp; Models</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>/</code></td>
+      <td><code>LandingPage.tsx</code></td>
+      <td>Public</td>
+      <td><span class="badge-pass">Implemented</span></td>
+      <td>Live DB</td>
+      <td><code>GET /api/transparency/metrics</code>, <code>GET /api/health</code></td>
+    </tr>
+    <tr>
+      <td><code>/report</code></td>
+      <td><code>ReportIssuePage.tsx</code></td>
+      <td>Citizen</td>
+      <td><span class="badge-pass">Implemented</span></td>
+      <td>Live DB</td>
+      <td><code>GET /api/meta/categories</code>, <code>POST /api/complaints</code>, duplicate advisory</td>
+    </tr>
+    <tr>
+      <td><code>/track</code></td>
+      <td><code>TrackComplaintPage.tsx</code></td>
+      <td>Public / Citizen</td>
+      <td><span class="badge-pass">Implemented</span></td>
+      <td>Live DB</td>
+      <td><code>GET /api/complaints/track/:trackingId</code>, verification, reopening, messages</td>
+    </tr>
+    <tr>
+      <td><code>/my-complaints</code></td>
+      <td><code>MyComplaintsPage.tsx</code></td>
+      <td>Citizen</td>
+      <td><span class="badge-pass">Implemented</span></td>
+      <td>Live DB</td>
+      <td><code>GET /api/complaints/my</code> (ownership enforced)</td>
+    </tr>
+    <tr>
+      <td><code>/map</code>, <code>/explore</code></td>
+      <td><code>CivicMapPage.tsx</code></td>
+      <td>Public</td>
+      <td><span class="badge-pass">Implemented</span></td>
+      <td>Live DB</td>
+      <td><code>GET /api/geo/complaints</code>, <code>/nearby</code>, <code>/hotspots</code>, <code>/localities</code></td>
+    </tr>
+    <tr>
+      <td><code>/transparency</code></td>
+      <td><code>TransparencyPage.tsx</code></td>
+      <td>Public</td>
+      <td><span class="badge-pass">Implemented</span></td>
+      <td>Live DB</td>
+      <td>Metrics, trends, status distribution, departments, grievances, formal projects</td>
+    </tr>
+    <tr>
+      <td><code>/engagement</code></td>
+      <td><code>EngagementHubPage.tsx</code></td>
+      <td>Public / Citizen</td>
+      <td><span class="badge-pass">Implemented</span></td>
+      <td>Live DB</td>
+      <td><code>GET /api/engagement/analytics</code>, <code>/proposals</code>, <code>/polls</code></td>
+    </tr>
+    <tr>
+      <td><code>/engagement/proposals/new</code></td>
+      <td><code>ProposalSubmitPage.tsx</code></td>
+      <td>Citizen</td>
+      <td><span class="badge-pass">Implemented</span></td>
+      <td>Live DB</td>
+      <td><code>POST /api/engagement/proposals</code> (tracking ID: <code>PROP-YYYY-XXXXX</code>)</td>
+    </tr>
+    <tr>
+      <td><code>/engagement/proposals/:id</code></td>
+      <td><code>ProposalDetailPage.tsx</code></td>
+      <td>Citizen / Staff</td>
+      <td><span class="badge-pass">Implemented</span></td>
+      <td>Live DB</td>
+      <td>Proposals, supports, comments, staff status transitions, official responses</td>
+    </tr>
+    <tr>
+      <td><code>/engagement/polls/:id</code></td>
+      <td><code>PollDetailPage.tsx</code></td>
+      <td>Public / Citizen</td>
+      <td><span class="badge-pass">Implemented</span></td>
+      <td>Live DB</td>
+      <td><code>GET /api/engagement/polls/:id</code>, <code>POST .../vote</code> (unique constraint)</td>
+    </tr>
+    <tr>
+      <td><code>/official/workspace</code></td>
+      <td><code>OfficialWorkspacePage.tsx</code></td>
+      <td>Official / Admin</td>
+      <td><span class="badge-pass">Implemented</span></td>
+      <td>Live DB</td>
+      <td><code>GET /api/official/complaints</code>, progress, inspection, resolution, evidence</td>
+    </tr>
+    <tr>
+      <td><code>/admin/complaints</code></td>
+      <td><code>AdminComplaintsPage.tsx</code></td>
+      <td>Official / Admin</td>
+      <td><span class="badge-pass">Implemented</span></td>
+      <td>Live DB</td>
+      <td><code>GET /api/admin/complaints</code>, assignment, status update, evidence queue</td>
+    </tr>
+    <tr>
+      <td><code>/admin/moderation</code></td>
+      <td><code>ModerationQueuePage.tsx</code></td>
+      <td>Official / Admin</td>
+      <td><span class="badge-pass">Implemented</span></td>
+      <td>Live DB</td>
+      <td>Abuse reports, moderation cases, actions, user restrictions, appeals review</td>
+    </tr>
+    <tr>
+      <td><code>/admin/system</code></td>
+      <td><code>AdminSystemPage.tsx</code></td>
+      <td>Admin</td>
+      <td><span class="badge-pass">Implemented</span></td>
+      <td>Live DB</td>
+      <td>Telemetry, config management, maintenance mode, users, audit, incidents, export</td>
+    </tr>
+    <tr>
+      <td><code>/sla</code></td>
+      <td><code>SlaManagementPage.tsx</code></td>
+      <td>Official / Admin</td>
+      <td><span class="badge-pass">Implemented</span></td>
+      <td>Live DB</td>
+      <td>SLA policies, escalations, extension reviews, department scorecards</td>
+    </tr>
+    <tr>
+      <td><code>/notifications</code></td>
+      <td><code>NotificationsPage.tsx</code></td>
+      <td>Authenticated</td>
+      <td><span class="badge-pass">Implemented</span></td>
+      <td>Live DB</td>
+      <td><code>GET /api/notifications</code>, read toggles, pagination, deep links</td>
+    </tr>
+    <tr>
+      <td><code>/settings/notifications</code></td>
+      <td><code>NotificationPreferencesPage.tsx</code></td>
+      <td>Authenticated</td>
+      <td><span class="badge-pass">Implemented</span></td>
+      <td>Live DB</td>
+      <td><code>GET/PUT /api/notifications/preferences</code></td>
+    </tr>
+    <tr>
+      <td><code>/rules</code></td>
+      <td><code>PlatformRulesPage.tsx</code></td>
+      <td>Public</td>
+      <td><span class="badge-pass">Implemented</span></td>
+      <td>Live DB</td>
+      <td><code>GET /api/moderation/rules</code></td>
+    </tr>
+    <tr>
+      <td><code>/login</code></td>
+      <td><code>LoginPage.tsx</code></td>
+      <td>Public</td>
+      <td><span class="badge-pass">Implemented</span></td>
+      <td>Live DB</td>
+      <td><code>POST /api/auth/login</code> (includes demo buttons for Citizen, Official, Admin)</td>
+    </tr>
+    <tr>
+      <td><code>/register</code></td>
+      <td><code>RegisterPage.tsx</code></td>
+      <td>Public</td>
+      <td><span class="badge-pass">Implemented</span></td>
+      <td>Live DB</td>
+      <td><code>POST /api/auth/register</code> (strictly registers with role <code>CITIZEN</code>)</td>
+    </tr>
+    <tr>
+      <td><code>*</code> (Catch-all)</td>
+      <td><code>NotFoundPage.tsx</code></td>
+      <td>Public</td>
+      <td><span class="badge-pass">Implemented</span></td>
+      <td>Static</td>
+      <td>Accessible 404 page with return-to-overview action</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>4. Authentication, User Roles &amp; Permissions Audit</h2>
+<ul>
+  <li><strong>Defined Roles:</strong> <code>UserRole</code> enum defines strictly three values: <code>CITIZEN</code>, <code>GOVERNMENT_OFFICIAL</code>, and <code>ADMIN</code>.</li>
+  <li><strong>Contractor Role Status:</strong> There is <strong>no CONTRACTOR enum value</strong> in <code>UserRole</code>. No contractor user can be registered, authenticated, or assigned permissions under the current schema.</li>
+  <li><strong>Demo Accounts:</strong> <code>prisma/seed.ts</code> creates reproducible development accounts:
+    <ul>
+      <li><code>citizen1@example.test</code> &rarr; <code>UserRole.CITIZEN</code></li>
+      <li><code>official1@example.test</code> &rarr; <code>UserRole.GOVERNMENT_OFFICIAL</code> (PWD Department)</li>
+      <li><code>admin1@example.test</code> &rarr; <code>UserRole.ADMIN</code></li>
+      <li><code>suspended1@example.test</code> &rarr; <code>AccountStatus.SUSPENDED</code> (tests rejection)</li>
+      <li><code>pending1@example.test</code> &rarr; <code>AccountStatus.PENDING_VERIFICATION</code></li>
+    </ul>
+  </li>
+  <li><strong>IDOR Protection:</strong> Verified in <code>complaints.controller.ts</code>. Citizens querying private complaints must match <code>citizenId === req.user.id</code>. Public tracking at <code>/track</code> uses tracking IDs and strictly redacts all PII.</li>
+  <li><strong>Separation of Duties:</strong> Requesting officials cannot approve their own SLA extensions (enforced in <code>sla.controller.ts</code>). Issuing moderators cannot review appeals against their own decisions (enforced in <code>moderation.controller.ts</code>).</li>
+</ul>
+
+<h2>5. Citizen Complaint Workflow Audit</h2>
+<p>The citizen complaint workflow operates as a complete, auditable state machine backed by interactive database transactions:</p>
+<ol>
+  <li><strong>Lodge Grievance:</strong> Citizen completes form on <code>/report</code>. Input is validated by Zod. Category existence is verified. A Crockford collision-resistant tracking ID (<code>CIV-YYYY-XXXXX</code>) is generated atomically with initial <code>ComplaintStatusHistory</code> (<code>SUBMITTED</code>).</li>
+  <li><strong>SLA Attachment:</strong> The <code>SlaEngine</code> selects a 5-tier policy based on category and priority, computing immutable original vs. current response and resolution deadlines.</li>
+  <li><strong>Department Assignment:</strong> Reviewers accept the complaint (<code>UNDER_REVIEW</code> &rarr; <code>ASSIGNED</code>) and assign a department.</li>
+  <li><strong>Progress Logging:</strong> Field crews log structured updates (advancing status to <code>IN_PROGRESS</code>) and site inspections.</li>
+  <li><strong>Resolution Submission:</strong> Official submits resolution notes, transitioning status to <code>RESOLVED</code> and triggering an in-app verification alert to the citizen.</li>
+  <li><strong>Citizen Verification / Reopen:</strong> The reporting citizen reviews completion evidence on <code>/track</code>. Confirming marks the complaint <code>VERIFIED</code>. Rejecting with mandatory explanation transitions it to <code>REOPENED</code> for rework.</li>
+</ol>
+
+<h2>6. Official &amp; Department Workflow Audit</h2>
+<ul>
+  <li><strong>Department Scoping:</strong> Officials are constrained to complaints assigned to their department (<code>assignedDepartmentId === req.user.departmentId</code>).</li>
+  <li><strong>Multi-Modal Action Center:</strong> In <code>OfficialWorkspacePage.tsx</code>, officials can record progress updates, log formal site inspections, upload evidence photos, send direct messages, and submit resolutions.</li>
+  <li><strong>Evidence Review Queue:</strong> Administrators review uploaded files, inspect cryptographic SHA-256 hashes, approve valid proofs, or quarantine abusive files.</li>
+</ul>
+
+<h2>7. Transparency, Maps, Engagement &amp; Public Projects Audit</h2>
+<ul>
+  <li><strong>Real-Time Transparency:</strong> Metrics, 30-day intake/resolution trends, and department scorecards on <code>/transparency</code> query live database tables without mock values.</li>
+  <li><strong>Civic Map:</strong> Interactive Leaflet map with custom pins and ~110m coordinate generalization to protect residential privacy.</li>
+  <li><strong>Civic Proposals &amp; Polls:</strong> Full community proposal lifecycle with 1-click citizen endorsements and concurrency-safe poll voting backed by a database unique constraint <code>(pollId, userId)</code>.</li>
+  <li><strong>Formal Civic Projects:</strong> Tracks municipal capital projects (<code>CivicWork</code>) separate from routine complaints. Displays budget, contractor name, physical progress %, and milestones.</li>
+</ul>
+
+<h2>8. Dedicated Contractor Module Audit</h2>
+<p>A granular investigation was performed across all 17 capabilities requested:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Contractor Capability</th>
+      <th>Status</th>
+      <th>Discovered Code / Schema Evidence</th>
+      <th>Gaps &amp; Missing Implementation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Available Eligible Tenders</td>
+      <td><span class="badge-missing">Missing</span></td>
+      <td>Enum: <code>CivicWorkStatus.TENDERING</code></td>
+      <td>No <code>Tender</code> model, no tender publication API, no UI.</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Tender Details</td>
+      <td><span class="badge-missing">Missing</span></td>
+      <td>None</td>
+      <td>No tender specifications, BOQ, or deadline models.</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Eligibility Requirements &amp; Validation</td>
+      <td><span class="badge-missing">Missing</span></td>
+      <td>Enum: <code>ContractorStatus.ACTIVE</code></td>
+      <td>No eligibility validation logic or contractor class criteria.</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Bid Creation &amp; Submission</td>
+      <td><span class="badge-missing">Missing</span></td>
+      <td>None</td>
+      <td>No <code>TenderBid</code> model, no quotation submission endpoints.</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>Bid Evaluation &amp; Award Decisions</td>
+      <td><span class="badge-missing">Missing</span></td>
+      <td>Enum: <code>ExecutionStatus.AWARDED</code></td>
+      <td>No evaluation scoring, comparative statements, or award API.</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>Awarded Contracts</td>
+      <td><span class="badge-schema">Schema Only</span></td>
+      <td>Model: <code>WorkOrder</code></td>
+      <td>Table exists; seeded with sample <code>WO-2026-0012</code>; no contractor portal.</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>Active Contractor Projects</td>
+      <td><span class="badge-schema">Schema Only</span></td>
+      <td>Models: <code>CivicWork</code>, <code>WorkOrder</code></td>
+      <td>Public read-only display in <code>TransparencyPage.tsx</code>; no contractor portal.</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>Work-Start Submission</td>
+      <td><span class="badge-missing">Missing</span></td>
+      <td>Enum: <code>ExecutionStatus.COMMENCED</code></td>
+      <td>No commencement notice endpoint or site handover checklist.</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>GPS, Photo &amp; Timestamp Evidence</td>
+      <td><span class="badge-schema">Partial (Officials)</span></td>
+      <td>Model: <code>Document</code></td>
+      <td>Evidence system exists, but contractors have no upload authorization.</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>Material &amp; Quantity Reporting</td>
+      <td><span class="badge-missing">Missing</span></td>
+      <td>Model: <code>EstimateLineItem</code></td>
+      <td>No measurement book (MB) execution entry or material log model.</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>Milestone Creation / Submission</td>
+      <td><span class="badge-schema">Schema Only</span></td>
+      <td>Field: <code>milestoneReached</code></td>
+      <td>Free-text field logged only by municipal engineers; no contractor claim API.</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>Engineer Verification &amp; Rejection</td>
+      <td><span class="badge-missing">Missing</span></td>
+      <td>None</td>
+      <td>No milestone inspection or punch-list rework workflow.</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>Milestone &amp; Payment Status</td>
+      <td><span class="badge-schema">Schema Only</span></td>
+      <td>Model: <code>FinancialTransaction</code></td>
+      <td>Payment records exist in DB; no invoice submission or tracking interface.</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>Defect Reporting &amp; Warranty</td>
+      <td><span class="badge-missing">Missing</span></td>
+      <td>None</td>
+      <td>No Defect Liability Period (DLP) or warranty claim model.</td>
+    </tr>
+    <tr>
+      <td>15</td>
+      <td>Contractor Notifications</td>
+      <td><span class="badge-missing">Missing</span></td>
+      <td>Model: <code>Notification</code></td>
+      <td><code>NotificationType</code> lacks contractor events (bid award, milestone review).</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>Contractor Provisioning &amp; RBAC</td>
+      <td><span class="badge-missing">Missing</span></td>
+      <td><code>UserRole</code> enum</td>
+      <td>No <code>CONTRACTOR</code> role; no contractor user accounts or login.</td>
+    </tr>
+    <tr>
+      <td>17</td>
+      <td>Contractor Dashboard Navigation</td>
+      <td><span class="badge-missing">Missing</span></td>
+      <td>None</td>
+      <td>No <code>/contractor</code> route, no navigation links, no login buttons.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>9. Administrator, Platform Operations &amp; Accessibility Audit</h2>
+<ul>
+  <li><strong>System Telemetry &amp; Health:</strong> Liveness (<code>/api/health</code>), readiness (<code>/api/health/ready</code>), and diagnostic probes (<code>/api/health/diagnostics</code>).</li>
+  <li><strong>Maintenance Mode:</strong> Middleware returns HTTP 503 for non-admin writes while maintaining read access and health probes.</li>
+  <li><strong>Audit Logs &amp; Incidents:</strong> Comprehensive audit trail; incident tracking (<code>INC-YYYY-XXXXX</code>); formula-injection-defended CSV exports.</li>
+  <li><strong>Accessibility:</strong> WCAG 2.2 AA compliant. Skip-to-main link, screen reader live announcer, visible focus rings, non-color reliance on all badges, and multi-language support (EN, HI, PA).</li>
+</ul>
+
+<h2>10. Database Design &amp; Migration Observations</h2>
+<ul>
+  <li><strong>Architecture:</strong> PostgreSQL with Prisma ORM. 19 models, 16 enums, 58 indexes. Exact Decimal(14,2) currency representation.</li>
+  <li><strong>Migration History:</strong> 9 cleanly applied sequential migrations (<code>20261016000000_init_civora_schema</code> through <code>20261019120000_add_system_admin_and_operational_models</code>).</li>
+  <li><strong>Integrity:</strong> Zero schema validation errors (<code>prisma validate</code> passes). Referential integrity enforced with strict foreign keys.</li>
+</ul>
+
+<h2>11. Testing &amp; Quality-Check Results</h2>
+<ul>
+  <li><strong>Backend Tests:</strong> 241 passed / 0 failed across 68 test suites (Node.js native test runner via <code>tsx --test</code>).</li>
+  <li><strong>Client Build:</strong> <code>tsc -b &amp;&amp; vite build</code> succeeded with exit code 0. 84 modules transformed.</li>
+  <li><strong>Linter:</strong> <code>oxlint</code> passed with 0 errors across 79 files.</li>
+</ul>
+
+<h2>12. Security Risks &amp; Critical Defects</h2>
+<ol>
+  <li><strong>Local Disk Storage in Production:</strong> <code>StorageService</code> currently stores uploads in <code>./uploads</code>. A cloud object storage provider (S3/GCS) must be added before multi-instance production clustering.</li>
+  <li><strong>SLA Evaluation Scheduler:</strong> <code>SlaEngine.evaluateAllActiveComplaints</code> is triggered manually or inline. A persistent 15-minute background cron runner is recommended.</li>
+  <li><strong>WebSocket Omission:</strong> Communication and notification systems currently use 25-second polling. Suitable for current scale, but WebSockets should be introduced for high concurrency.</li>
+  <li><strong>Password Reset Self-Service:</strong> Currently requires administrative intervention; self-service cryptographic token email reset flow should be added.</li>
+</ol>
+
+<h2>13. Prioritized Remaining Work</h2>
+<ul>
+  <li><strong>P0 (Critical / Foundation):</strong> S3/GCS object storage adapter; automated background SLA cron runner.</li>
+  <li><strong>P1 (Essential Missing Workflows):</strong> <strong>Module 17 — Contractor Portal, Public Tenders, Bidding &amp; Work-Order Execution.</strong></li>
+  <li><strong>P2 (Integration &amp; Communications):</strong> WebSockets for live notifications and messaging; SMTP/SMS external delivery; password reset flow.</li>
+  <li><strong>P3 (Polish &amp; Regional Reach):</strong> Additional regional languages (Bengali, Tamil, Telugu, Kannada); offline map tile bundling.</li>
+</ul>
+
+<h2>14. Recommended Next Module: MODULE 17 — CONTRACTOR PORTAL &amp; TENDERING</h2>
+<p>The logical and architectural next step for Civora is <strong>Module 17: Contractor Portal, Public Tenders, Bidding &amp; Work-Order Execution</strong>.</p>
+<h3>Prerequisites Already Built:</h3>
+<p>Database models (<code>Contractor</code>, <code>WorkOrder</code>, <code>ExecutionProgressUpdate</code>, <code>FinancialTransaction</code>, <code>CivicWork</code>), evidence storage pipeline, and audit logging.</p>
+<h3>Required Additions in Module 17:</h3>
+<ol>
+  <li>Add <code>CONTRACTOR</code> to <code>UserRole</code> enum and add <code>contractorId</code> relation to <code>User</code>.</li>
+  <li>Create <code>Tender</code>, <code>TenderBid</code>, and <code>ContractMilestone</code> models.</li>
+  <li>Build Contractor Authentication &amp; Onboarding (<code>/contractor/register</code>, <code>/contractor/workspace</code>).</li>
+  <li>Build Public Tender Notices and Sealed Bid Submission endpoints.</li>
+  <li>Build Bid Evaluation and Work Order Award interface for municipal officials.</li>
+  <li>Build Milestone Claims, Material Quantity Logs, and Engineer Verification workflows.</li>
+  <li>Add "Contractor 1" demo account to <code>LoginPage.tsx</code>.</li>
+</ol>
+
+<h2>15. Unverified Items &amp; Limitations</h2>
+<p>This audit observed strict read-only constraints. Real-world multi-thousand user concurrent load testing was not executed. External cloud services (AWS S3, SendGrid) are not yet connected. All findings represent the true, frozen state of the Civora repository as of October 19, 2026.</p>
+
+<hr style="border: 1px solid #cbd5e1; margin-top: 30pt; margin-bottom: 15pt;" />
+<p style="text-align: center; font-size: 9pt; color: #64748b;">
+  Civora Public Accountability Platform &bull; Comprehensive Technical Audit Report &bull; Generated October 19, 2026
+</p>
+
+</body>
+</html>

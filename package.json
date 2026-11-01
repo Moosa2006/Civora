@@ -1,12 +1,28 @@
 {
-  "name": "zinnovatio",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "civora",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Civic issue reporting and public accountability web application",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev:client": "npm --prefix client run dev",
+    "dev:server": "npm --prefix server run dev",
+    "build:client": "npm --prefix client run build",
+    "build:server": "npm --prefix server run build",
+    "build": "npm run build:client && npm run build:server",
+    "db:validate": "npm --prefix server run db:validate",
+    "db:generate": "npm --prefix server run db:generate",
+    "db:migrate": "npm --prefix server run db:migrate",
+    "db:seed": "npm --prefix server run db:seed",
+    "test:server": "npm --prefix server test"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "keywords": [
+    "civic",
+    "accountability",
+    "complaint-tracking",
+    "react",
+    "express",
+    "typescript"
+  ],
+  "author": "Civora Team",
+  "license": "MIT"
 }

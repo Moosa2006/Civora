@@ -362,6 +362,7 @@ export async function login(req: Request, res: Response, next: NextFunction) {
     if (!parseResult.success) {
       const issue = parseResult.error.issues?.[0];
       const message = issue ? issue.message : 'Validation failed.';
+      console.warn(`[Civora Auth ${req.correlationId || 'N/A'}]: Login request validation failed:`, parseResult.error.flatten().fieldErrors);
       return res.status(400).json({
         success: false,
         error: {
@@ -400,6 +401,7 @@ export async function login(req: Request, res: Response, next: NextFunction) {
 
     // Generic error message to prevent account enumeration
     if (!user) {
+      console.warn(`[Civora Auth ${req.correlationId || 'N/A'}]: Login failed — no user record found for email "${email}".`);
       return res.status(401).json({
         success: false,
         error: {
@@ -411,6 +413,7 @@ export async function login(req: Request, res: Response, next: NextFunction) {
 
     const isMatch = await comparePassword(password, user.passwordHash);
     if (!isMatch) {
+      console.warn(`[Civora Auth ${req.correlationId || 'N/A'}]: Login failed — password verification failed for user "${user.id}" (${email}).`);
       return res.status(401).json({
         success: false,
         error: {

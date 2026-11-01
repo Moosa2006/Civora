@@ -12,6 +12,13 @@ import { maintenanceModeMiddleware } from './middleware/maintenanceMode.middlewa
 
 dotenv.config();
 
+if (!process.env.DATABASE_URL && process.env.NODE_ENV !== 'test') {
+  console.error('[Civora Environment Warning]: DATABASE_URL is not defined in the environment.');
+}
+if (!process.env.JWT_SECRET && process.env.NODE_ENV === 'production') {
+  console.warn('[Civora Security Warning]: JWT_SECRET is not set in production. Using fallback secret is insecure.');
+}
+
 export function createApp() {
   const app = express();
 
