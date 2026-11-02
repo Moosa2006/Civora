@@ -132,23 +132,23 @@ export function Navbar() {
           <NavLink
             to={getLogoDestination()}
             onClick={closeMobileMenu}
-            className="flex items-center space-x-2.5 sm:space-x-3 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A8BFAE] rounded-lg p-1 min-h-[44px] shrink-0"
+            className="flex items-center space-x-2 sm:space-x-3 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A8BFAE] rounded-lg p-1 min-h-[44px] min-w-0 shrink"
             aria-label={`${t('nav.brand')} - ${t('nav.tagline')}`}
           >
             <img
               src="/civora_icon.jpeg"
               alt="Civora Emblem"
-              className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg object-contain bg-white p-0.5 shadow-xs transition-transform group-hover:scale-105 shrink-0"
+              className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg object-contain bg-white p-0.5 shadow-xs transition-transform group-hover:scale-105 shrink-0"
             />
-            <div className="hidden sm:block text-left">
-              <span className="text-lg font-heading font-bold tracking-tight text-[#F4F0E6] block leading-none">
+            <div className="hidden sm:block text-left min-w-0">
+              <span className="text-lg font-heading font-bold tracking-tight text-[#F4F0E6] block leading-none truncate">
                 {t('nav.brand')}
               </span>
-              <span className="text-[10px] text-[#A8BFAE] font-normal tracking-wide block mt-0.5">
+              <span className="text-[10px] text-[#A8BFAE] font-normal tracking-wide block mt-0.5 truncate">
                 {t('nav.tagline')}
               </span>
             </div>
-            <span className="sm:hidden text-lg font-heading font-bold tracking-tight text-[#F4F0E6] block leading-none">
+            <span className="sm:hidden text-base font-heading font-bold tracking-tight text-[#F4F0E6] block leading-none truncate">
               {t('nav.brand')}
             </span>
           </NavLink>
@@ -223,12 +223,12 @@ export function Navbar() {
           </nav>
 
           {/* 3. Utility Area (Shared: Language, Accessibility, Notifications, Auth) */}
-          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
-            {/* Language Selector */}
-            <LanguageSelector />
-
-            {/* Accessibility Settings Modal */}
-            <AccessibilitySettingsModal />
+          <div className="flex items-center space-x-1 sm:space-x-2 shrink-0">
+            {/* Language & Accessibility (Hidden on extra narrow screens, available in mobile drawer) */}
+            <div className="hidden sm:flex items-center space-x-1.5 sm:space-x-2">
+              <LanguageSelector />
+              <AccessibilitySettingsModal />
+            </div>
 
             {/* Notification Bell (Authenticated Users) */}
             {isAuthenticated && <NotificationDropdown />}
@@ -388,6 +388,15 @@ export function Navbar() {
                   </NavLink>
                 </div>
               )}
+            </div>
+
+            {/* Mobile Utility Row (Preferences: Language & Accessibility) */}
+            <div className="pt-3 border-t border-[#112F26] flex sm:hidden items-center justify-between px-3">
+              <span className="text-xs text-[#A8BFAE] font-medium">Preferences</span>
+              <div className="flex items-center space-x-2">
+                <LanguageSelector />
+                <AccessibilitySettingsModal />
+              </div>
             </div>
           </nav>
         )}

@@ -3,6 +3,8 @@
  * Standardized municipal ward dictionary for citizen complaint reporting and municipal triage.
  */
 
+export const SUPPORTED_MUNICIPALITY = 'Bruhat Bengaluru Mahanagara Palike (BBMP)';
+
 export interface MunicipalWard {
   code: string;
   number: string;

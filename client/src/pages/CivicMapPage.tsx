@@ -57,7 +57,10 @@ export const CivicMapPage: React.FC = () => {
 
         if (catRes.ok) {
           const catJson = await catRes.json();
-          if (catJson.success) setCategories(catJson.data.categories || []);
+          if (catJson.success) {
+            const list = Array.isArray(catJson.data) ? catJson.data : (catJson.data?.categories || []);
+            setCategories(list);
+          }
         }
 
         if (locRes.ok) {

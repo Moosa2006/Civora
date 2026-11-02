@@ -21,6 +21,7 @@
     "test:bootstrap": "tsx src/scripts/verifyAdminBootstrap.ts",
     "test:verify": "tsx src/scripts/verifyApplication.ts",
     "test:ai": "tsx src/scripts/verifyAiVerification.ts",
+    "test:audit": "tsx src/scripts/verifyAuditRemediations.ts",
     "test": "tsx --test --test-concurrency=4 test/**/*.test.ts"
   },
   "prisma": {

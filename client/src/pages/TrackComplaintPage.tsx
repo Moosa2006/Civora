@@ -421,7 +421,7 @@ export function TrackComplaintPage() {
                   <div>
                     {(() => {
                       const sla = (complaint as any).sla;
-                      if (!sla) {
+                      if (!sla || sla.slaStatus === 'NO_SLA' || sla.policyName === 'No Configured SLA Policy') {
                         return <Badge variant="neutral">No Configured SLA</Badge>;
                       }
                       if (sla.slaStatus === 'RESOLVED_ON_TIME') {
@@ -445,49 +445,60 @@ export function TrackComplaintPage() {
                 </div>
 
                 {/* Deadlines Grid */}
-                {(complaint as any).sla && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-xs">
-                    <div className="bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 p-3 rounded-lg border border-[#DED8CB] dark:border-[#283931]">
-                      <span className="text-[#54625A] dark:text-[#C5D4C9] block mb-0.5">Response Target:</span>
-                      <strong className="text-[#202522] dark:text-[#E8F0EC]">
-                        {new Date((complaint as any).sla.currentResponseDeadline).toLocaleString(undefined, {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
-                      </strong>
-                    </div>
+                {(() => {
+                  const sla = (complaint as any).sla;
+                  const hasNoSla = !sla || sla.slaStatus === 'NO_SLA' || sla.policyName === 'No Configured SLA Policy';
+                  if (hasNoSla) return null;
 
-                    <div className="bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 p-3 rounded-lg border border-[#DED8CB] dark:border-[#283931]">
-                      <span className="text-[#54625A] dark:text-[#C5D4C9] block mb-0.5">Resolution Target:</span>
-                      <strong className="text-[#202522] dark:text-[#E8F0EC]">
-                        {new Date((complaint as any).sla.currentResolutionDeadline).toLocaleString(undefined, {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
-                      </strong>
-                    </div>
+                  const respDateVal = sla.currentResponseDeadline || sla.responseDeadline;
+                  const resDateVal = sla.currentResolutionDeadline || sla.resolutionDeadline;
+                  const formatSafeDate = (dVal: any) => {
+                    if (!dVal) return 'Not scheduled';
+                    const d = new Date(dVal);
+                    return isNaN(d.getTime()) ? 'Not scheduled' : d.toLocaleString(undefined, {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    });
+                  };
 
-                    {(complaint as any).sla.estimatedCompletionDate && (
-                      <div className="bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 p-3 rounded-lg border border-[#4F9B8B]/40 sm:col-span-2 md:col-span-1">
-                        <span className="text-[#1D584D] dark:text-[#7BC4B2] font-semibold block mb-0.5">Department Estimated Completion:</span>
-                        <strong className="text-[#202522] dark:text-[#F5F2EA]">
-                          {new Date((complaint as any).sla.estimatedCompletionDate).toLocaleDateString()}
+                  return (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-xs">
+                      <div className="bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 p-3 rounded-lg border border-[#DED8CB] dark:border-[#283931]">
+                        <span className="text-[#54625A] dark:text-[#C5D4C9] block mb-0.5">Response Target:</span>
+                        <strong className="text-[#202522] dark:text-[#E8F0EC]">
+                          {formatSafeDate(respDateVal)}
                         </strong>
-                        {(complaint as any).sla.estimatedCompletionNotes && (
-                          <p className="text-[11px] text-[#54625A] dark:text-[#C5D4C9] mt-0.5">
-                            {(complaint as any).sla.estimatedCompletionNotes}
-                          </p>
-                        )}
                       </div>
-                    )}
-                  </div>
-                )}
+
+                      <div className="bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 p-3 rounded-lg border border-[#DED8CB] dark:border-[#283931]">
+                        <span className="text-[#54625A] dark:text-[#C5D4C9] block mb-0.5">Resolution Target:</span>
+                        <strong className="text-[#202522] dark:text-[#E8F0EC]">
+                          {formatSafeDate(resDateVal)}
+                        </strong>
+                      </div>
+
+                      {sla.estimatedCompletionDate && (
+                        <div className="bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 p-3 rounded-lg border border-[#4F9B8B]/40 sm:col-span-2 md:col-span-1">
+                          <span className="text-[#1D584D] dark:text-[#7BC4B2] font-semibold block mb-0.5">Department Estimated Completion:</span>
+                          <strong className="text-[#202522] dark:text-[#F5F2EA]">
+                            {(() => {
+                              const d = new Date(sla.estimatedCompletionDate);
+                              return isNaN(d.getTime()) ? 'Not scheduled' : d.toLocaleDateString();
+                            })()}
+                          </strong>
+                          {sla.estimatedCompletionNotes && (
+                            <p className="text-[11px] text-[#54625A] dark:text-[#C5D4C9] mt-0.5">
+                              {sla.estimatedCompletionNotes}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
 
                 {/* Public Escalation Notice */}
                 {Array.isArray((complaint as any).escalations) &&

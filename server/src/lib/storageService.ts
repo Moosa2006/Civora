@@ -174,6 +174,17 @@ export class StorageService {
   }
 
   /**
+   * Returns complete file buffer for metadata processing or EXIF stripping.
+   */
+  public static async getFileBuffer(storageKey: string): Promise<Buffer> {
+    const diskPath = this.resolveDiskPath(storageKey);
+    if (!fs.existsSync(diskPath)) {
+      throw new Error('Stored evidence file not found on disk.');
+    }
+    return fs.promises.readFile(diskPath);
+  }
+
+  /**
    * Deletes an evidence file from disk.
    */
   public static async deleteFile(storageKey: string): Promise<boolean> {

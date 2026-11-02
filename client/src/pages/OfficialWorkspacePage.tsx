@@ -477,58 +477,62 @@ export function OfficialWorkspacePage() {
 
                   {/* Official Action Controls */}
                   <div className="flex flex-col sm:flex-row md:flex-col flex-wrap gap-2 shrink-0">
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      onClick={() => {
-                        setSelectedComplaint(c);
-                        setActiveModal('PROGRESS');
-                      }}
-                      leftIcon={<ClockIcon className="w-3.5 h-3.5" />}
-                      className="text-xs"
-                    >
-                      Log Progress
-                    </Button>
+                    {c.status !== 'REJECTED' && c.status !== 'CLOSED' && (
+                      <>
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedComplaint(c);
+                            setActiveModal('PROGRESS');
+                          }}
+                          leftIcon={<ClockIcon className="w-3.5 h-3.5" />}
+                          className="text-xs"
+                        >
+                          Log Progress
+                        </Button>
 
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setSelectedComplaint(c);
-                        setActiveModal('INSPECTION');
-                      }}
-                      leftIcon={<FileTextIcon className="w-3.5 h-3.5" />}
-                      className="text-xs"
-                    >
-                      Log Inspection
-                    </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedComplaint(c);
+                            setActiveModal('INSPECTION');
+                          }}
+                          leftIcon={<FileTextIcon className="w-3.5 h-3.5" />}
+                          className="text-xs"
+                        >
+                          Log Inspection
+                        </Button>
 
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setSelectedComplaint(c);
-                        setActiveModal('EVIDENCE');
-                      }}
-                      leftIcon={<CameraIcon className="w-3.5 h-3.5" />}
-                      className="text-xs"
-                    >
-                      Add Evidence
-                    </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedComplaint(c);
+                            setActiveModal('EVIDENCE');
+                          }}
+                          leftIcon={<CameraIcon className="w-3.5 h-3.5" />}
+                          className="text-xs"
+                        >
+                          Add Evidence
+                        </Button>
 
-                    {c.status !== 'RESOLVED' && c.status !== 'VERIFIED' && (
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        onClick={() => {
-                          setSelectedComplaint(c);
-                          setActiveModal('RESOLUTION');
-                        }}
-                        leftIcon={<CheckCircleIcon className="w-3.5 h-3.5" />}
-                        className="text-xs bg-[#1E6B52] hover:bg-[#17523F]"
-                      >
-                        Submit Resolution
-                      </Button>
+                        {c.status !== 'RESOLVED' && c.status !== 'VERIFIED' && (
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedComplaint(c);
+                              setActiveModal('RESOLUTION');
+                            }}
+                            leftIcon={<CheckCircleIcon className="w-3.5 h-3.5" />}
+                            className="text-xs bg-[#1E6B52] hover:bg-[#17523F]"
+                          >
+                            Submit Resolution
+                          </Button>
+                        )}
+                      </>
                     )}
 
                     <Button

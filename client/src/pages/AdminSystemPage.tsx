@@ -88,6 +88,7 @@ interface DashboardOverviewData {
       CITIZEN: number;
       OFFICIAL: number;
       ADMIN: number;
+      CONTRACTOR: number;
     };
     totalComplaints: number;
     complaintsAwaitingAction: number;
@@ -390,6 +391,7 @@ export function AdminSystemPage() {
                 CITIZEN: Number(rawMetrics.usersByRole?.CITIZEN ?? rawUsers.citizens ?? 0),
                 OFFICIAL: Number(rawMetrics.usersByRole?.OFFICIAL ?? rawUsers.officials ?? 0),
                 ADMIN: Number(rawMetrics.usersByRole?.ADMIN ?? rawUsers.admins ?? 0),
+                CONTRACTOR: Number(rawMetrics.usersByRole?.CONTRACTOR ?? rawUsers.contractors ?? 0),
               },
               totalComplaints: Number(rawMetrics.totalComplaints ?? rawComplaints.total ?? 0),
               complaintsAwaitingAction: Number(rawMetrics.complaintsAwaitingAction ?? rawComplaints.awaitingAction ?? 0),
@@ -1145,7 +1147,7 @@ export function AdminSystemPage() {
             <MetricCard
               label={t('adminSystem.registeredUsers')}
               value={overview?.metrics?.totalUsers ?? diagnostics?.metrics?.usersCount ?? 0}
-              subtext={`${overview?.metrics?.activeUsers ?? 0} active recently`}
+              subtext={`${overview?.metrics?.activeUsers ?? 0} registered accounts (non-suspended)`}
               accentColor="blue"
               icon={<UsersIcon className="w-5 h-5 text-blue-400" />}
             />
@@ -1203,6 +1205,7 @@ export function AdminSystemPage() {
                   <span className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
                     User demographics: <strong>{overview?.metrics?.usersByRole?.CITIZEN ?? 0} Citizens</strong>,{' '}
                     <strong>{overview?.metrics?.usersByRole?.OFFICIAL ?? 0} Officials</strong>,{' '}
+                    <strong>{overview?.metrics?.usersByRole?.CONTRACTOR ?? 0} Contractors</strong>,{' '}
                     <strong>{overview?.metrics?.usersByRole?.ADMIN ?? 0} Administrators</strong>.
                   </span>
                   <Button variant="ghost" size="sm" onClick={() => setActiveTab('users')} rightIcon={<UsersIcon className="w-3.5 h-3.5" />}>
@@ -1879,13 +1882,25 @@ export function AdminSystemPage() {
               accentColor="blue"
               icon={<ClockIcon className="w-5 h-5 text-blue-400" />}
             />
-            <MetricCard
-              label={t('adminSystem.databaseLatency')}
-              value={diagnostics?.database?.latencyMs != null ? `${diagnostics.database.latencyMs} ms` : 'N/A'}
-              subtext={isDbConnected ? 'Active connection healthy' : 'Connection degraded'}
-              accentColor="emerald"
-              icon={<CheckCircleIcon className="w-5 h-5 text-emerald-400" />}
-            />
+            {(() => {
+              const dbLatency = diagnostics?.database?.latencyMs ?? 0;
+              const isDegradedLatency = dbLatency > 1000;
+              return (
+                <MetricCard
+                  label={t('adminSystem.databaseLatency')}
+                  value={diagnostics?.database?.latencyMs != null ? `${diagnostics.database.latencyMs} ms` : 'N/A'}
+                  subtext={
+                    !isDbConnected
+                      ? 'Connection degraded'
+                      : isDegradedLatency
+                      ? `Connection degraded (High Latency: ${dbLatency}ms)`
+                      : 'Active connection healthy'
+                  }
+                  accentColor={!isDbConnected || isDegradedLatency ? 'amber' : 'emerald'}
+                  icon={<CheckCircleIcon className="w-5 h-5 text-emerald-400" />}
+                />
+              );
+            })()}
             <MetricCard
               label={t('adminSystem.heapUsed')}
               value={diagnostics?.memory?.heapUsedMb != null ? `${diagnostics.memory.heapUsedMb} MB` : 'Checking...'}

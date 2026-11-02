@@ -482,6 +482,21 @@ export async function getPublicComplaints(req: Request, res: Response, next: Nex
           priority: true,
           locality: true,
           ward: true,
+          isLocationPublic: true,
+          primaryComplaint: {
+            select: {
+              id: true,
+              trackingId: true,
+              status: true,
+              assignedDepartment: {
+                select: {
+                  id: true,
+                  code: true,
+                  name: true,
+                },
+              },
+            },
+          },
           category: {
             select: {
               id: true,
@@ -509,10 +524,33 @@ export async function getPublicComplaints(req: Request, res: Response, next: Nex
 
     const totalPages = Math.ceil(total / limit) || 1;
 
+    const formattedComplaints = complaints.map((c) => {
+      const effectiveStatus = c.primaryComplaint ? c.primaryComplaint.status : c.status;
+      const effectiveDepartment = c.assignedDepartment || c.primaryComplaint?.assignedDepartment || null;
+      return {
+        id: c.id,
+        trackingId: c.trackingId,
+        title: c.title,
+        description: c.description,
+        status: effectiveStatus,
+        priority: c.priority,
+        locality: c.locality,
+        ward: c.ward,
+        category: c.category,
+        assignedDepartment: effectiveDepartment,
+        isConsolidatedReport: Boolean(c.primaryComplaint),
+        masterTrackingId: c.primaryComplaint?.trackingId || null,
+        createdAt: c.createdAt,
+        resolvedAt: c.resolvedAt,
+        verifiedAt: c.verifiedAt,
+        updatedAt: c.updatedAt,
+      };
+    });
+
     return res.status(200).json({
       success: true,
       data: {
-        complaints,
+        complaints: formattedComplaints,
         pagination: {
           page,
           limit,

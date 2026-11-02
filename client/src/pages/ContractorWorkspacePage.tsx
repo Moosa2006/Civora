@@ -958,7 +958,7 @@ export function ContractorWorkspacePage() {
                                 )}
                               </div>
 
-                              <div className="flex items-center gap-4 shrink-0">
+                              <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3 shrink-0">
                                 <div className="text-right text-xs">
                                   <span className="text-[#54625A] dark:text-[#C5D4C9] block">Target Amount</span>
                                   <strong className="text-[#1E6B52] dark:text-[#52B79A] text-sm font-mono">
@@ -966,21 +966,47 @@ export function ContractorWorkspacePage() {
                                   </strong>
                                 </div>
 
-                                {!isApproved && (
-                                  <Button
-                                    variant="primary"
-                                    size="sm"
-                                    onClick={() => {
-                                      setSelectedWorkOrder(wo);
-                                      setSelectedMilestone(m);
-                                      setIsMilestoneModalOpen(true);
-                                    }}
-                                  >
-                                    {m.status === 'REJECTED' || m.status === 'REJECTED_REVISION_REQUIRED'
-                                      ? 'Resubmit Claim'
-                                      : 'Claim Milestone'}
-                                  </Button>
-                                )}
+                                {!isApproved && (() => {
+                                  const latestWorkStart = (wo as any).workStartDeclarations?.[0];
+                                  const isWorkStartVerified = latestWorkStart?.status === 'VERIFIED';
+                                  const hasUnapprovedPredecessors = (wo as any).milestones?.some(
+                                    (prevM: any) =>
+                                      prevM.milestoneNumber < m.milestoneNumber &&
+                                      prevM.status !== 'APPROVED' &&
+                                      prevM.status !== 'COMPLETED'
+                                  );
+                                  const cannotClaimReason = !isWorkStartVerified
+                                    ? 'Work start must be verified by an official before claiming milestones.'
+                                    : hasUnapprovedPredecessors
+                                    ? `Prior milestones must be approved before claiming milestone ${m.milestoneNumber}.`
+                                    : null;
+
+                                  return (
+                                    <div className="flex flex-col items-end gap-1">
+                                      <Button
+                                        variant="primary"
+                                        size="sm"
+                                        disabled={Boolean(cannotClaimReason)}
+                                        title={cannotClaimReason || undefined}
+                                        onClick={() => {
+                                          if (cannotClaimReason) return;
+                                          setSelectedWorkOrder(wo);
+                                          setSelectedMilestone(m);
+                                          setIsMilestoneModalOpen(true);
+                                        }}
+                                      >
+                                        {m.status === 'REJECTED' || m.status === 'REJECTED_REVISION_REQUIRED'
+                                          ? 'Resubmit Claim'
+                                          : 'Claim Milestone'}
+                                      </Button>
+                                      {cannotClaimReason && (
+                                        <span className="text-[10px] text-amber-700 dark:text-amber-400 font-medium">
+                                          {cannotClaimReason}
+                                        </span>
+                                      )}
+                                    </div>
+                                  );
+                                })()}
                               </div>
                             </div>
                           );

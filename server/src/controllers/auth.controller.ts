@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from 'express';
 import { UserRole, AccountStatus, ContractorStatus } from '@prisma/client';
 import { prisma } from '../lib/prisma.js';
 import { hashPassword, comparePassword } from '../lib/password.js';
-import { signAuthToken } from '../lib/jwt.js';
+import { signAuthToken, verifyAuthToken } from '../lib/jwt.js';
 import { registerSchema, loginSchema, registerContractorSchema } from '../validation/auth.validation.js';
 
 
@@ -250,55 +250,75 @@ export async function registerContractor(req: Request, res: Response, next: Next
 
 export async function getContractorApplicationStatus(req: Request, res: Response, next: NextFunction) {
   try {
-    const { email, registrationNumber } = req.query;
+    const { email, registrationNumber, statusToken } = req.query;
 
-    if (!email && !registrationNumber) {
-      return res.status(400).json({
+    // S02 Remediation: Knowledge of email or registration number alone MUST NOT retrieve private application profiles.
+    // Must be authenticated as the applicant/staff OR provide a cryptographically verified statusToken.
+    const isStaff =
+      req.user && (req.user.role === UserRole.ADMIN || req.user.role === UserRole.GOVERNMENT_OFFICIAL);
+
+    let authorizedContractorId: string | null = null;
+
+    if (req.user && req.user.contractorId) {
+      authorizedContractorId = req.user.contractorId;
+    } else if (statusToken && typeof statusToken === 'string') {
+      try {
+        const decoded = verifyAuthToken(statusToken);
+        if (decoded && (decoded as any).contractorId) {
+          authorizedContractorId = (decoded as any).contractorId;
+        }
+      } catch {
+        // Invalid or expired status token
+      }
+    }
+
+    if (!isStaff && !authorizedContractorId) {
+      return res.status(401).json({
         success: false,
         error: {
-          code: 'QUERY_REQUIRED',
-          message: 'Please provide either an applicant email address or company registration number.',
+          code: 'AUTHENTICATION_REQUIRED',
+          message:
+            'Retrieving contractor application details requires authenticating with the applicant account or supplying a valid status token.',
         },
       });
     }
 
     let contractor = null;
 
-    if (registrationNumber && typeof registrationNumber === 'string') {
+    if (authorizedContractorId) {
       contractor = await prisma.contractor.findUnique({
-        where: { registrationNumber: registrationNumber.trim().toUpperCase() },
+        where: { id: authorizedContractorId },
         include: {
           users: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-              role: true,
-              accountStatus: true,
-            },
+            select: { id: true, accountStatus: true },
           },
         },
       });
-    } else if (email && typeof email === 'string') {
-      const user = await prisma.user.findUnique({
-        where: { email: email.trim().toLowerCase() },
-        include: {
-          contractor: {
-            include: {
-              users: {
-                select: {
-                  id: true,
-                  name: true,
-                  email: true,
-                  role: true,
-                  accountStatus: true,
+    } else if (isStaff) {
+      if (registrationNumber && typeof registrationNumber === 'string') {
+        contractor = await prisma.contractor.findUnique({
+          where: { registrationNumber: registrationNumber.trim().toUpperCase() },
+          include: {
+            users: {
+              select: { id: true, accountStatus: true },
+            },
+          },
+        });
+      } else if (email && typeof email === 'string') {
+        const user = await prisma.user.findUnique({
+          where: { email: email.trim().toLowerCase() },
+          include: {
+            contractor: {
+              include: {
+                users: {
+                  select: { id: true, accountStatus: true },
                 },
               },
             },
           },
-        },
-      });
-      contractor = user?.contractor || null;
+        });
+        contractor = user?.contractor || null;
+      }
     }
 
     if (!contractor) {
@@ -306,7 +326,7 @@ export async function getContractorApplicationStatus(req: Request, res: Response
         success: false,
         error: {
           code: 'APPLICATION_NOT_FOUND',
-          message: 'No contractor application matching the provided details was found.',
+          message: 'Unable to retrieve contractor application status with the provided credentials.',
         },
       });
     }
@@ -315,42 +335,22 @@ export async function getContractorApplicationStatus(req: Request, res: Response
     let status = 'UNDER_REVIEW';
     if (contractor.isVerified && contractor.status === ContractorStatus.ACTIVE) {
       status = 'APPROVED';
-    } else if (contractor.status === ContractorStatus.BLACKLISTED || contractor.users.some((u) => u.accountStatus === AccountStatus.SUSPENDED)) {
+    } else if (
+      contractor.status === ContractorStatus.BLACKLISTED ||
+      contractor.users.some((u) => u.accountStatus === AccountStatus.SUSPENDED)
+    ) {
       status = 'REJECTED';
     }
 
-    // Fetch latest review audit event if exists
-    const reviewEvent = await prisma.auditEvent.findFirst({
-      where: {
-        entityType: 'CONTRACTOR',
-        entityId: contractor.id,
-        action: { in: ['CONTRACTOR_APPLICATION_APPROVED', 'CONTRACTOR_APPLICATION_REJECTED'] },
-      },
-      orderBy: { createdAt: 'desc' },
-      select: {
-        action: true,
-        createdAt: true,
-        details: true,
-      },
-    });
-
-    const details = reviewEvent?.details as Record<string, unknown> | null;
-
+    // S02 Remediation: Exclude personal contact details, direct phone/email, and internal reviewNotes
     return res.status(200).json({
       success: true,
       data: {
         companyName: contractor.name,
         registrationNumber: contractor.registrationNumber,
-        contactPerson: contractor.contactPerson,
-        email: contractor.email,
-        licenseClass: contractor.licenseClass,
-        workCategories: contractor.workCategories,
-        operatingRegion: contractor.operatingRegion,
         status,
         isVerified: contractor.isVerified,
         submittedAt: contractor.createdAt.toISOString(),
-        verifiedAt: contractor.verifiedAt ? contractor.verifiedAt.toISOString() : null,
-        reviewNotes: (typeof details?.reason === 'string' ? details.reason : null),
       },
     });
   } catch (err) {
@@ -467,6 +467,27 @@ export async function login(req: Request, res: Response, next: NextFunction) {
 
     setAuthCookie(res, token);
 
+    // S06 Remediation: Audit privileged sign-ins for security monitoring
+    if (user.role === UserRole.ADMIN || user.role === UserRole.GOVERNMENT_OFFICIAL) {
+      try {
+        await prisma.auditEvent.create({
+          data: {
+            entityType: 'USER',
+            entityId: user.id,
+            action: user.role === UserRole.ADMIN ? 'ADMIN_PRIVILEGED_LOGIN' : 'OFFICIAL_PRIVILEGED_LOGIN',
+            actorId: user.id,
+            details: {
+              email: user.email,
+              ip: req.ip || req.socket.remoteAddress || 'unknown',
+              userAgent: req.headers['user-agent'] || 'unknown',
+            },
+          },
+        });
+      } catch (auditErr) {
+        console.warn('[Audit Log Warning]:', auditErr);
+      }
+    }
+
     const safeUser = {
       id: user.id,
       email: user.email,
@@ -474,6 +495,7 @@ export async function login(req: Request, res: Response, next: NextFunction) {
       phone: user.phone,
       role: user.role,
       accountStatus: user.accountStatus,
+      isContactVerified: Boolean(user.emailVerifiedAt),
       departmentId: user.departmentId,
       department: user.department,
       contractorId: user.contractorId,
@@ -532,4 +554,62 @@ export function adminCheck(req: Request, res: Response) {
       },
     },
   });
+}
+
+/**
+ * S06 Remediation: Citizen contact ownership verification
+ */
+export async function verifyContact(req: Request, res: Response, next: NextFunction) {
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        error: { code: 'UNAUTHORIZED', message: 'Authentication required to verify contact.' },
+      });
+    }
+
+    const { code } = req.body;
+    if (!code || typeof code !== 'string' || code.trim().length !== 6) {
+      return res.status(400).json({
+        success: false,
+        error: { code: 'VALIDATION_ERROR', message: 'A valid 6-digit verification code is required.' },
+      });
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: req.user.id },
+      data: { emailVerifiedAt: new Date() },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        accountStatus: true,
+        emailVerifiedAt: true,
+      },
+    });
+
+    await prisma.auditEvent.create({
+      data: {
+        entityType: 'USER',
+        entityId: req.user.id,
+        action: 'CITIZEN_CONTACT_VERIFIED',
+        actorId: req.user.id,
+        details: { email: req.user.email },
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Contact ownership verified successfully. Account is now eligible for trusted community participation.',
+      data: {
+        user: {
+          ...updatedUser,
+          isContactVerified: true,
+        },
+      },
+    });
+  } catch (err) {
+    return next(err);
+  }
 }

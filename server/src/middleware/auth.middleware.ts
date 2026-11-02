@@ -100,6 +100,11 @@ export async function authenticateUser(
       });
     }
 
+    // S05 Remediation: Authenticated operational and user data must never be cached by shared proxies, CDNs, or browsers
+    res.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+
     req.user = user;
     return next();
   } catch (err) {

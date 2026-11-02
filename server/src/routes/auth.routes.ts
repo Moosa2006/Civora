@@ -9,6 +9,7 @@ import {
   getCurrentUser,
   logout,
   adminCheck,
+  verifyContact,
 } from '../controllers/auth.controller.js';
 import {
   postBootstrapAdmin,
@@ -61,6 +62,7 @@ router.post('/logout', logout);
 
 // Protected routes (Require active authentication)
 router.get('/me', authenticateUser, getCurrentUser);
+router.post('/verify-contact', authenticateUser, verifyContact);
 
 // Role-protected test route (Requires ADMIN role)
 router.get('/admin-check', authenticateUser, requireRoles(UserRole.ADMIN), adminCheck);

@@ -513,6 +513,10 @@ const complaintTrackArgs = Prisma.validator<Prisma.ComplaintDefaultArgs>()({
         mimeType: true,
         fileSize: true,
         documentCategory: true,
+        evidencePurpose: true,
+        visibility: true,
+        description: true,
+        reviewStatus: true,
         sha256Checksum: true,
         perceptualHash: true,
         capturedAt: true,
@@ -532,6 +536,12 @@ const complaintTrackArgs = Prisma.validator<Prisma.ComplaintDefaultArgs>()({
         resolutionNotes: true,
         resolvedAt: true,
         verifiedAt: true,
+        assignedDepartment: {
+          select: {
+            code: true,
+            name: true,
+          },
+        },
       },
     },
     sla: true,
@@ -741,12 +751,79 @@ export async function trackComplaintByTrackingId(req: Request, res: Response, ne
       })
       .filter((u) => u.visibility === 'PUBLIC');
 
-    const isOwner = req.user && (req.user.id === complaint.citizenId || req.user.role === 'ADMIN');
+    const isOwner = Boolean(req.user && req.user.id === complaint.citizenId);
+    const isStaff = Boolean(
+      req.user && (req.user.role === UserRole.ADMIN || req.user.role === UserRole.GOVERNMENT_OFFICIAL)
+    );
+    const canAccessPrivateDetails = isOwner || isStaff;
 
     // Effective workflow status reflects master issue progress if linked
     const effectiveStatus = complaint.primaryComplaint ? complaint.primaryComplaint.status : complaint.status;
-    const effectiveResolutionNotes = complaint.primaryComplaint ? complaint.primaryComplaint.resolutionNotes : complaint.resolutionNotes;
-    const effectiveResolvedAt = complaint.primaryComplaint ? complaint.primaryComplaint.resolvedAt : complaint.resolvedAt;
+    const effectiveResolutionNotes = complaint.primaryComplaint
+      ? complaint.primaryComplaint.resolutionNotes
+      : complaint.resolutionNotes;
+    const effectiveResolvedAt = complaint.primaryComplaint
+      ? complaint.primaryComplaint.resolvedAt
+      : complaint.resolvedAt;
+    const effectiveDepartment = complaint.assignedDepartment || complaint.primaryComplaint?.assignedDepartment || null;
+
+    // Strict privacy-safe location handling
+    const safeAddress =
+      complaint.isLocationPublic || canAccessPrivateDetails
+        ? complaint.locationAddress
+        : `[Private Location in ${complaint.ward || complaint.locality || 'Municipal Jurisdiction'}]`;
+
+    // Strictly allowlisted public evidence DTO:
+    // S01 Remediation: NO exact capture coordinates, accuracy, timestamps, or perceptual/cryptographic hashes exposed to public users
+    const safeEvidence = complaint.documents
+      .filter((d: ComplaintTrackPayload['documents'][number]) => d.visibility === 'PUBLIC' || canAccessPrivateDetails)
+      .map((d: ComplaintTrackPayload['documents'][number]) => ({
+        id: d.id,
+        fileName: d.fileName,
+        fileSize: Number(d.fileSize),
+        mimeType: d.mimeType,
+        documentCategory: d.documentCategory,
+        evidencePurpose: d.evidencePurpose,
+        visibility: d.visibility,
+        description: d.description,
+        reviewStatus: d.reviewStatus,
+        createdAt: d.createdAt,
+        downloadUrl: `/api/evidence/${d.id}/download`,
+        fileUrl: `/api/evidence/${d.id}/file`,
+        ...(canAccessPrivateDetails
+          ? {
+              captureLatitude: d.captureLatitude ? Number(d.captureLatitude) : null,
+              captureLongitude: d.captureLongitude ? Number(d.captureLongitude) : null,
+              captureAccuracy: d.captureAccuracy ? Number(d.captureAccuracy) : null,
+              browserCaptureTimestamp: d.browserCaptureTimestamp,
+              isGpsVerified: d.isGpsVerified,
+              sha256Checksum: d.sha256Checksum,
+              perceptualHash: d.perceptualHash,
+            }
+          : {}),
+      }));
+
+    const isNoSla =
+      !complaint.sla ||
+      complaint.sla.policyName === 'No Configured SLA Policy' ||
+      complaint.sla.slaStatus === 'NO_SLA';
+
+    const safeSla = complaint.sla
+      ? {
+          policyName: complaint.sla.policyName,
+          clockStartedAt: complaint.sla.clockStartedAt,
+          responseDeadline: complaint.sla.currentResponseDeadline,
+          resolutionDeadline: complaint.sla.currentResolutionDeadline,
+          currentResponseDeadline: complaint.sla.currentResponseDeadline,
+          currentResolutionDeadline: complaint.sla.currentResolutionDeadline,
+          isOverdue: complaint.sla.isResolutionOverdue || complaint.sla.isResponseOverdue,
+          slaStatus: isNoSla ? 'NO_SLA' : complaint.sla.slaStatus,
+          estimatedCompletionDate: complaint.sla.estimatedCompletionDate,
+          estimatedCompletionNotes: complaint.sla.estimatedCompletionNotes,
+          isEscalated: complaint.escalations && complaint.escalations.length > 0,
+          escalationLevel: complaint.escalations?.[0]?.escalationLevel || null,
+        }
+      : null;
 
     // Return strictly privacy-safe fields: ZERO citizen PII (no name, no email, no phone)
     const publicRecord = {
@@ -758,9 +835,10 @@ export async function trackComplaintByTrackingId(req: Request, res: Response, ne
       priority: complaint.priority,
       status: effectiveStatus,
       isConsolidatedReport: Boolean(complaint.primaryComplaintId),
+      masterTrackingId: complaint.primaryComplaint?.trackingId || null,
       category: complaint.category,
-      assignedDepartment: complaint.assignedDepartment,
-      locationAddress: complaint.locationAddress,
+      assignedDepartment: effectiveDepartment,
+      locationAddress: safeAddress,
       locality: complaint.locality,
       ward: complaint.ward,
       createdAt: complaint.createdAt,
@@ -773,26 +851,8 @@ export async function trackComplaintByTrackingId(req: Request, res: Response, ne
       timeline: complaint.statusHistory,
       progressUpdates: publicProgress,
       inspections: complaint.inspections,
-      evidence: complaint.documents.map((d: ComplaintTrackPayload['documents'][number]) => ({
-        ...d,
-        fileSize: Number(d.fileSize),
-        captureLatitude: d.captureLatitude ? Number(d.captureLatitude) : null,
-        captureLongitude: d.captureLongitude ? Number(d.captureLongitude) : null,
-      })),
-      sla: complaint.sla
-        ? {
-            policyName: complaint.sla.policyName,
-            clockStartedAt: complaint.sla.clockStartedAt,
-            responseDeadline: complaint.sla.currentResponseDeadline,
-            resolutionDeadline: complaint.sla.currentResolutionDeadline,
-            isOverdue: complaint.sla.isResolutionOverdue || complaint.sla.isResponseOverdue,
-            slaStatus: complaint.sla.slaStatus,
-            estimatedCompletionDate: complaint.sla.estimatedCompletionDate,
-            estimatedCompletionNotes: complaint.sla.estimatedCompletionNotes,
-            isEscalated: complaint.escalations && complaint.escalations.length > 0,
-            escalationLevel: complaint.escalations?.[0]?.escalationLevel || null,
-          }
-        : null,
+      evidence: safeEvidence,
+      sla: safeSla,
     };
 
     return res.status(200).json({

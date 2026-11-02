@@ -75,12 +75,18 @@ export function LandingPage() {
           />
 
           {/* Parliament Building and Citizens Assembly Image */}
-          <img
-            src="/parliament.png"
-            alt="Parliament of India with Citizens Assembly"
-            className="relative z-10 w-full max-w-5xl h-auto object-contain select-none pointer-events-none"
-            loading="eager"
-          />
+          <picture className="relative z-10 w-full max-w-5xl flex justify-center">
+            <source srcSet="/parliament.webp" type="image/webp" />
+            <img
+              src="/parliament.png"
+              alt="Parliament of India with Citizens Assembly"
+              width={1667}
+              height={943}
+              className="w-full max-w-5xl h-auto object-contain select-none pointer-events-none"
+              loading="eager"
+              decoding="async"
+            />
+          </picture>
         </div>
       </section>
 

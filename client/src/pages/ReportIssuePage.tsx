@@ -21,7 +21,7 @@ import { useRouter } from '../router';
 import { LocationPickerModal } from '../components/map/LocationPickerModal';
 import { useTranslation } from '../context/useTranslation';
 import { announceToScreenReader } from '../components/ui/LiveAnnouncer';
-import { MUNICIPAL_WARDS } from '../config/wards';
+import { MUNICIPAL_WARDS, SUPPORTED_MUNICIPALITY } from '../config/wards';
 import {
   computeClientSha256,
   computeClientDHash,
@@ -32,7 +32,7 @@ import {
 import type { ComplaintCategory, ComplaintPriority } from '../types/complaint';
 
 export function ReportIssuePage() {
-  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const { navigate } = useRouter();
   const { t } = useTranslation();
 
@@ -90,6 +90,17 @@ export function ReportIssuePage() {
   const [locationSource, setLocationSource] = useState<'GPS_DEVICE' | 'MAP_PICKER' | 'MANUAL_ENTRY'>('MANUAL_ENTRY');
   const [isLocationPublic, setIsLocationPublic] = useState(true);
 
+  // Idempotency & Upload Recovery State (L01 & L02)
+  const [formIdempotencyKey, setFormIdempotencyKey] = useState<string>(() => {
+    return typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : 'idemp_' + Math.random().toString(36).substring(2);
+  });
+  const [pendingEvidenceComplaint, setPendingEvidenceComplaint] = useState<{
+    id: string;
+    trackingId: string;
+    title: string;
+  } | null>(null);
+  const [isRetryingEvidence, setIsRetryingEvidence] = useState(false);
+
   // Success state
   const [submittedData, setSubmittedData] = useState<{
     trackingId: string;
@@ -99,11 +110,11 @@ export function ReportIssuePage() {
   } | null>(null);
   const [copied, setCopied] = useState(false);
 
-  // Module 15: Draft persistence & offline resilience
-  const DRAFT_STORAGE_KEY = 'civora_complaint_draft';
+  // User-scoped draft persistence (L02)
+  const DRAFT_STORAGE_KEY = user?.id ? `civora_complaint_draft_${user.id}` : 'civora_complaint_draft_guest';
   const [draftRestoredBanner, setDraftRestoredBanner] = useState(false);
 
-  // Restore draft on mount
+  // Restore draft on mount or when user session resolves
   useEffect(() => {
     try {
       const saved = localStorage.getItem(DRAFT_STORAGE_KEY);
@@ -132,7 +143,7 @@ export function ReportIssuePage() {
     } catch {
       // Ignore parse failure
     }
-  }, [t]);
+  }, [t, DRAFT_STORAGE_KEY]);
 
   // Debounced auto-save draft
   useEffect(() => {
@@ -160,7 +171,7 @@ export function ReportIssuePage() {
     }, 400);
 
     return () => clearTimeout(timer);
-  }, [title, categoryId, priority, locality, locationAddress, ward, description, latitude, longitude, isLocationPublic]);
+  }, [title, categoryId, priority, locality, locationAddress, ward, description, latitude, longitude, isLocationPublic, DRAFT_STORAGE_KEY]);
 
   const handleDiscardDraft = () => {
     try {
@@ -171,7 +182,7 @@ export function ReportIssuePage() {
     announceToScreenReader('Draft discarded.');
   };
 
-  // Fetch active categories on mount
+  // Fetch active categories on mount (L05: require intentional category selection)
   const loadCategories = useCallback(async () => {
     setLoadingCategories(true);
     try {
@@ -179,9 +190,6 @@ export function ReportIssuePage() {
       const json = await res.json();
       if (json.success && Array.isArray(json.data)) {
         setCategories(json.data);
-        if (json.data.length > 0) {
-          setCategoryId((prev) => prev || json.data[0].id);
-        }
       }
     } catch {
       setErrorMsg('Failed to load categories. Please check your internet connection.');
@@ -393,7 +401,7 @@ export function ReportIssuePage() {
         locationAddress: locationAddress.trim(),
         description: `${description.trim()}${durationNote}`,
         clientPerceptualHash: primaryImg?.perceptualHash || undefined,
-        idempotencyKey: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : undefined,
+        idempotencyKey: formIdempotencyKey,
       };
 
       if (latitude && !isNaN(Number(latitude))) {
@@ -466,14 +474,38 @@ export function ReportIssuePage() {
             uploadHeaders['Authorization'] = `Bearer ${token}`;
           }
 
-          await fetch(`/api/evidence/complaints/${json.data.complaint.id}/upload`, {
+          const uploadRes = await fetch(`/api/evidence/complaints/${json.data.complaint.id}/upload`, {
             method: 'POST',
             headers: uploadHeaders,
             credentials: 'include',
             body: formData,
           });
-        } catch (uploadErr) {
+
+          if (!uploadRes.ok) {
+            const errBody = await uploadRes.json().catch(() => ({}));
+            setPendingEvidenceComplaint({
+              id: json.data.complaint.id,
+              trackingId: json.data.trackingId,
+              title: json.data.complaint.title,
+            });
+            setErrorMsg(
+              `Complaint registered with Tracking ID ${json.data.trackingId}, but photographic evidence upload failed (${errBody.error?.message || 'Server upload error'}). Please click 'Retry Uploading Photos' below to complete filing without creating a duplicate complaint.`
+            );
+            setSubmitting(false);
+            return;
+          }
+        } catch (uploadErr: any) {
           console.warn('[Evidence Upload Error during complaint lodging]:', uploadErr);
+          setPendingEvidenceComplaint({
+            id: json.data.complaint.id,
+            trackingId: json.data.trackingId,
+            title: json.data.complaint.title,
+          });
+          setErrorMsg(
+            `Complaint registered with Tracking ID ${json.data.trackingId}, but photo upload encountered a network issue. Please click 'Retry Uploading Photos' below to re-submit your photos.`
+          );
+          setSubmitting(false);
+          return;
         }
       }
 
@@ -482,6 +514,8 @@ export function ReportIssuePage() {
         localStorage.removeItem(DRAFT_STORAGE_KEY);
         setDraftRestoredBanner(false);
       } catch {}
+      setFormIdempotencyKey(typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : 'idemp_' + Math.random().toString(36).substring(2));
+      setPendingEvidenceComplaint(null);
       setSubmittedData({
         trackingId: json.data.trackingId,
         title: json.data.complaint.title,
@@ -497,9 +531,81 @@ export function ReportIssuePage() {
     }
   };
 
+  const handleRetryEvidenceUpload = async () => {
+    if (!pendingEvidenceComplaint || evidenceFiles.length === 0) return;
+    setIsRetryingEvidence(true);
+    setErrorMsg(null);
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('civora_token') : null;
+      const primaryImg = analyzedImages[0];
+      const formData = new FormData();
+      evidenceFiles.forEach((file) => formData.append('files', file));
+      formData.append('evidencePurpose', 'CITIZEN_SUPPORTING');
+      formData.append(
+        'description',
+        'Photographic evidence submitted during complaint filing with capture verification.'
+      );
+
+      if (primaryImg) {
+        if (primaryImg.perceptualHash) {
+          formData.append('clientPerceptualHash', primaryImg.perceptualHash);
+        }
+        if (primaryImg.browserCapturedAt) {
+          formData.append('browserCaptureTimestamp', primaryImg.browserCapturedAt.toISOString());
+        }
+        if (primaryImg.exifLatitude !== null && primaryImg.exifLongitude !== null) {
+          formData.append('browserLatitude', String(primaryImg.exifLatitude));
+          formData.append('browserLongitude', String(primaryImg.exifLongitude));
+        } else if (primaryImg.browserLatitude && primaryImg.browserLongitude) {
+          formData.append('browserLatitude', String(primaryImg.browserLatitude));
+          formData.append('browserLongitude', String(primaryImg.browserLongitude));
+          if (primaryImg.browserAccuracy) {
+            formData.append('browserAccuracy', String(primaryImg.browserAccuracy));
+          }
+        }
+      }
+
+      const uploadHeaders: Record<string, string> = {};
+      if (token) {
+        uploadHeaders['Authorization'] = `Bearer ${token}`;
+      }
+
+      const uploadRes = await fetch(`/api/evidence/complaints/${pendingEvidenceComplaint.id}/upload`, {
+        method: 'POST',
+        headers: uploadHeaders,
+        credentials: 'include',
+        body: formData,
+      });
+
+      if (!uploadRes.ok) {
+        const errBody = await uploadRes.json().catch(() => ({}));
+        throw new Error(errBody.error?.message || 'Evidence upload retry failed.');
+      }
+
+      try {
+        localStorage.removeItem(DRAFT_STORAGE_KEY);
+        setDraftRestoredBanner(false);
+      } catch {}
+      setFormIdempotencyKey(typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : 'idemp_' + Math.random().toString(36).substring(2));
+      setSubmittedData({
+        trackingId: pendingEvidenceComplaint.trackingId,
+        title: pendingEvidenceComplaint.title,
+        status: 'OPEN',
+        createdAt: new Date().toISOString(),
+      });
+      setPendingEvidenceComplaint(null);
+      announceToScreenReader(t('complaints.successTitle'));
+      window.scrollTo(0, 0);
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Evidence upload retry failed. Please try again or check your network connection.');
+    } finally {
+      setIsRetryingEvidence(false);
+    }
+  };
+
   const handleResetForm = () => {
     setTitle('');
-    if (categories.length > 0) setCategoryId(categories[0].id);
+    setCategoryId('');
     setPriority('LOW');
     setDuration('JUST_NOTICED');
     setLocality('');
@@ -513,6 +619,8 @@ export function ReportIssuePage() {
     setLocationStatus(null);
     setSubmittedData(null);
     setFieldErrors({});
+    setPendingEvidenceComplaint(null);
+    setFormIdempotencyKey(typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : 'idemp_' + Math.random().toString(36).substring(2));
   };
 
   // If not authenticated, prompt sign-in
@@ -654,7 +762,30 @@ export function ReportIssuePage() {
 
       {errorMsg && (
         <Alert variant="error" title="Submission Error">
-          {errorMsg}
+          <div className="space-y-3">
+            <p>{errorMsg}</p>
+            {pendingEvidenceComplaint && (
+              <div className="pt-2 flex flex-wrap items-center gap-3">
+                <Button
+                  type="button"
+                  variant="primary"
+                  size="sm"
+                  onClick={handleRetryEvidenceUpload}
+                  isLoading={isRetryingEvidence}
+                >
+                  Retry Uploading Photos
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate(`/track?id=${pendingEvidenceComplaint.trackingId}`)}
+                >
+                  Track Complaint Directly
+                </Button>
+              </div>
+            )}
+          </div>
         </Alert>
       )}
 
@@ -766,7 +897,7 @@ export function ReportIssuePage() {
                     id="issue-ward"
                     label="Municipal Ward"
                     required
-                    helperText="Mandatory municipal ward jurisdiction"
+                    helperText={`Mandatory municipal ward jurisdiction (${SUPPORTED_MUNICIPALITY})`}
                     error={fieldErrors.ward?.[0]}
                   >
                     <Select

@@ -21,6 +21,16 @@ export function createApp() {
   // Attach safe correlation ID to every request
   app.use(requestIdMiddleware);
 
+  // S04 & S05 Remediation: Enforce standard security and privacy headers
+  app.use((_req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('Permissions-Policy', 'camera=(self), geolocation=(self), microphone=()');
+    next();
+  });
+
   // Dynamic and resilient CORS configuration supporting production, custom, and preview domains
   const clientOriginEnv = process.env.CLIENT_ORIGIN || 'https://civora-tau.vercel.app';
   const configuredOrigins = clientOriginEnv
@@ -55,6 +65,32 @@ export function createApp() {
       allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
     })
   );
+
+  // S03 Remediation: CSRF Origin Protection on all state-changing mutations
+  app.use((req, res, next) => {
+    const mutationMethods = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
+    if (mutationMethods.has(req.method)) {
+      const originHeader = req.headers.origin;
+      if (originHeader) {
+        const normalized = originHeader.trim().replace(/\/+$/, '');
+        const isAllowed =
+          allowedOrigins.has(normalized) ||
+          /^https:\/\/civora-[a-z0-9-]+.*\.vercel\.app$/.test(normalized) ||
+          /^https:\/\/.*\.vercel\.app$/.test(normalized);
+
+        if (!isAllowed) {
+          return res.status(403).json({
+            success: false,
+            error: {
+              code: 'CSRF_ORIGIN_DENIED',
+              message: 'Request origin is not authorized for state-changing mutations.',
+            },
+          });
+        }
+      }
+    }
+    next();
+  });
   app.use(express.json());
   app.use(cookieParser());
 
