@@ -189,7 +189,7 @@ export function PollDetailPage() {
             </span>
           </div>
 
-          <span className="text-xs text-[#C5D4C9] dark:text-[#54625A] flex items-center gap-1">
+          <span className="text-xs text-[#54625A] dark:text-[#C5D4C9] flex items-center gap-1">
             <ClockIcon className="w-3.5 h-3.5" />
             {isClosed ? 'Closed' : `Deadline: ${new Date(poll.endDate).toLocaleDateString()}`}
           </span>
@@ -232,8 +232,8 @@ export function PollDetailPage() {
 
         {/* Already Voted Banner */}
         {poll.hasVoted && (
-          <div className="p-4 rounded-xl bg-emerald-950/20 border border-emerald-500/30 flex items-center gap-3 text-xs text-emerald-300">
-            <CheckCircleIcon className="w-5 h-5 text-emerald-400 shrink-0" />
+          <div className="p-4 rounded-xl bg-[#EDF7F4] dark:bg-emerald-950/20 border border-[#98D6C5] dark:border-emerald-500/30 flex items-center gap-3 text-xs text-[#185541] dark:text-emerald-300 font-medium">
+            <CheckCircleIcon className="w-5 h-5 text-[#1E6B52] dark:text-emerald-400 shrink-0" />
             <div>
               <strong>Your participation is recorded.</strong> Thank you for sharing your perspective on this civic issue.
             </div>
@@ -276,7 +276,7 @@ export function PollDetailPage() {
             </div>
 
             <div className="pt-4 flex items-center justify-between">
-              <span className="text-xs text-[#C5D4C9] dark:text-[#54625A]">
+              <span className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
                 {poll.pollType === 'SINGLE_CHOICE'
                   ? 'Select 1 option'
                   : `Select up to ${poll.maxSelections} option(s)`}
@@ -309,7 +309,7 @@ export function PollDetailPage() {
                     key={opt.id}
                     className={`p-4 rounded-xl border space-y-2 ${
                       wasVoted
-                        ? 'bg-blue-950/20 border-blue-500/40'
+                        ? 'bg-[#EDF5F7] dark:bg-blue-950/20 border-[#4F9B8B] dark:border-blue-500/40'
                         : 'bg-[#ECE7DB]/40 dark:bg-[#1D2A25]/40 border-[#DED8CB] dark:border-[#283931]'
                     }`}
                   >
@@ -317,7 +317,7 @@ export function PollDetailPage() {
                       <div className="flex items-center gap-2">
                         <span className="font-semibold text-[#202522] dark:text-[#E8F0EC]">{opt.text}</span>
                         {wasVoted && (
-                          <span className="text-[10px] text-blue-400 bg-blue-500/10 px-1.5 py-0.2 rounded border border-blue-500/20">
+                          <span className="text-[10px] text-[#1D584D] dark:text-blue-300 bg-[#4F9B8B]/15 dark:bg-blue-500/20 px-1.5 py-0.5 rounded border border-[#4F9B8B]/30 dark:border-blue-500/30 font-semibold">
                             Your Vote
                           </span>
                         )}

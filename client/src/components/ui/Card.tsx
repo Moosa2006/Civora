@@ -13,7 +13,7 @@ export function Card({ children, className = '', variant = 'default', ...props }
     subtle:
       'bg-[#FAF8F5] dark:bg-[#141C18] border border-[#EAE5D9] dark:border-[#212C26]',
     interactive:
-      'bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] hover:border-[#173D32] dark:hover:border-[#4F9B8B] transition-colors shadow-[0_1px_3px_rgba(32,37,34,0.04)] hover:shadow-sm cursor-pointer',
+      'bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] hover:border-[#173D32] dark:hover:border-[#4F9B8B] transition-all duration-200 ease-out shadow-[0_1px_3px_rgba(32,37,34,0.04)] hover:shadow-md hover:-translate-y-0.5 cursor-pointer',
   };
 
   return (

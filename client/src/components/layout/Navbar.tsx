@@ -62,8 +62,8 @@ export function Navbar() {
   };
 
   const navLinkBase =
-    'px-2.5 xl:px-3 py-1.5 rounded-lg text-xs xl:text-sm font-medium text-[#E4E0D5] hover:text-white hover:bg-[#112F26]/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A8BFAE] min-h-[36px] flex items-center whitespace-nowrap shrink-0 font-sans';
-  const navLinkActive = 'text-white bg-[#112F26] font-semibold shadow-xs border border-[#A8BFAE]/30';
+    'px-2.5 xl:px-3 py-1.5 rounded-lg text-xs xl:text-sm font-medium text-[#E4E0D5] hover:text-white hover:bg-[#112F26] transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A8BFAE] min-h-[36px] flex items-center whitespace-nowrap shrink-0 font-sans';
+  const navLinkActive = 'text-white bg-[#112F26] font-semibold shadow-xs border border-[#A8BFAE]/40 ring-1 ring-white/10';
 
   const getRoleBadge = (userRole?: string) => {
     switch (userRole) {
@@ -178,10 +178,10 @@ export function Navbar() {
                       onClick={() => setSecondaryDropdownOpen((prev) => !prev)}
                       aria-expanded={secondaryDropdownOpen}
                       aria-haspopup="true"
-                      className={`px-2.5 xl:px-3 py-1.5 rounded-lg text-xs xl:text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A8BFAE] min-h-[36px] flex items-center gap-1.5 whitespace-nowrap cursor-pointer font-sans ${
+                      className={`px-2.5 xl:px-3 py-1.5 rounded-lg text-xs xl:text-sm font-medium transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A8BFAE] min-h-[36px] flex items-center gap-1.5 whitespace-nowrap cursor-pointer font-sans ${
                         isDropdownActive
-                          ? 'text-white bg-[#112F26] border border-[#A8BFAE]/30 font-semibold'
-                          : 'text-[#E4E0D5] hover:text-white hover:bg-[#112F26]/80'
+                          ? 'text-white bg-[#112F26] border border-[#A8BFAE]/40 font-semibold ring-1 ring-white/10'
+                          : 'text-[#E4E0D5] hover:text-white hover:bg-[#112F26]'
                       }`}
                     >
                       {getDropdownIcon()}

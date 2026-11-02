@@ -223,7 +223,7 @@ async function runAuditVerificationSuite() {
         },
       });
       assert(
-        authRes.headers['cache-control']?.includes('no-store'),
+        Boolean(authRes.headers['cache-control']?.includes('no-store')),
         'Authenticated endpoints enforce Cache-Control: private, no-store'
       );
     }
@@ -343,7 +343,6 @@ async function runAuditVerificationSuite() {
         userId: contractorUser.id,
         email: contractorUser.email,
         role: contractorUser.role,
-        contractorId: contractorUser.contractorId,
       });
 
       // Find a work order with milestones where work start is NOT verified

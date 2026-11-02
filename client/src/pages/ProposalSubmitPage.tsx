@@ -288,7 +288,7 @@ export function ProposalSubmitPage() {
             </ul>
           </Card>
 
-          <Card className="p-4 bg-blue-950/20 border-blue-900/30 text-xs text-blue-300">
+          <Card className="p-4 bg-[#EDF5F7] dark:bg-blue-950/20 border-[#B7D8DE] dark:border-blue-900/30 text-xs text-[#1D584D] dark:text-blue-300 font-medium">
             Proposals are community suggestions and do not constitute formal budget sanctions or procurement commitments.
           </Card>
         </div>

@@ -1294,7 +1294,7 @@ export function AdminSystemPage() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-xs text-[#C5D4C9] dark:text-[#54625A] py-4 text-center">No recent administrative audit records found.</p>
+                  <p className="text-xs text-[#54625A] dark:text-[#C5D4C9] py-4 text-center">No recent administrative audit records found.</p>
                 )}
               </CardContent>
             </Card>
@@ -1333,7 +1333,7 @@ export function AdminSystemPage() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-xs text-[#C5D4C9] dark:text-[#54625A] py-4 text-center">No open incidents. Systems operating within parameters.</p>
+                  <p className="text-xs text-[#54625A] dark:text-[#C5D4C9] py-4 text-center">No open incidents. Systems operating within parameters.</p>
                 )}
               </CardContent>
             </Card>
@@ -1431,7 +1431,7 @@ export function AdminSystemPage() {
             </CardHeader>
             <CardContent>
               {configHistory.length === 0 ? (
-                <p className="text-xs text-[#C5D4C9] dark:text-[#54625A] py-4 text-center">No configuration changes logged yet.</p>
+                <p className="text-xs text-[#54625A] dark:text-[#C5D4C9] py-4 text-center">No configuration changes logged yet.</p>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs text-[#3E4B44] dark:text-[#C5D4C9]">

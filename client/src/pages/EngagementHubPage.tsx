@@ -353,7 +353,7 @@ export function EngagementHubPage() {
           {/* Filters & Search */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 p-4 rounded-xl border border-[#DED8CB] dark:border-[#283931]">
             <div className="relative flex-1">
-              <SearchIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#C5D4C9] dark:text-[#54625A]" />
+              <SearchIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#54625A] dark:text-[#C5D4C9]" />
               <input
                 type="text"
                 placeholder="Search proposals by title, tracking ID, or keyword..."
@@ -468,7 +468,7 @@ export function EngagementHubPage() {
                       <span className="hidden sm:inline">Endorse</span>
                     </button>
 
-                    <div className="flex items-center gap-3 text-xs text-[#C5D4C9] dark:text-[#54625A]">
+                    <div className="flex items-center gap-3 text-xs text-[#54625A] dark:text-[#C5D4C9]">
                       <span className="flex items-center gap-1">
                         <ChatBubbleIcon className="w-3.5 h-3.5" /> {proposal.commentsCount || 0}
                       </span>
@@ -549,7 +549,7 @@ export function EngagementHubPage() {
                         </div>
                       ))}
                       {poll.options.length > 3 && (
-                        <span className="text-[11px] text-[#C5D4C9] dark:text-[#54625A] block text-right">
+                        <span className="text-[11px] text-[#54625A] dark:text-[#C5D4C9] block text-right">
                           +{poll.options.length - 3} more options
                         </span>
                       )}

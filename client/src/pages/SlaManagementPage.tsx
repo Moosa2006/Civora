@@ -810,7 +810,7 @@ export function SlaManagementPage() {
 
                   {isAdmin && (
                     <div className="pt-2 flex items-center justify-between border-t border-[#DED8CB] dark:border-[#283931]">
-                      <span className="text-[11px] text-[#C5D4C9] dark:text-[#54625A]">
+                      <span className="text-[11px] text-[#54625A] dark:text-[#C5D4C9]">
                         Used by {pol._count?.complaintSlas ?? 0} case(s)
                       </span>
                       <Button
@@ -1069,7 +1069,7 @@ export function SlaManagementPage() {
                         {dept.activeOverdue > 0 ? (
                           <span className="font-bold text-red-400">{dept.activeOverdue}</span>
                         ) : (
-                          <span className="text-[#C5D4C9] dark:text-[#54625A]">0</span>
+                          <span className="text-[#54625A] dark:text-[#C5D4C9]">0</span>
                         )}
                       </td>
                     </tr>

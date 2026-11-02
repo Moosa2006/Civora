@@ -384,7 +384,7 @@ export function TrackComplaintPage() {
 
           {/* Reopened Banner */}
           {complaint.status === 'REOPENED' && (
-            <Card className="border-amber-500/40 bg-amber-950/20">
+            <Card className="border-[#F3B768]/60 dark:border-amber-500/40 bg-[#FEF6E9] dark:bg-amber-950/20">
               <CardContent className="p-4 flex items-center gap-3">
                 <AlertTriangleIcon className="w-6 h-6 text-amber-400 shrink-0" />
                 <div className="text-xs">

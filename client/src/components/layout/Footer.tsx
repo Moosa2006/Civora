@@ -4,135 +4,128 @@ import { useTranslation } from '../../context/useTranslation.js';
 
 const CURRENT_YEAR = new Date().getFullYear();
 
+interface FooterLinkProps {
+  to: string;
+  label: string;
+}
+
+function FooterLink({ to, label }: FooterLinkProps) {
+  return (
+    <li>
+      <NavLink
+        to={to}
+        className="group inline-flex items-center text-xs text-[#D6E5DE] hover:text-[#63D6B5] transition-all duration-200 ease-out hover:translate-x-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#63D6B5] rounded-xs"
+      >
+        <span className="relative after:content-[''] after:absolute after:-bottom-0.5 after:left-0 after:w-0 after:h-[1px] after:bg-[#63D6B5] group-hover:after:w-full after:transition-all after:duration-200">
+          {label}
+        </span>
+      </NavLink>
+    </li>
+  );
+}
+
 export function Footer() {
   const { t } = useTranslation();
 
   return (
-    <footer className="w-full border-t border-[#173D32] bg-[#102620] mt-16 text-[#A8BFAE] font-sans">
-      <Container size="lg" className="py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
-          {/* Civora Mission */}
-          <div className="md:col-span-1 space-y-3">
+    <footer className="w-full border-t border-[#285044] bg-[#0B2921] text-[#D6E5DE] font-sans mt-12 sm:mt-16">
+      <Container size="lg" className="py-8 sm:py-10">
+        {/* Main 4-Column Structured Desktop Layout */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+          {/* Column 1: Civora Branding & Purpose */}
+          <div className="space-y-2.5">
             <div className="flex items-center space-x-2.5">
               <img
                 src="/civora_icon.jpeg"
                 alt="Civora Emblem"
-                className="w-8 h-8 rounded-lg object-contain bg-white p-0.5 shrink-0 shadow-xs"
+                className="w-7 h-7 rounded-lg object-contain bg-white p-0.5 shrink-0 shadow-xs"
               />
-              <span className="text-base font-heading font-bold text-[#F4F0E6] tracking-tight">Civora</span>
+              <span className="text-base font-heading font-bold text-white tracking-tight">Civora</span>
             </div>
-            <p className="text-sm text-[#A8BFAE] leading-relaxed">
+            <p className="text-xs text-[#D6E5DE] leading-relaxed">
               {t('footer.civicMission')}
             </p>
-            <div className="text-xs text-[#C5D4C9] font-medium">
-              Civic Issue Reporting & Public Accountability Platform
+            <div className="text-[11px] text-[#B7CCC2] font-medium leading-tight">
+              Civic Issue Reporting &amp; Public Accountability Platform
             </div>
           </div>
 
-          {/* Citizen Services */}
+          {/* Column 2: Citizen Services */}
           <div>
-            <h4 className="text-xs font-heading font-semibold uppercase tracking-wider text-[#F4F0E6] mb-3">
+            <h4 className="text-xs font-heading font-bold uppercase tracking-wider text-white mb-2.5">
               Citizen Services
             </h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <NavLink to="/report" className="hover:text-white transition-colors">
-                  {t('nav.reportIssue')}
-                </NavLink>
-              </li>
-              <li>
-                <NavLink to="/track" className="hover:text-white transition-colors">
-                  {t('nav.trackComplaint')}
-                </NavLink>
-              </li>
-              <li>
-                <NavLink to="/transparency" className="hover:text-white transition-colors">
-                  {t('nav.transparency')}
-                </NavLink>
-              </li>
-              <li>
-                <NavLink to="/engagement" className="hover:text-white transition-colors">
-                  {t('nav.engagement')}
-                </NavLink>
-              </li>
-              <li>
-                <NavLink to="/my-complaints" className="hover:text-white transition-colors">
-                  {t('nav.myComplaints')}
-                </NavLink>
-              </li>
+            <ul className="space-y-1.5" role="list">
+              <FooterLink to="/report" label={t('nav.reportIssue')} />
+              <FooterLink to="/track" label={t('nav.trackComplaint')} />
+              <FooterLink to="/transparency" label={t('nav.transparency')} />
+              <FooterLink to="/engagement" label={t('nav.engagement')} />
+              <FooterLink to="/my-complaints" label={t('nav.myComplaints')} />
             </ul>
           </div>
 
-          {/* Platform & Accountability */}
+          {/* Column 3: Accountability & Governance */}
           <div>
-            <h4 className="text-xs font-heading font-semibold uppercase tracking-wider text-[#F4F0E6] mb-3">
-              Accountability & Governance
+            <h4 className="text-xs font-heading font-bold uppercase tracking-wider text-white mb-2.5">
+              Accountability &amp; Governance
             </h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <NavLink to="/" className="hover:text-white transition-colors">
-                  {t('home.howItWorksTitle')}
-                </NavLink>
-              </li>
-              <li>
-                <NavLink to="/transparency" className="hover:text-white transition-colors">
-                  {t('transparency.departmentTitle')}
-                </NavLink>
-              </li>
-              <li>
-                <NavLink to="/sla" className="hover:text-white transition-colors">
-                  {t('nav.slaEscalations')}
-                </NavLink>
-              </li>
-              <li>
-                <NavLink to="/official/workspace" className="hover:text-white transition-colors">
-                  {t('nav.fieldOps')}
-                </NavLink>
-              </li>
-              <li>
-                <NavLink to="/admin/complaints" className="hover:text-white transition-colors">
-                  {t('nav.staffTriage')}
-                </NavLink>
-              </li>
+            <ul className="space-y-1.5" role="list">
+              <FooterLink to="/" label={t('home.howItWorksTitle')} />
+              <FooterLink to="/transparency" label={t('transparency.departmentTitle')} />
+              <FooterLink to="/sla" label={t('nav.slaEscalations')} />
+              <FooterLink to="/official/workspace" label={t('nav.fieldOps')} />
+              <FooterLink to="/admin/complaints" label={t('nav.staffTriage')} />
             </ul>
           </div>
 
-          {/* Public Standards & Policies */}
-          <div>
-            <h4 className="text-xs font-heading font-semibold uppercase tracking-wider text-[#F4F0E6] mb-3">
+          {/* Column 4: Public Standards */}
+          <div className="space-y-2">
+            <h4 className="text-xs font-heading font-bold uppercase tracking-wider text-white mb-2.5">
               Public Standards
             </h4>
-            <div className="space-y-2.5 text-xs text-[#A8BFAE]">
-              <p>
-                <strong className="text-[#F4F0E6] block">Verified Resolution:</strong>
-                Issues are marked resolved only with photographic before-and-after proof.
-              </p>
-              <p>
-                <strong className="text-[#F4F0E6] block">Citizen Privacy:</strong>
-                Personal identities are shielded from public transparency views.
-              </p>
-              <p>
-                <strong className="text-[#F4F0E6] block">Accessibility Guarantee:</strong>
-                Designed for WCAG 2.2 AA compliance with multilingual support and keyboard navigation.
-              </p>
-              <div className="pt-1.5 flex flex-col gap-1.5">
-                <NavLink to="/rules" className="text-[#7BC4B2] hover:underline font-medium transition-colors">
-                  {t('footer.platformRules')} &rarr;
+            <div className="space-y-2 text-xs text-[#D6E5DE]">
+              <div>
+                <strong className="text-white block font-semibold text-[11px]">Verified Resolution:</strong>
+                <span className="text-[#B7CCC2] text-[11px] leading-snug block">
+                  Mandatory timestamped photographic evidence required before issue closure.
+                </span>
+              </div>
+              <div>
+                <strong className="text-white block font-semibold text-[11px]">Citizen Privacy:</strong>
+                <span className="text-[#B7CCC2] text-[11px] leading-snug block">
+                  Identities and high-precision coordinates strictly masked from public lists.
+                </span>
+              </div>
+              <div>
+                <strong className="text-white block font-semibold text-[11px]">Accessibility Guarantee:</strong>
+                <span className="text-[#B7CCC2] text-[11px] leading-snug block">
+                  Engineered for WCAG 2.2 AA standards with keyboard navigation and high contrast.
+                </span>
+              </div>
+              <div className="pt-0.5">
+                <NavLink
+                  to="/rules"
+                  className="group inline-flex items-center gap-1 text-[11px] text-[#63D6B5] hover:text-white font-medium transition-colors"
+                >
+                  <span className="underline underline-offset-2">{t('footer.platformRules')}</span>
+                  <span aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-1">&rarr;</span>
                 </NavLink>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="pt-6 border-t border-[#173D32] flex flex-col sm:flex-row items-center justify-between text-xs text-[#C5D4C9] gap-4">
-          <p>&copy; {CURRENT_YEAR} {t('footer.rightsReserved')}</p>
-          <div className="flex items-center gap-4">
-            <span className="text-[#E8F0EC]">Verified Evidence</span>
-            <span className="text-[#A8BFAE]">&bull;</span>
-            <span className="text-[#E8F0EC]">Auditable Timestamps</span>
-            <span className="text-[#A8BFAE]">&bull;</span>
-            <span className="text-[#E8F0EC]">{t('footer.accessibilityNotice')}</span>
+        {/* Compact Bottom Bar */}
+        <div className="pt-4 mt-6 border-t border-[#285044] flex flex-col sm:flex-row items-center justify-between text-xs text-[#B7CCC2] gap-2.5">
+          <p className="text-[11px] sm:text-xs">
+            &copy; {CURRENT_YEAR} Civora. {t('footer.rightsReserved')}
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-[11px] sm:text-xs text-[#B7CCC2]">
+            <span className="text-[#D6E5DE] font-medium">Verified Evidence</span>
+            <span className="text-[#285044]" aria-hidden="true">&bull;</span>
+            <span className="text-[#D6E5DE] font-medium">Auditable Timestamps</span>
+            <span className="text-[#285044]" aria-hidden="true">&bull;</span>
+            <span className="text-[#D6E5DE] font-medium">{t('footer.accessibilityNotice')}</span>
           </div>
         </div>
       </Container>

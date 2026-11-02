@@ -26,7 +26,7 @@ export function PlatformRulesPage() {
       <div className="space-y-3">
         <div className="flex items-center space-x-2">
           <Badge variant="info">Civic Governance & Trust</Badge>
-          <span className="text-xs text-[#C5D4C9] dark:text-[#54625A]">
+          <span className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
             {loading
               ? 'Loading policy...'
               : `Policy v${rulesData?.version || '1.0'} • Updated ${rulesData?.lastUpdated || '2026-10-18'}`}

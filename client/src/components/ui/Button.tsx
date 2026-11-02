@@ -55,9 +55,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       disabled={isDisabled}
       aria-busy={isLoading ? 'true' : undefined}
       className={`
-        inline-flex items-center justify-center transition-colors duration-150 cursor-pointer
+        inline-flex items-center justify-center transition-all duration-200 ease-out cursor-pointer
         select-none font-sans focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
-        focus-visible:ring-offset-[#F4F0E6] dark:focus-visible:ring-offset-[#0F1613] disabled:opacity-50 disabled:cursor-not-allowed
+        focus-visible:ring-offset-[#F4F0E6] dark:focus-visible:ring-offset-[#0F1613]
+        hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:shadow-xs
+        disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none
         ${variantStyles[variant]}
         ${sizeStyles[size]}
         ${fullWidth ? 'w-full' : ''}

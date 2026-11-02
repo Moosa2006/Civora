@@ -296,7 +296,7 @@ export function ProposalDetailPage() {
             <button
               type="button"
               onClick={() => openReportModal('PROPOSAL', proposal.id, proposal.title)}
-              className="text-xs text-[#C5D4C9] dark:text-[#54625A] hover:text-rose-400 transition-colors flex items-center gap-1 cursor-pointer"
+              className="text-xs text-[#54625A] dark:text-[#C5D4C9] hover:text-rose-400 transition-colors flex items-center gap-1 cursor-pointer"
               title="Report this proposal"
             >
               <AlertTriangleIcon className="w-3.5 h-3.5" />
@@ -342,7 +342,7 @@ export function ProposalDetailPage() {
             <p className="text-sm text-[#202522] dark:text-[#E8F0EC] leading-relaxed font-sans">
               {proposal.officialResponse}
             </p>
-            <p className="text-[11px] text-[#C5D4C9] dark:text-[#54625A]">
+            <p className="text-[11px] text-[#54625A] dark:text-[#C5D4C9]">
               Civic Note: An official response acknowledges consideration and feasibility study; it is distinct from approved capital project tenders.
             </p>
           </div>
@@ -350,7 +350,7 @@ export function ProposalDetailPage() {
 
         {/* Public Moderator Explanation if Declined or Clarification */}
         {proposal.publicExplanation && (
-          <div className="p-4 rounded-lg bg-amber-950/20 border border-amber-500/30 text-xs text-amber-300">
+          <div className="p-4 rounded-lg bg-[#FEF6E9] dark:bg-amber-950/20 border border-[#F3B768] dark:border-amber-500/30 text-xs text-[#854F0B] dark:text-amber-300 font-medium">
             <strong>Moderator Note:</strong> {proposal.publicExplanation}
           </div>
         )}
@@ -405,12 +405,12 @@ export function ProposalDetailPage() {
                 {proposal.supportCount}
               </span>
             </Button>
-            <span className="text-xs text-[#C5D4C9] dark:text-[#54625A]">
+            <span className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
               {proposal.supportCount === 1 ? '1 citizen endorsement' : `${proposal.supportCount} citizen endorsements`}
             </span>
           </div>
 
-          <span className="text-xs text-[#C5D4C9] dark:text-[#54625A] flex items-center gap-1">
+          <span className="text-xs text-[#54625A] dark:text-[#C5D4C9] flex items-center gap-1">
             <ChatBubbleIcon className="w-3.5 h-3.5" /> {comments.length} comments
           </span>
         </div>
@@ -560,7 +560,7 @@ export function ProposalDetailPage() {
         {/* Comments List */}
         <div className="space-y-3 pt-2">
           {comments.length === 0 ? (
-            <p className="text-xs text-[#C5D4C9] dark:text-[#54625A] italic text-center py-4">
+            <p className="text-xs text-[#54625A] dark:text-[#C5D4C9] italic text-center py-4">
               No comments posted yet. Start the conversation!
             </p>
           ) : (
@@ -581,13 +581,13 @@ export function ProposalDetailPage() {
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[#C5D4C9] dark:text-[#54625A]">
+                    <span className="text-[#54625A] dark:text-[#C5D4C9]">
                       {new Date(comment.createdAt).toLocaleDateString()}
                     </span>
                     <button
                       type="button"
                       onClick={() => openReportModal('PROPOSAL_COMMENT', comment.id, comment.content.slice(0, 60))}
-                      className="text-[11px] text-[#C5D4C9] dark:text-[#54625A] hover:text-rose-400 transition-colors cursor-pointer"
+                      className="text-[11px] text-[#54625A] dark:text-[#C5D4C9] hover:text-rose-400 transition-colors cursor-pointer"
                       title="Report comment"
                     >
                       Report

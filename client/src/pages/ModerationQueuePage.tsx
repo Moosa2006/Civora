@@ -205,7 +205,7 @@ export function ModerationQueuePage() {
         <div>
           <div className="flex items-center space-x-2 mb-1">
             <Badge variant="info">Staff Oversight</Badge>
-            <span className="text-xs text-[#C5D4C9] dark:text-[#54625A]">Module 14 Moderation & Trust</span>
+            <span className="text-xs text-[#54625A] dark:text-[#C5D4C9]">Module 14 Moderation & Trust</span>
           </div>
           <PageHeading
             title="Content Moderation & Abuse Triage"
@@ -338,7 +338,7 @@ export function ModerationQueuePage() {
                       <Badge variant="neutral">
                         {c.targetType.replace(/_/g, ' ')}
                       </Badge>
-                      <span className="text-xs text-[#C5D4C9] dark:text-[#54625A]">
+                      <span className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
                         Score: <span className="font-semibold text-[#3E4B44] dark:text-[#C5D4C9]">{c.riskScore}/100</span>
                       </span>
                     </div>
@@ -455,10 +455,10 @@ export function ModerationQueuePage() {
                   <div key={r.id} className="p-3 bg-[#ECE7DB]/40 dark:bg-[#1D2A25]/40 rounded-lg border border-[#DED8CB] dark:border-[#283931] text-xs space-y-1">
                     <div className="flex items-center justify-between">
                       <span className="font-semibold text-rose-300">{r.reason.replace(/_/g, ' ')}</span>
-                      <span className="text-[#C5D4C9] dark:text-[#54625A]">{new Date(r.createdAt).toLocaleDateString()}</span>
+                      <span className="text-[#54625A] dark:text-[#C5D4C9]">{new Date(r.createdAt).toLocaleDateString()}</span>
                     </div>
                     {r.explanation && <p className="text-[#3E4B44] dark:text-[#C5D4C9]">{r.explanation}</p>}
-                    <span className="text-[10px] text-[#C5D4C9] dark:text-[#54625A] block">
+                    <span className="text-[10px] text-[#54625A] dark:text-[#C5D4C9] block">
                       Reporter Identity: [Shielded under Platform Privacy Standards]
                     </span>
                   </div>
@@ -477,7 +477,7 @@ export function ModerationQueuePage() {
                     <div key={a.id} className="p-3 bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 rounded-lg border border-[#DED8CB] dark:border-[#283931] text-xs space-y-2">
                       <div className="flex items-center justify-between">
                         <span className="font-semibold text-[#202522] dark:text-[#E8F0EC]">Appeal Status: {a.status}</span>
-                        <span className="text-[#C5D4C9] dark:text-[#54625A]">{new Date(a.createdAt).toLocaleDateString()}</span>
+                        <span className="text-[#54625A] dark:text-[#C5D4C9]">{new Date(a.createdAt).toLocaleDateString()}</span>
                       </div>
                       <p className="text-[#3E4B44] dark:text-[#C5D4C9]">&ldquo;{a.reason}&rdquo;</p>
                       {a.status === 'PENDING' && (

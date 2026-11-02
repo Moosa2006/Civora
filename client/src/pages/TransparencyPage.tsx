@@ -512,7 +512,7 @@ export function TransparencyPage() {
                   {trends?.timeline ? (
                     <TrendAreaChart data={trends.timeline} />
                   ) : (
-                    <div className="h-48 flex items-center justify-center text-xs text-[#C5D4C9] dark:text-[#54625A]">
+                    <div className="h-48 flex items-center justify-center text-xs text-[#54625A] dark:text-[#C5D4C9]">
                       No trend observations recorded.
                     </div>
                   )}
@@ -796,7 +796,7 @@ export function TransparencyPage() {
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-950 text-blue-300 border border-blue-800/40">
+                          <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#173D32]/10 dark:bg-[#215748]/30 text-[#173D32] dark:text-[#7BC4B2] border border-[#173D32]/20 dark:border-[#4F9B8B]/30">
                             {dept.code}
                           </span>
                           <span className="text-xs text-[#54625A] dark:text-[#C5D4C9] font-mono">
@@ -1196,7 +1196,7 @@ export function TransparencyPage() {
                             </div>
                             <p className="text-[#202522] dark:text-[#F5F2EA]">{u.progressNotes}</p>
                             {u.milestoneReached && (
-                              <span className="inline-block text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800/40">
+                              <span className="inline-block text-[10px] px-2 py-0.5 rounded bg-[#1E6B52]/10 text-[#185541] dark:bg-[#1E6B52]/30 dark:text-[#78C7AE] border border-[#1E6B52]/25 dark:border-[#1E6B52]/40 font-semibold">
                                 Milestone: {u.milestoneReached}
                               </span>
                             )}
