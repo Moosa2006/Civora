@@ -53,6 +53,8 @@ export const awardTenderSchema = z.object({
   awardJustification: z.string().optional(),
   startDate: z.string().optional().nullable(),
   expectedCompletionDate: z.string().optional().nullable(),
+  emergencyAwardOverride: z.boolean().optional().default(false),
+  emergencyJustification: z.string().optional(),
 });
 
 export const workStartDeclarationSchema = z.object({

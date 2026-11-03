@@ -405,3 +405,58 @@ export async function findDuplicateEvidence(
 
   return matches;
 }
+
+/**
+ * Strips EXIF metadata segments (APP1, COM) from JPEG buffers to prevent leaking
+ * embedded GPS coordinates or camera metadata to unauthorized public viewers.
+ */
+export function stripExifFromBuffer(buffer: Buffer, mimeType?: string): Buffer {
+  if (!buffer || buffer.length < 4) return buffer;
+  // If mimeType is provided and definitely not JPEG, return intact
+  if (mimeType && !mimeType.toLowerCase().includes('jpeg') && !mimeType.toLowerCase().includes('jpg')) {
+    return buffer;
+  }
+  // Check SOI (Start of Image) marker: 0xFF, 0xD8
+  if (buffer[0] !== 0xff || buffer[1] !== 0xd8) {
+    return buffer; // Not JPEG format
+  }
+
+  try {
+    const chunks: Buffer[] = [buffer.subarray(0, 2)];
+    let offset = 2;
+
+    while (offset < buffer.length) {
+      if (buffer[offset] !== 0xff) break;
+      const marker = buffer[offset + 1];
+
+      // SOS (Start of Scan) - all following bytes are compressed image data until EOI
+      if (marker === 0xda) {
+        chunks.push(buffer.subarray(offset));
+        break;
+      }
+      // EOI (End of Image)
+      if (marker === 0xd9) {
+        chunks.push(buffer.subarray(offset, offset + 2));
+        break;
+      }
+
+      if (offset + 4 > buffer.length) break;
+      const segmentLength = buffer.readUInt16BE(offset + 2);
+
+      // Skip APP1 (0xE1: EXIF / XMP) and COM (0xFE: Comments)
+      if (marker === 0xe1 || marker === 0xfe) {
+        // Omitting metadata segment
+      } else {
+        chunks.push(buffer.subarray(offset, offset + 2 + segmentLength));
+      }
+
+      offset += 2 + segmentLength;
+    }
+
+    return Buffer.concat(chunks);
+  } catch (err) {
+    console.warn('[EXIF Stripper] Error stripping EXIF, returning original buffer safely:', err);
+    return buffer;
+  }
+}
+

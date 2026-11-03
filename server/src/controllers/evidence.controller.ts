@@ -10,7 +10,7 @@ import {
 import { prisma } from '../lib/prisma.js';
 import { StorageService } from '../lib/storageService.js';
 import { NotificationService } from '../lib/notificationService.js';
-import { extractExifFromBuffer, generatePerceptualHash } from '../lib/imageAnalysis.js';
+import { extractExifFromBuffer, generatePerceptualHash, stripExifFromBuffer } from '../lib/imageAnalysis.js';
 import { triggerComplaintAiVerification } from '../services/gemini.service.js';
 import {
   uploadEvidenceMetadataSchema,
@@ -402,14 +402,6 @@ export async function getComplaintEvidence(req: Request, res: Response, next: Ne
       evidencePurpose: doc.evidencePurpose,
       visibility: doc.visibility,
       description: doc.description,
-      sha256Checksum: doc.sha256Checksum,
-      perceptualHash: doc.perceptualHash,
-      capturedAt: doc.capturedAt,
-      browserCaptureTimestamp: doc.browserCaptureTimestamp,
-      captureLatitude: doc.captureLatitude ? Number(doc.captureLatitude) : null,
-      captureLongitude: doc.captureLongitude ? Number(doc.captureLongitude) : null,
-      captureAccuracy: doc.captureAccuracy,
-      isGpsVerified: doc.isGpsVerified,
       reviewStatus: doc.reviewStatus,
       reviewedAt: doc.reviewedAt,
       reviewedBy: isStaff || isOwner ? doc.reviewedBy : undefined,
@@ -426,6 +418,18 @@ export async function getComplaintEvidence(req: Request, res: Response, next: Ne
       createdAt: doc.createdAt,
       downloadUrl: `/api/evidence/${doc.id}/download`,
       fileUrl: `/api/evidence/${doc.id}/file`,
+      ...(isStaff || isOwner
+        ? {
+            sha256Checksum: doc.sha256Checksum,
+            perceptualHash: doc.perceptualHash,
+            capturedAt: doc.capturedAt,
+            browserCaptureTimestamp: doc.browserCaptureTimestamp,
+            captureLatitude: doc.captureLatitude ? Number(doc.captureLatitude) : null,
+            captureLongitude: doc.captureLongitude ? Number(doc.captureLongitude) : null,
+            captureAccuracy: doc.captureAccuracy,
+            isGpsVerified: doc.isGpsVerified,
+          }
+        : {}),
     }));
 
     return res.status(200).json({
@@ -548,6 +552,7 @@ export async function downloadEvidenceFile(req: Request, res: Response, next: Ne
             trackingId: true,
             citizenId: true,
             assignedDepartmentId: true,
+            isLocationPublic: true,
           },
         },
       },
@@ -588,6 +593,17 @@ export async function downloadEvidenceFile(req: Request, res: Response, next: Ne
           },
         });
       }
+
+      // Private-location protection: Evidence for private-location complaints is not publicly accessible
+      if (document.complaint && !document.complaint.isLocationPublic) {
+        return res.status(403).json({
+          success: false,
+          error: {
+            code: 'FORBIDDEN',
+            message: 'Evidence for private-location complaints cannot be downloaded by the general public.',
+          },
+        });
+      }
     }
 
     // Check physical file existence
@@ -605,6 +621,21 @@ export async function downloadEvidenceFile(req: Request, res: Response, next: Ne
     const isInlineImage = document.mimeType.startsWith('image/');
     const dispositionType = isInlineImage ? 'inline' : 'attachment';
 
+    // Strip EXIF metadata from public image downloads so embedded GPS coordinates are not leaked
+    if (!isStaff && !isOwner && !isUploader && (document.mimeType.includes('jpeg') || document.mimeType.includes('jpg'))) {
+      const rawBuffer = await StorageService.getFileBuffer(document.storageKey);
+      const sanitizedBuffer = stripExifFromBuffer(rawBuffer, document.mimeType);
+      res.setHeader('Content-Type', document.mimeType);
+      res.setHeader('Content-Length', String(sanitizedBuffer.length));
+      res.setHeader(
+        'Content-Disposition',
+        `${dispositionType}; filename="${encodeURIComponent(document.fileName)}"`
+      );
+      res.setHeader('X-Content-Type-Options', 'nosniff');
+      res.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+      return res.send(sanitizedBuffer);
+    }
+
     res.setHeader('Content-Type', document.mimeType);
     res.setHeader('Content-Length', String(document.fileSize));
     res.setHeader(
@@ -612,7 +643,7 @@ export async function downloadEvidenceFile(req: Request, res: Response, next: Ne
       `${dispositionType}; filename="${encodeURIComponent(document.fileName)}"`
     );
     res.setHeader('X-Content-Type-Options', 'nosniff');
-    res.setHeader('Cache-Control', 'private, max-age=3600');
+    res.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate');
 
     const stream = StorageService.getFileStream(document.storageKey);
     stream.on('error', (err) => {

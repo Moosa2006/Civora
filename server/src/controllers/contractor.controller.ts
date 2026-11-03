@@ -699,7 +699,14 @@ export async function claimMilestone(req: Request, res: Response, next: NextFunc
 
     const milestone = await prisma.contractMilestone.findFirst({
       where: { id: milestoneId, workOrderId },
-      include: { workOrder: true },
+      include: {
+        workOrder: {
+          include: {
+            workStartDeclarations: true,
+            milestones: true,
+          },
+        },
+      },
     });
 
     if (!milestone) {
@@ -717,6 +724,37 @@ export async function claimMilestone(req: Request, res: Response, next: NextFunc
       return res.status(400).json({
         success: false,
         error: { code: 'ALREADY_APPROVED', message: 'This milestone has already been verified and approved.' },
+      });
+    }
+
+    // L08 Integrity Check: Work start declaration must be officially verified
+    const hasVerifiedWorkStart = milestone.workOrder.workStartDeclarations?.some(
+      (ws) => ws.status === WorkStartStatus.VERIFIED
+    );
+    if (!hasVerifiedWorkStart) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'WORK_START_NOT_VERIFIED',
+          message: 'Physical work start must be declared and verified by a municipal official before claiming completion milestones.',
+        },
+      });
+    }
+
+    // L08 Integrity Check: Predecessor milestones must be approved or completed
+    const pendingPredecessors = milestone.workOrder.milestones?.filter(
+      (m) =>
+        m.milestoneNumber < milestone.milestoneNumber &&
+        m.status !== MilestoneStatus.APPROVED &&
+        m.status !== MilestoneStatus.COMPLETED
+    );
+    if (pendingPredecessors && pendingPredecessors.length > 0) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'PREDECESSOR_MILESTONES_PENDING',
+          message: `Prior milestones must be verified and approved before claiming milestone ${milestone.milestoneNumber}.`,
+        },
       });
     }
 

@@ -900,6 +900,49 @@ export async function awardTender(req: Request, res: Response, next: NextFunctio
       });
     }
 
+    // L07 Integrity Check: Ensure bidding window has closed before awarding (unless authorized emergency override)
+    const now = new Date();
+    const deadline = new Date(tender.submissionDeadline);
+    const hasEmergencyOverride = Boolean(parseResult.data.emergencyAwardOverride);
+
+    if (now < deadline && !hasEmergencyOverride) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'BIDDING_WINDOW_ACTIVE',
+          message: `Cannot award tender before the submission deadline has closed (${deadline.toISOString()}) without an authorized emergency override.`,
+        },
+      });
+    }
+
+    // L07 Integrity Check: Verify winning contractor status and active verification
+    if (!winningBid.contractor || winningBid.contractor.status !== 'ACTIVE' || !winningBid.contractor.isVerified) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'CONTRACTOR_INELIGIBLE',
+          message: 'The selected contractor is not currently active and verified for municipal procurement award.',
+        },
+      });
+    }
+
+    // L07 Integrity Check: Verify category capability
+    if (
+      tender.categoryCode &&
+      winningBid.contractor.workCategories &&
+      winningBid.contractor.workCategories.length > 0 &&
+      !winningBid.contractor.workCategories.includes(tender.categoryCode) &&
+      !hasEmergencyOverride
+    ) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'CATEGORY_MISMATCH',
+          message: `Contractor does not possess registered qualification in required category '${tender.categoryCode}'.`,
+        },
+      });
+    }
+
     // Interactive transaction for atomic contract generation
     const result = await prisma.$transaction(async (tx) => {
       // 1. Update winning bid

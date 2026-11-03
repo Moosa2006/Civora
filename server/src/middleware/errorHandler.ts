@@ -10,7 +10,6 @@ export function errorHandler(
   _next: NextFunction
 ) {
   const correlationId = req.correlationId;
-  const isDev = process.env.NODE_ENV === 'development';
 
   // Handle Zod validation errors
   if (err instanceof z.ZodError) {
@@ -75,24 +74,6 @@ export function errorHandler(
       });
     }
 
-    // P2021 (table does not exist) or P2022 (column does not exist) denote unapplied migrations
-    if (err.code === 'P2021' || err.code === 'P2022') {
-      const missingTarget = (err.meta?.column as string) || (err.meta?.table as string) || 'schema element';
-      console.error(
-        `[Civora Database Schema/Migration Error ${correlationId || 'N/A'}]: Missing database ${err.code === 'P2021' ? 'table' : 'column'} '${missingTarget}'. Please apply pending migrations with 'npm run db:deploy'. Code: ${err.code}`
-      );
-      return res.status(500).json({
-        success: false,
-        error: {
-          code: 'DATABASE_SCHEMA_ERROR',
-          message: isDev
-            ? `Database schema mismatch: missing ${err.code === 'P2021' ? 'table' : 'column'} (${missingTarget}). Pending migrations must be applied.`
-            : 'A database query operation could not be processed.',
-          correlationId,
-        },
-      });
-    }
-
     if (err.code === 'P2002') {
       const target = (err.meta?.target as string[])?.join(', ') || 'field';
       return res.status(409).json({
@@ -152,6 +133,7 @@ export function errorHandler(
   }
 
   // Handle generic errors safely without leaking internal secrets, file paths, or DB URLs
+  const isDev = process.env.NODE_ENV === 'development';
   let message = 'An unexpected internal server error occurred.';
 
   if (isDev && err instanceof Error) {
