@@ -1,19 +1,23 @@
 {
   "name": "civora",
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "description": "Civora Civic Issue Reporting and Public Accountability Platform",
   "private": true,
-  "description": "Civic issue reporting and public accountability web application",
+  "main": "index.js",
   "scripts": {
     "dev:client": "npm --prefix client run dev",
     "dev:server": "npm --prefix server run dev",
     "build:client": "npm --prefix client run build",
     "build:server": "npm --prefix server run build",
     "build": "npm run build:client && npm run build:server",
+    "start": "npm run start --prefix server",
+    "postinstall": "npm run postinstall --prefix server",
+    "test": "npm run test:verify --prefix server",
+    "test:server": "npm --prefix server test",
     "db:validate": "npm --prefix server run db:validate",
     "db:generate": "npm --prefix server run db:generate",
     "db:migrate": "npm --prefix server run db:migrate",
-    "db:seed": "npm --prefix server run db:seed",
-    "test:server": "npm --prefix server test"
+    "db:seed": "npm --prefix server run db:seed"
   },
   "keywords": [
     "civic",

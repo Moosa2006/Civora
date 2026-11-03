@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from '../router';
 import { useAuth } from '../context/useAuth';
+import { useTranslation } from '../context/useTranslation';
 import { Container } from '../components/layout/Container';
 import { Card } from '../components/ui/Card';
 import { PageHeading } from '../components/ui/PageHeading';
@@ -26,6 +27,7 @@ export type WorkspaceTab =
 export function ContractorWorkspacePage() {
   const { currentPath, navigate } = useRouter();
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
+  const { t } = useTranslation();
 
   // Extract initial active tab from URL query params (e.g. ?tab=bids)
   const getTabFromUrl = (): WorkspaceTab => {
@@ -356,7 +358,7 @@ export function ContractorWorkspacePage() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="text-xs font-semibold px-2 py-0.5 rounded bg-[#173D32]/10 text-[#173D32] border border-[#173D32]/25 dark:bg-[#215748]/30 dark:text-[#7BC4B2] dark:border-[#4F9B8B]/30 uppercase font-mono">
-              Contractor Command Center
+              {t('roles.contractor')} {t('nav.contractorDashboard')}
             </span>
             {profile?.isVerified && (
               <Badge variant="success">Verified Enterprise</Badge>
@@ -369,7 +371,7 @@ export function ContractorWorkspacePage() {
         </div>
         <div className="flex items-center gap-3">
           <Button variant="primary" onClick={() => navigate('/tenders')}>
-            Browse Open Tenders →
+            {t('nav.findTenders')} →
           </Button>
         </div>
       </div>

@@ -39,7 +39,10 @@ export async function getAdminDashboardOverview(_req: Request, res: Response) {
       // 8. Recent Audit Events
       recentAuditEvents,
 
-      // 9. Maintenance Mode
+      // 9. Recent Incidents
+      recentIncidents,
+
+      // 10. Maintenance Mode
       maintenanceMode,
     ] = await Promise.all([
       // Users by role
@@ -119,6 +122,20 @@ export async function getAdminDashboardOverview(_req: Request, res: Response) {
         },
       }),
 
+      // Recent 5 Incidents
+      prisma.operationalIncident.findMany({
+        take: 5,
+        orderBy: { createdAt: 'desc' },
+        select: {
+          id: true,
+          incidentNumber: true,
+          title: true,
+          severity: true,
+          status: true,
+          createdAt: true,
+        },
+      }),
+
       // Maintenance
       isMaintenanceModeActive(),
     ]);
@@ -157,6 +174,25 @@ export async function getAdminDashboardOverview(_req: Request, res: Response) {
         timestamp: new Date().toISOString(),
         queryLatencyMs: latencyMs,
         maintenanceMode,
+        // Metrics object matching frontend DashboardOverviewData schema
+        metrics: {
+          totalUsers,
+          activeUsers: Math.max(0, totalUsers - suspendedUsers),
+          usersByRole: {
+            CITIZEN: userRoleCounts[UserRole.CITIZEN] || 0,
+            OFFICIAL: userRoleCounts[UserRole.GOVERNMENT_OFFICIAL] || 0,
+            ADMIN: userRoleCounts[UserRole.ADMIN] || 0,
+            CONTRACTOR: userRoleCounts[UserRole.CONTRACTOR] || 0,
+          },
+          totalComplaints,
+          complaintsAwaitingAction: submitted + underReview,
+          complaintsInProgress: assigned + inProgress,
+          complaintsResolved: resolved + verified + closed,
+          complaintsRejected: rejected,
+          complaintsOverdue: overdueComplaintsCount,
+          openIncidents,
+          recentAuditActionsCount: recentAuditEvents.length,
+        },
         users: {
           total: totalUsers,
           citizens: userRoleCounts[UserRole.CITIZEN] || 0,
@@ -217,6 +253,14 @@ export async function getAdminDashboardOverview(_req: Request, res: Response) {
               }
             : null,
           details: evt.details,
+        })),
+        recentIncidents: recentIncidents.map((inc) => ({
+          id: inc.id,
+          incidentNumber: inc.incidentNumber,
+          title: inc.title,
+          severity: inc.severity,
+          status: inc.status,
+          createdAt: inc.createdAt.toISOString(),
         })),
       },
     });

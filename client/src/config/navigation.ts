@@ -4,6 +4,7 @@ export interface NavItem {
   id: string;
   label: string;
   path: string;
+  translationKey?: string;
   iconName?: string;
   roles?: UserRole[] | null; // null or undefined means public / all roles
   placement?: 'primary' | 'secondary' | 'dropdown' | 'action';
@@ -239,52 +240,55 @@ export function getRolePrimaryNav(role?: UserRole | null, isAuthenticated?: bool
   if (!isAuthenticated || !role) {
     // Visitor / Public navigation
     return [
-      { id: 'home', label: 'Home', path: '/' },
-      { id: 'transparency', label: 'Transparency', path: '/transparency' },
-      { id: 'public-tenders', label: 'Tenders', path: '/tenders' },
-      { id: 'civic-map', label: 'Civic Map', path: '/map' },
-      { id: 'track-complaint', label: 'Track Complaint', path: '/track' },
-      { id: 'engagement', label: 'Engagement', path: '/engagement' },
+      { id: 'home', label: 'Home', path: '/', translationKey: 'nav.home' },
+      { id: 'transparency', label: 'Transparency', path: '/transparency', translationKey: 'nav.transparency' },
+      { id: 'public-tenders', label: 'Tenders', path: '/tenders', translationKey: 'nav.publicTenders' },
+      { id: 'civic-map', label: 'Civic Map', path: '/map', translationKey: 'nav.civicMap' },
+      { id: 'track-complaint', label: 'Track Complaint', path: '/track', translationKey: 'nav.trackComplaint' },
+      { id: 'engagement', label: 'Engagement', path: '/engagement', translationKey: 'nav.engagement' },
     ];
   }
 
   switch (role) {
     case 'CONTRACTOR':
       return [
-        { id: 'contractor-dashboard', label: 'Dashboard', path: '/contractor' },
-        { id: 'contractor-find-tenders', label: 'Find Tenders', path: '/tenders' },
-        { id: 'contractor-my-bids', label: 'My Bids', path: '/contractor?tab=bids' },
-        { id: 'contractor-work-orders', label: 'Work Orders', path: '/contractor?tab=work_orders' },
-        { id: 'transparency', label: 'Civic Works', path: '/transparency?tab=projects' },
+        { id: 'contractor-dashboard', label: 'Dashboard', path: '/contractor', translationKey: 'nav.contractorDashboard' },
+        { id: 'contractor-find-tenders', label: 'Find Tenders', path: '/tenders', translationKey: 'nav.findTenders' },
+        { id: 'contractor-my-bids', label: 'My Bids', path: '/contractor?tab=bids', translationKey: 'nav.myBids' },
+        { id: 'contractor-work-orders', label: 'Work Orders', path: '/contractor?tab=work_orders', translationKey: 'nav.workOrders' },
+        { id: 'transparency', label: 'Civic Works', path: '/transparency?tab=projects', translationKey: 'nav.civicWorks' },
       ];
 
     case 'GOVERNMENT_OFFICIAL':
       return [
-        { id: 'official-workspace', label: 'Field Operations', path: '/official/workspace' },
-        { id: 'official-complaints', label: 'Complaints', path: '/admin/complaints' },
-        { id: 'official-tenders', label: 'Tenders & Awards', path: '/admin/tenders' },
-        { id: 'transparency', label: 'Transparency', path: '/transparency' },
-        { id: 'civic-map', label: 'Civic Map', path: '/map' },
+        { id: 'official-workspace', label: 'Field Operations', path: '/official/workspace', translationKey: 'nav.fieldOps' },
+        { id: 'official-complaints', label: 'Complaints Queue', path: '/admin/complaints', translationKey: 'nav.complaintsQueue' },
+        { id: 'official-tenders', label: 'Tenders & Awards', path: '/admin/tenders', translationKey: 'nav.tendersAndAwards' },
+        { id: 'official-sla', label: 'SLA Escalations', path: '/sla', translationKey: 'nav.slaEscalations' },
+        { id: 'transparency', label: 'Transparency', path: '/transparency', translationKey: 'nav.transparency' },
+        { id: 'civic-map', label: 'Civic Map', path: '/map', translationKey: 'nav.civicMap' },
       ];
 
     case 'ADMIN':
       return [
-        { id: 'admin-complaints', label: 'Triage Dashboard', path: '/admin/complaints' },
-        { id: 'official-tenders', label: 'Tenders & Awards', path: '/admin/tenders' },
-        { id: 'transparency', label: 'Transparency', path: '/transparency' },
-        { id: 'civic-map', label: 'Civic Map', path: '/map' },
+        { id: 'admin-complaints', label: 'Triage Dashboard', path: '/admin/complaints', translationKey: 'nav.triageDashboard' },
+        { id: 'official-tenders', label: 'Tenders & Awards', path: '/admin/tenders', translationKey: 'nav.tendersAndAwards' },
+        { id: 'admin-system', label: 'Platform Health', path: '/admin/system', translationKey: 'nav.systemHealth' },
+        { id: 'official-sla', label: 'SLA Management', path: '/sla', translationKey: 'nav.slaManagement' },
+        { id: 'transparency', label: 'Transparency', path: '/transparency', translationKey: 'nav.transparency' },
+        { id: 'civic-map', label: 'Civic Map', path: '/map', translationKey: 'nav.civicMap' },
       ];
 
     case 'CITIZEN':
     default:
       return [
-        { id: 'home', label: 'Home', path: '/' },
-        { id: 'report-issue', label: 'Report Issue', path: '/report' },
-        { id: 'my-complaints', label: 'My Complaints', path: '/my-complaints' },
-        { id: 'track-complaint', label: 'Track', path: '/track' },
-        { id: 'transparency', label: 'Transparency', path: '/transparency' },
-        { id: 'civic-map', label: 'Civic Map', path: '/map' },
-        { id: 'engagement', label: 'Engagement', path: '/engagement' },
+        { id: 'home', label: 'Home', path: '/', translationKey: 'nav.home' },
+        { id: 'report-issue', label: 'Report Issue', path: '/report', translationKey: 'nav.reportIssue' },
+        { id: 'my-complaints', label: 'My Complaints', path: '/my-complaints', translationKey: 'nav.myComplaints' },
+        { id: 'track-complaint', label: 'Track', path: '/track', translationKey: 'nav.trackComplaint' },
+        { id: 'transparency', label: 'Transparency', path: '/transparency', translationKey: 'nav.transparency' },
+        { id: 'civic-map', label: 'Civic Map', path: '/map', translationKey: 'nav.civicMap' },
+        { id: 'engagement', label: 'Engagement', path: '/engagement', translationKey: 'nav.engagement' },
       ];
   }
 }
@@ -298,27 +302,29 @@ export function getRoleSecondaryNav(role?: UserRole | null, isAuthenticated?: bo
   switch (role) {
     case 'CONTRACTOR':
       return [
-        { id: 'contractor-work-start', label: 'Work-Start Declarations', path: '/contractor?tab=work_start' },
-        { id: 'contractor-milestones', label: 'Milestones & Claims', path: '/contractor?tab=milestones' },
-        { id: 'contractor-payments', label: 'Payment Ledger', path: '/contractor?tab=payments' },
-        { id: 'contractor-defects', label: 'Warranty & Defects', path: '/contractor?tab=defects' },
+        { id: 'contractor-work-start', label: 'Work-Start Declarations', path: '/contractor?tab=work_start', translationKey: 'nav.workStart' },
+        { id: 'contractor-milestones', label: 'Milestones & Claims', path: '/contractor?tab=milestones', translationKey: 'nav.milestones' },
+        { id: 'contractor-payments', label: 'Payment Ledger', path: '/contractor?tab=payments', translationKey: 'nav.paymentLedger' },
+        { id: 'contractor-defects', label: 'Warranty & Defects', path: '/contractor?tab=defects', translationKey: 'nav.warrantyDefects' },
       ];
 
     case 'GOVERNMENT_OFFICIAL':
       return [
-        { id: 'official-sla', label: 'SLA Escalations', path: '/sla' },
-        { id: 'engagement', label: 'Civic Engagement', path: '/engagement' },
-        { id: 'public-tenders-view', label: 'Public Tenders Portal', path: '/tenders' },
+        { id: 'engagement', label: 'Civic Engagement', path: '/engagement', translationKey: 'nav.civicEngagement' },
+        { id: 'public-tenders-view', label: 'Public Tenders Portal', path: '/tenders', translationKey: 'nav.publicTendersPortal' },
       ];
 
     case 'ADMIN':
       return [
-        { id: 'admin-system', label: 'Platform & System Health', path: '/admin/system' },
-        { id: 'admin-moderation', label: 'Content Moderation', path: '/admin/moderation' },
-        { id: 'official-sla', label: 'SLA Management', path: '/sla' },
-        { id: 'official-workspace', label: 'Field Operations', path: '/official/workspace' },
-        { id: 'engagement', label: 'Civic Engagement', path: '/engagement' },
-        { id: 'public-tenders-view', label: 'Public Tenders Portal', path: '/tenders' },
+        { id: 'admin-moderation', label: 'Content Moderation', path: '/admin/moderation', translationKey: 'nav.moderation' },
+        { id: 'official-workspace', label: 'Field Operations', path: '/official/workspace', translationKey: 'nav.fieldOps' },
+        { id: 'engagement', label: 'Civic Engagement', path: '/engagement', translationKey: 'nav.civicEngagement' },
+        { id: 'public-tenders-view', label: 'Public Tenders Portal', path: '/tenders', translationKey: 'nav.publicTendersPortal' },
+      ];
+
+    case 'CITIZEN':
+      return [
+        { id: 'public-tenders-view', label: 'Public Tenders', path: '/tenders', translationKey: 'nav.publicTenders' },
       ];
 
     default:
@@ -340,6 +346,6 @@ export function getRoleLandingPage(role?: UserRole | null): string {
       return '/admin/complaints';
     case 'CITIZEN':
     default:
-      return '/';
+      return '/my-complaints';
   }
 }

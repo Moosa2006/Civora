@@ -13,6 +13,7 @@ import { EmptyState } from '../components/ui/EmptyState';
 import { LoadingIndicator } from '../components/ui/LoadingIndicator';
 import { SearchIcon, CloseIcon } from '../components/ui/icons';
 import { useAuth } from '../context/useAuth';
+import { useTranslation } from '../context/useTranslation';
 import { useRouter } from '../router';
 import { getStatusBadgeVariant } from '../utils/status';
 import type { Complaint, Department } from '../types/complaint';
@@ -21,6 +22,7 @@ import { EvidenceReviewQueue } from '../components/evidence/EvidenceReviewQueue'
 export function AdminComplaintsPage() {
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const { navigate } = useRouter();
+  const { t } = useTranslation();
 
   // Top level tab
   const [mainTab, setMainTab] = useState<'COMPLAINTS' | 'EVIDENCE'>('COMPLAINTS');
@@ -49,11 +51,24 @@ export function AdminComplaintsPage() {
   const [selectedDeptId, setSelectedDeptId] = useState<string>('');
   const [actionLoading, setActionLoading] = useState(false);
 
+  // Helper to get authenticated headers
+  const getAuthHeaders = (extra: Record<string, string> = {}) => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('civora_token') : null;
+    const headers: Record<string, string> = { ...extra };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    return headers;
+  };
+
   // Fetch departments for assignment dropdown
   useEffect(() => {
     async function loadDepartments() {
       try {
-        const res = await fetch('/api/meta/departments');
+        const res = await fetch('/api/meta/departments', {
+          headers: getAuthHeaders({ Accept: 'application/json' }),
+          credentials: 'include',
+        });
         const json = await res.json();
         if (json.success && Array.isArray(json.data)) {
           setDepartments(json.data);
@@ -79,7 +94,7 @@ export function AdminComplaintsPage() {
       }
 
       const res = await fetch(url, {
-        headers: { Accept: 'application/json' },
+        headers: getAuthHeaders({ Accept: 'application/json' }),
         credentials: 'include',
       });
 
@@ -96,7 +111,7 @@ export function AdminComplaintsPage() {
         setTotalCount(json.data.pagination.total || 0);
       }
     } catch {
-      setErrorMsg('Failed to connect to administrative server.');
+      setErrorMsg('Failed to connect to administrative server. Please check network connection.');
     } finally {
       setLoading(false);
     }
@@ -125,10 +140,10 @@ export function AdminComplaintsPage() {
     try {
       const res = await fetch(`/api/admin/complaints/${selectedComplaint.id}/status`, {
         method: 'PATCH',
-        headers: {
+        headers: getAuthHeaders({
           'Content-Type': 'application/json',
           Accept: 'application/json',
-        },
+        }),
         credentials: 'include',
         body: JSON.stringify({
           status: newStatus,
@@ -174,10 +189,10 @@ export function AdminComplaintsPage() {
     try {
       const res = await fetch(`/api/admin/complaints/${selectedComplaint.id}/assign`, {
         method: 'PATCH',
-        headers: {
+        headers: getAuthHeaders({
           'Content-Type': 'application/json',
           Accept: 'application/json',
-        },
+        }),
         credentials: 'include',
         body: JSON.stringify({
           departmentId: selectedDeptId,
@@ -199,6 +214,45 @@ export function AdminComplaintsPage() {
       fetchAdminComplaints();
     } catch {
       setErrorMsg('An unexpected error occurred while assigning department.');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Handle separating a consolidated report back into an independent complaint
+  const handleSeparateReport = async (subordinateId: string, trackingId: string) => {
+    const reason = window.prompt(
+      `Enter reason to unlink report ${trackingId} from master issue:`,
+      'Distinct physical defect or separate location confirmed by reviewer.'
+    );
+    if (!reason || !reason.trim()) return;
+
+    setActionLoading(true);
+    setErrorMsg(null);
+    setSuccessMsg(null);
+
+    try {
+      const res = await fetch(`/api/admin/complaints/${subordinateId}/separate`, {
+        method: 'POST',
+        headers: getAuthHeaders({
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        }),
+        credentials: 'include',
+        body: JSON.stringify({ reason: reason.trim() }),
+      });
+
+      const json = await res.json();
+
+      if (!res.ok || !json.success) {
+        setErrorMsg(json.error?.message || 'Failed to separate report.');
+        return;
+      }
+
+      setSuccessMsg(`Report ${trackingId} successfully separated into an independent master issue.`);
+      fetchAdminComplaints();
+    } catch {
+      setErrorMsg('Network error while attempting to separate report.');
     } finally {
       setActionLoading(false);
     }
@@ -234,20 +288,20 @@ export function AdminComplaintsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <PageHeading
-          title="Complaint Management & Triage"
-          description={`Logged as ${user?.name} (${user?.role}) • ${totalCount} grievances in queue`}
+          title={t('nav.triageDashboard')}
+          description={`Logged as ${user?.name} (${user?.role}) • ${totalCount} grievances`}
           badge={
             <Badge variant="warning" size="md">
-              Staff Portal
+              {t('roles.admin')}
             </Badge>
           }
         />
         <Button
           variant="outline"
           onClick={() => (mainTab === 'COMPLAINTS' ? fetchAdminComplaints() : undefined)}
-          className="shrink-0 text-xs"
+          className="shrink-0 text-xs cursor-pointer"
         >
-          Refresh Queue
+          {t('adminSystem.refreshBtn')}
         </Button>
       </div>
 
@@ -332,6 +386,21 @@ export function AdminComplaintsPage() {
           <LoadingIndicator size="lg" label="Loading queue" />
           <span className="text-xs text-[#54625A] dark:text-[#C5D4C9] mt-3">Loading grievances queue...</span>
         </div>
+      ) : errorMsg ? (
+        <div className="py-8 space-y-4">
+          <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 text-sm text-red-700 dark:text-red-300">
+            <p className="font-semibold mb-1">Administrative Queue Error</p>
+            <p className="text-xs mb-3">{errorMsg}</p>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => fetchAdminComplaints()}
+              className="cursor-pointer text-xs"
+            >
+              Retry Loading Queue
+            </Button>
+          </div>
+        </div>
       ) : complaints.length === 0 ? (
         <EmptyState
           title="No Grievances Found"
@@ -354,6 +423,31 @@ export function AdminComplaintsPage() {
                       <Badge variant="neutral" size="sm">
                         {c.priority} Priority
                       </Badge>
+                      {c.affectedReportCount && c.affectedReportCount > 1 && (
+                        <Badge variant="info" size="sm">
+                          Consolidated ({c.affectedReportCount} reports &bull; {c.distinctReporterCount || 1} citizens)
+                        </Badge>
+                      )}
+                      {c.isDuplicate && (
+                        <Badge variant="warning" size="sm">
+                          Subordinate Report
+                        </Badge>
+                      )}
+                      {c.aiRiskLevel === 'HIGH' && (
+                        <Badge variant="danger" size="sm">
+                          AI Risk: High ({c.aiRiskScore || 75}/100)
+                        </Badge>
+                      )}
+                      {c.aiRiskLevel === 'NEEDS_REVIEW' && (
+                        <Badge variant="warning" size="sm">
+                          AI Flag: Needs Review
+                        </Badge>
+                      )}
+                      {c.aiRiskLevel === 'LOW' && c.aiAnalysisStatus === 'COMPLETED' && (
+                        <Badge variant="success" size="sm">
+                          AI Verified
+                        </Badge>
+                      )}
                       <span className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
                         • {c.category?.name || 'Category'}
                       </span>
@@ -362,9 +456,26 @@ export function AdminComplaintsPage() {
                     <h3 className="text-base font-bold font-heading text-[#202522] dark:text-[#E8F0EC]">{c.title}</h3>
                     <p className="text-xs text-[#4A5750] dark:text-[#A8BFAE] leading-relaxed">{c.description}</p>
 
+                    {c.aiFindings?.verificationSummary && (
+                      <div className="p-2.5 rounded-lg bg-[#ECE7DB]/60 dark:bg-[#1D2A25]/60 border border-[#DED8CB] dark:border-[#283931] text-xs space-y-1">
+                        <div className="flex items-center justify-between text-[#173D32] dark:text-[#7BC4B2] font-semibold text-[11px]">
+                          <span>AI Integrity Findings</span>
+                          {c.aiFindings.fraudIndicators && c.aiFindings.fraudIndicators.length > 0 && (
+                            <span className="text-amber-600 dark:text-amber-400 font-mono">
+                              Flags: {c.aiFindings.fraudIndicators.join(', ')}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-[#3E4B44] dark:text-[#C5D4C9] text-[11px] leading-relaxed">
+                          {c.aiFindings.verificationSummary}
+                        </p>
+                      </div>
+                    )}
+
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-[#54625A] dark:text-[#C5D4C9] pt-2 border-t border-[#DED8CB] dark:border-[#283931]">
                       <div>
                         <strong className="text-[#202522] dark:text-[#E8F0EC]">Location:</strong> {c.locationAddress} ({c.locality})
+                        {c.ward && <span className="block text-[11px] text-[#173D32] dark:text-[#7BC4B2] font-medium">Ward: {c.ward}</span>}
                       </div>
                       <div>
                         <strong className="text-[#202522] dark:text-[#E8F0EC]">Citizen:</strong>{' '}
@@ -425,6 +536,17 @@ export function AdminComplaintsPage() {
                     >
                       Public View
                     </Button>
+                    {c.isDuplicate && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleSeparateReport(c.id, c.trackingId)}
+                        className="text-xs text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-700"
+                        disabled={actionLoading}
+                      >
+                        Separate Report
+                      </Button>
+                    )}
                   </div>
                 </div>
               </CardContent>

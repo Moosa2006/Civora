@@ -42,6 +42,24 @@ export function errorHandler(
     });
   }
 
+  // Detect PostgreSQL 42P05 / Prepared statement collisions from connection poolers
+  if (
+    err instanceof Prisma.PrismaClientUnknownRequestError &&
+    (err.message.includes('42P05') || err.message.includes('prepared statement'))
+  ) {
+    console.error(
+      `[Civora Database Pooler Collision ${correlationId || 'N/A'}]: Prepared statement collision 42P05. Ensure pgbouncer=true is appended to DATABASE_URL.`
+    );
+    return res.status(503).json({
+      success: false,
+      error: {
+        code: 'DATABASE_POOLER_COLLISION',
+        message: 'Database connection pooler encountered a prepared statement collision. pgbouncer=true parameter is required on DATABASE_URL.',
+        correlationId,
+      },
+    });
+  }
+
   // Prisma-specific known request errors
   if (err instanceof Prisma.PrismaClientKnownRequestError) {
     // P1xxx codes denote database connection, authentication, and reachability issues
@@ -87,12 +105,46 @@ export function errorHandler(
       });
     }
 
+    if (err.code === 'P2021' || err.code === 'P2022') {
+      const missingTarget = (err.meta?.column as string) || (err.meta?.table as string) || 'database structure';
+      console.error(
+        `[Civora Database Schema Drift ${correlationId || 'N/A'}]: Missing ${missingTarget}.`,
+        err.message
+      );
+      return res.status(500).json({
+        success: false,
+        error: {
+          code: 'DATABASE_SCHEMA_DRIFT',
+          message: 'Database schema synchronization is in progress. Please refresh in a moment.',
+          correlationId,
+        },
+      });
+    }
+
     if (err.code === 'P2025' || err.code === 'P2023') {
       return res.status(404).json({
         success: false,
         error: {
           code: 'NOT_FOUND',
           message: 'The requested record does not exist.',
+          correlationId,
+        },
+      });
+    }
+  }
+
+  // Handle Prisma Unknown Request Errors (Postgres syntax, missing columns 42703, missing relations 42P01)
+  if (err instanceof Prisma.PrismaClientUnknownRequestError) {
+    if (err.message.includes('42703') || err.message.includes('does not exist')) {
+      console.error(
+        `[Civora Database Column Missing ${correlationId || 'N/A'}]: Column missing in query:`,
+        err.message
+      );
+      return res.status(500).json({
+        success: false,
+        error: {
+          code: 'DATABASE_SCHEMA_DRIFT',
+          message: 'Database schema synchronization is in progress. Please refresh in a moment.',
           correlationId,
         },
       });

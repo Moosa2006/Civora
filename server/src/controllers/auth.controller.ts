@@ -10,11 +10,13 @@ const COOKIE_NAME = 'civora_auth_token';
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 
 function setAuthCookie(res: Response, token: string) {
+  const isProd = process.env.NODE_ENV === 'production';
   res.cookie(COOKIE_NAME, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    secure: isProd,
+    sameSite: isProd ? 'none' : 'lax',
     maxAge: SEVEN_DAYS_MS,
+    path: '/',
   });
 }
 
@@ -507,10 +509,12 @@ export function getCurrentUser(req: Request, res: Response) {
 }
 
 export function logout(_req: Request, res: Response) {
+  const isProd = process.env.NODE_ENV === 'production';
   res.clearCookie(COOKIE_NAME, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    secure: isProd,
+    sameSite: isProd ? 'none' : 'lax',
+    path: '/',
   });
 
   return res.status(200).json({

@@ -83,6 +83,14 @@ export interface EvidenceItem {
   fileSizeBytes?: number | null;
   mimeType?: string | null;
   isPublic: boolean;
+  sha256Checksum?: string | null;
+  perceptualHash?: string | null;
+  capturedAt?: string | null;
+  browserCaptureTimestamp?: string | null;
+  captureLatitude?: number | null;
+  captureLongitude?: number | null;
+  captureAccuracy?: number | null;
+  isGpsVerified?: boolean;
   uploadedById?: string | null;
   uploadedBy?: {
     id: string;
@@ -138,6 +146,42 @@ export interface Complaint {
   closedAt?: string | null;
   createdAt: string;
   updatedAt: string;
+  aiAnalysisStatus?: string | null;
+  aiRiskLevel?: 'LOW' | 'MEDIUM' | 'HIGH' | 'NEEDS_REVIEW' | null;
+  aiRiskScore?: number | null;
+  aiFindings?: {
+    isConsistent?: boolean;
+    relevanceScore?: number;
+    visualCategory?: string;
+    verificationSummary?: string;
+    fraudIndicators?: string[];
+    evidenceMatches?: any[];
+    duplicateCandidates?: any[];
+    exifDiscrepancy?: boolean;
+    locationDiscrepancyKm?: number | null;
+    timeDeltaHours?: number | null;
+    error?: string;
+  } | null;
+  aiAnalyzedAt?: string | null;
+  isDuplicate?: boolean;
+  duplicateConfidence?: number | null;
+  primaryComplaintId?: string | null;
+  isMaster?: boolean;
+  affectedReportCount?: number;
+  distinctReporterCount?: number;
+  consolidationReason?: string | null;
+  consolidatedAt?: string | null;
+  priorityEscalatedAt?: string | null;
+  priorityEscalationReason?: string | null;
+  subordinateComplaints?: Array<{
+    id: string;
+    trackingId: string;
+    title: string;
+    description?: string;
+    createdAt: string;
+    citizen?: { id: string; name: string; email?: string; phone?: string | null } | null;
+    documents?: EvidenceItem[];
+  }>;
   statusHistory?: ComplaintStatusHistoryItem[];
   timeline?: ComplaintStatusHistoryItem[];
   inspections?: SiteInspectionItem[];

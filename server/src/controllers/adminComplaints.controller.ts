@@ -8,6 +8,7 @@ import {
 } from '../validation/complaint.validation.js';
 import { NotificationService } from '../lib/notificationService.js';
 import { SlaEngine } from '../lib/slaEngine.js';
+import { ComplaintConsolidationService } from '../lib/complaintConsolidation.js';
 
 export async function getAllComplaints(req: Request, res: Response, next: NextFunction) {
   try {
@@ -20,8 +21,14 @@ export async function getAllComplaints(req: Request, res: Response, next: NextFu
     const departmentId = req.query.departmentId as string | undefined;
     const priority = req.query.priority as ComplaintPriority | undefined;
     const search = (req.query.search as string | undefined)?.trim();
+    const viewAll = req.query.viewAll === 'true';
 
     const whereClause: any = {};
+
+    // By default, queue displays MASTER complaints (avoid counting consolidated subordinate reports as separate issues)
+    if (!viewAll) {
+      whereClause.isMaster = true;
+    }
 
     if (status && Object.values(ComplaintStatus).includes(status)) {
       whereClause.status = status;
@@ -86,6 +93,31 @@ export async function getAllComplaints(req: Request, res: Response, next: NextFu
               phone: true,
             },
           },
+          subordinateComplaints: {
+            select: {
+              id: true,
+              trackingId: true,
+              title: true,
+              description: true,
+              createdAt: true,
+              citizen: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                  phone: true,
+                },
+              },
+            },
+          },
+          duplicateLinks: {
+            select: {
+              id: true,
+              similarityScore: true,
+              reason: true,
+              createdAt: true,
+            },
+          },
         },
         orderBy: { createdAt: 'desc' },
         skip,
@@ -106,6 +138,43 @@ export async function getAllComplaints(req: Request, res: Response, next: NextFu
       },
     });
   } catch (err) {
+    return next(err);
+  }
+}
+
+/**
+ * Allows an authorized municipal reviewer or administrator to safely separate an incorrectly
+ * consolidated subordinate complaint back into an independent master civic issue.
+ */
+export async function separateSubordinateComplaint(req: Request, res: Response, next: NextFunction) {
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        error: { code: 'UNAUTHORIZED', message: 'Authentication required.' },
+      });
+    }
+
+    const id = String(req.params.id || '').trim();
+    const reason = String(req.body.reason || 'Manually separated by municipal reviewer.').trim();
+
+    const result = await ComplaintConsolidationService.separateSubordinateComplaint({
+      subordinateId: id,
+      officialUser: {
+        id: req.user.id,
+        name: req.user.name,
+        role: req.user.role,
+      },
+      separationReason: reason,
+      prisma,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Complaint successfully separated into an independent civic issue.',
+      data: result,
+    });
+  } catch (err: any) {
     return next(err);
   }
 }

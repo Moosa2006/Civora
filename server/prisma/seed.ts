@@ -36,11 +36,13 @@ import {
 } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
+import crypto from 'crypto';
+
 const prisma = new PrismaClient();
 
-// Development-only testing password: CivoraDev123!
-const DEV_TEST_PASSWORD = 'CivoraDev123!';
-const DEV_PASSWORD_HASH = bcrypt.hashSync(DEV_TEST_PASSWORD, 10);
+// In production or seeding, use SEED_DEFAULT_PASSWORD env or secure random hash
+const SEED_PASSWORD = process.env.SEED_DEFAULT_PASSWORD || crypto.randomBytes(16).toString('hex');
+const DEFAULT_PASSWORD_HASH = bcrypt.hashSync(SEED_PASSWORD, 10);
 
 // Primary interactive demo testing password: CivoraDemo@2026
 const DEMO_TEST_PASSWORD = 'CivoraDemo@2026';
@@ -178,12 +180,12 @@ async function seed() {
   console.log('[Civora Seed] Seeding fictional accounts...');
   const citizenAarav = await prisma.user.upsert({
     where: { email: 'aarav.sharma@example.com' },
-    update: { passwordHash: DEV_PASSWORD_HASH },
+    update: { passwordHash: DEFAULT_PASSWORD_HASH },
     create: {
       email: 'aarav.sharma@example.com',
       name: 'Aarav Sharma',
       phone: '+91 98765 43210',
-      passwordHash: DEV_PASSWORD_HASH,
+      passwordHash: DEFAULT_PASSWORD_HASH,
       role: UserRole.CITIZEN,
       accountStatus: AccountStatus.ACTIVE,
       emailVerifiedAt: new Date('2026-01-15T10:00:00Z'),
@@ -192,12 +194,12 @@ async function seed() {
 
   const citizenPriya = await prisma.user.upsert({
     where: { email: 'priya.patel@example.com' },
-    update: { passwordHash: DEV_PASSWORD_HASH },
+    update: { passwordHash: DEFAULT_PASSWORD_HASH },
     create: {
       email: 'priya.patel@example.com',
       name: 'Priya Patel',
       phone: '+91 98765 43211',
-      passwordHash: DEV_PASSWORD_HASH,
+      passwordHash: DEFAULT_PASSWORD_HASH,
       role: UserRole.CITIZEN,
       accountStatus: AccountStatus.ACTIVE,
       emailVerifiedAt: new Date('2026-02-10T11:30:00Z'),
@@ -206,12 +208,12 @@ async function seed() {
 
   const citizenRahul = await prisma.user.upsert({
     where: { email: 'rahul.verma@example.com' },
-    update: { passwordHash: DEV_PASSWORD_HASH },
+    update: { passwordHash: DEFAULT_PASSWORD_HASH },
     create: {
       email: 'rahul.verma@example.com',
       name: 'Rahul Verma',
       phone: '+91 98765 43212',
-      passwordHash: DEV_PASSWORD_HASH,
+      passwordHash: DEFAULT_PASSWORD_HASH,
       role: UserRole.CITIZEN,
       accountStatus: AccountStatus.ACTIVE,
       emailVerifiedAt: new Date('2026-03-01T09:15:00Z'),
@@ -220,12 +222,12 @@ async function seed() {
 
   const officialRajesh = await prisma.user.upsert({
     where: { email: 'rajesh.kumar@example.com' },
-    update: { passwordHash: DEV_PASSWORD_HASH },
+    update: { passwordHash: DEFAULT_PASSWORD_HASH },
     create: {
       email: 'rajesh.kumar@example.com',
       name: 'Engineer Rajesh Kumar',
       phone: '+91 98765 43220',
-      passwordHash: DEV_PASSWORD_HASH,
+      passwordHash: DEFAULT_PASSWORD_HASH,
       role: UserRole.GOVERNMENT_OFFICIAL,
       accountStatus: AccountStatus.ACTIVE,
       departmentId: deptPwd.id,
@@ -235,12 +237,12 @@ async function seed() {
 
   const officialSunita = await prisma.user.upsert({
     where: { email: 'sunita.rao@example.com' },
-    update: { passwordHash: DEV_PASSWORD_HASH },
+    update: { passwordHash: DEFAULT_PASSWORD_HASH },
     create: {
       email: 'sunita.rao@example.com',
       name: 'Inspector Sunita Rao',
       phone: '+91 98765 43221',
-      passwordHash: DEV_PASSWORD_HASH,
+      passwordHash: DEFAULT_PASSWORD_HASH,
       role: UserRole.GOVERNMENT_OFFICIAL,
       accountStatus: AccountStatus.ACTIVE,
       departmentId: deptSan.id,
@@ -250,100 +252,29 @@ async function seed() {
 
   const adminMeera = await prisma.user.upsert({
     where: { email: 'admin.meera@civora.local' },
-    update: { passwordHash: DEV_PASSWORD_HASH },
+    update: { passwordHash: DEFAULT_PASSWORD_HASH },
     create: {
       email: 'admin.meera@civora.local',
       name: 'Meera Desai (System Admin)',
       phone: '+91 98765 43200',
-      passwordHash: DEV_PASSWORD_HASH,
+      passwordHash: DEFAULT_PASSWORD_HASH,
       role: UserRole.ADMIN,
       accountStatus: AccountStatus.ACTIVE,
       emailVerifiedAt: new Date('2025-10-01T00:00:00Z'),
     },
   });
 
-  // Explicit Module 5 Test Accounts (Testing Credentials: CivoraDev123!)
-  await prisma.user.upsert({
-    where: { email: 'citizen1@example.test' },
-    update: { passwordHash: DEV_PASSWORD_HASH },
+  const contractorSanjay = await prisma.user.upsert({
+    where: { email: 'sanjay.hegde@apexinfra.in' },
+    update: { passwordHash: DEFAULT_PASSWORD_HASH },
     create: {
-      email: 'citizen1@example.test',
-      name: 'Test Citizen One',
-      phone: '+91 90000 00001',
-      passwordHash: DEV_PASSWORD_HASH,
-      role: UserRole.CITIZEN,
-      accountStatus: AccountStatus.ACTIVE,
-      emailVerifiedAt: new Date('2026-01-01T00:00:00Z'),
-    },
-  });
-
-  await prisma.user.upsert({
-    where: { email: 'official1@example.test' },
-    update: { passwordHash: DEV_PASSWORD_HASH },
-    create: {
-      email: 'official1@example.test',
-      name: 'Test Official One',
-      phone: '+91 90000 00002',
-      passwordHash: DEV_PASSWORD_HASH,
-      role: UserRole.GOVERNMENT_OFFICIAL,
-      accountStatus: AccountStatus.ACTIVE,
-      departmentId: deptPwd.id,
-      emailVerifiedAt: new Date('2026-01-01T00:00:00Z'),
-    },
-  });
-
-  await prisma.user.upsert({
-    where: { email: 'admin1@example.test' },
-    update: { passwordHash: DEV_PASSWORD_HASH },
-    create: {
-      email: 'admin1@example.test',
-      name: 'Test Administrator One',
-      phone: '+91 90000 00003',
-      passwordHash: DEV_PASSWORD_HASH,
-      role: UserRole.ADMIN,
-      accountStatus: AccountStatus.ACTIVE,
-      emailVerifiedAt: new Date('2026-01-01T00:00:00Z'),
-    },
-  });
-
-  await prisma.user.upsert({
-    where: { email: 'contractor1@example.test' },
-    update: { passwordHash: DEV_PASSWORD_HASH },
-    create: {
-      email: 'contractor1@example.test',
-      name: 'Sanjay Hegde (Apex Infra)',
-      phone: '+91 90000 00004',
-      passwordHash: DEV_PASSWORD_HASH,
+      email: 'sanjay.hegde@apexinfra.in',
+      name: 'Sanjay Hegde',
+      phone: '+91 98765 43230',
+      passwordHash: DEFAULT_PASSWORD_HASH,
       role: UserRole.CONTRACTOR,
       accountStatus: AccountStatus.ACTIVE,
-      emailVerifiedAt: new Date('2026-01-01T00:00:00Z'),
-    },
-  });
-
-  await prisma.user.upsert({
-    where: { email: 'suspended1@example.test' },
-    update: { passwordHash: DEV_PASSWORD_HASH, accountStatus: AccountStatus.SUSPENDED },
-    create: {
-      email: 'suspended1@example.test',
-      name: 'Suspended Test User',
-      phone: '+91 90000 00004',
-      passwordHash: DEV_PASSWORD_HASH,
-      role: UserRole.CITIZEN,
-      accountStatus: AccountStatus.SUSPENDED,
-      emailVerifiedAt: new Date('2026-01-01T00:00:00Z'),
-    },
-  });
-
-  await prisma.user.upsert({
-    where: { email: 'pending1@example.test' },
-    update: { passwordHash: DEV_PASSWORD_HASH, accountStatus: AccountStatus.PENDING_VERIFICATION },
-    create: {
-      email: 'pending1@example.test',
-      name: 'Pending Verification Test User',
-      phone: '+91 90000 00005',
-      passwordHash: DEV_PASSWORD_HASH,
-      role: UserRole.CITIZEN,
-      accountStatus: AccountStatus.PENDING_VERIFICATION,
+      emailVerifiedAt: new Date('2025-10-01T00:00:00Z'),
     },
   });
 
@@ -1043,7 +974,7 @@ async function seed() {
   // Link contractor user to contractor organization
   await prisma.user.updateMany({
     where: {
-      email: { in: ['contractor1@example.test', 'contractor@civora.test'] },
+      email: { in: ['contractor1@example.test', 'contractor@civora.test', 'sanjay.hegde@apexinfra.in'] },
     },
     data: { contractorId: contractorApex.id },
   });
@@ -1100,7 +1031,7 @@ async function seed() {
 
   // Seed Winning Bid for Tender 1
   const contractorUser = await prisma.user.findUnique({
-    where: { email: 'contractor1@example.test' },
+    where: { email: 'sanjay.hegde@apexinfra.in' },
   });
 
   let winningBid = await prisma.tenderBid.findFirst({

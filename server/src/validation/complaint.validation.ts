@@ -32,8 +32,8 @@ export const createComplaintSchema = z.object({
   ward: z
     .string()
     .trim()
-    .max(100, 'Ward identifier must not exceed 100 characters.')
-    .optional(),
+    .min(1, 'Municipal Ward is mandatory for complaint triage.')
+    .max(100, 'Ward identifier must not exceed 100 characters.'),
   latitude: z
     .number()
     .min(-90, 'Latitude must be between -90 and 90.')
@@ -46,6 +46,10 @@ export const createComplaintSchema = z.object({
     .max(180, 'Longitude must be between -180 and 180.')
     .optional()
     .nullable(),
+  locationSource: z.string().trim().max(50).optional().nullable(),
+  isLocationPublic: z.boolean().optional().default(true),
+  clientPerceptualHash: z.string().trim().max(64).optional().nullable(),
+  idempotencyKey: z.string().trim().max(128).optional().nullable(),
 });
 
 export const updateComplaintStatusSchema = z.object({

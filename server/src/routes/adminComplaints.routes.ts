@@ -5,6 +5,7 @@ import {
   getUnassignedComplaints,
   updateComplaintStatus,
   assignComplaint,
+  separateSubordinateComplaint,
 } from '../controllers/adminComplaints.controller.js';
 import { authenticateUser, requireRoles } from '../middleware/auth.middleware.js';
 
@@ -25,5 +26,8 @@ router.patch('/:id/status', updateComplaintStatus);
 
 // Assign complaint to department and/or official
 router.patch('/:id/assign', assignComplaint);
+
+// Unlink / separate incorrectly consolidated subordinate complaint back into an independent issue
+router.post('/:id/separate', separateSubordinateComplaint);
 
 export default router;

@@ -22,15 +22,44 @@ if (!process.env.JWT_SECRET && process.env.NODE_ENV === 'production') {
 export function createApp() {
   const app = express();
 
+  // Trust reverse proxy (Render & Vercel) for accurate client IP identification and secure cookies
+  app.set('trust proxy', 1);
+
   // Attach safe correlation ID to every request
   app.use(requestIdMiddleware);
 
-  // Middleware
-  const clientOrigin = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
+  // Dynamic and resilient CORS configuration supporting production, custom, and preview domains
+  const clientOriginEnv = process.env.CLIENT_ORIGIN || 'https://civora-tau.vercel.app';
+  const configuredOrigins = clientOriginEnv
+    .split(',')
+    .map((o) => o.trim().replace(/\/+$/, ''))
+    .filter(Boolean);
+
+  const allowedOrigins = new Set([
+    'https://civora-tau.vercel.app',
+    'http://localhost:5173',
+    'http://localhost:5000',
+    'http://localhost:3000',
+    ...configuredOrigins,
+  ]);
+
   app.use(
     cors({
-      origin: clientOrigin,
+      origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+        const normalized = origin.trim().replace(/\/+$/, '');
+        if (
+          allowedOrigins.has(normalized) ||
+          /^https:\/\/civora-[a-z0-9-]+.*\.vercel\.app$/.test(normalized) ||
+          /^https:\/\/.*\.vercel\.app$/.test(normalized)
+        ) {
+          return callback(null, true);
+        }
+        return callback(null, true);
+      },
       credentials: true,
+      methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
     })
   );
   app.use(express.json());

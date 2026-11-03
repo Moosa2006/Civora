@@ -10,6 +10,10 @@ import {
   logout,
   adminCheck,
 } from '../controllers/auth.controller.js';
+import {
+  postBootstrapAdmin,
+  getBootstrapStatus,
+} from '../controllers/adminBootstrap.controller.js';
 import { authenticateUser, requireRoles } from '../middleware/auth.middleware.js';
 
 const router = Router();
@@ -28,6 +32,25 @@ const authLimiter = rateLimit({
     },
   },
 });
+
+// Dedicated strict rate limiter for one-time administrator bootstrap
+const bootstrapLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: process.env.NODE_ENV === 'test' ? 50 : 5, // Max 5 attempts
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: {
+      code: 'RATE_LIMIT_EXCEEDED',
+      message: 'Too many bootstrap attempts. Please try again after 15 minutes.',
+    },
+  },
+});
+
+// One-time protected administrator bootstrap routes (Permanently disabled once an admin exists)
+router.post('/bootstrap-admin', bootstrapLimiter, postBootstrapAdmin);
+router.get('/bootstrap-admin/status', bootstrapLimiter, getBootstrapStatus);
 
 // Public authentication & registration routes
 router.post('/register', authLimiter, register);

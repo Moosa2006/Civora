@@ -14,9 +14,11 @@ export function Footer() {
           {/* Civora Mission */}
           <div className="md:col-span-1 space-y-3">
             <div className="flex items-center space-x-2.5">
-              <div className="w-7 h-7 rounded-lg bg-[#F4F0E6] text-[#173D32] flex items-center justify-center font-heading font-bold text-sm">
-                C
-              </div>
+              <img
+                src="/civora_icon.jpeg"
+                alt="Civora Emblem"
+                className="w-8 h-8 rounded-lg object-contain bg-white p-0.5 shrink-0 shadow-xs"
+              />
               <span className="text-base font-heading font-bold text-[#F4F0E6] tracking-tight">Civora</span>
             </div>
             <p className="text-sm text-[#A8BFAE] leading-relaxed">

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Container } from '../components/layout/Container';
 import { PageHeading } from '../components/ui/PageHeading';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/Card';
@@ -21,8 +21,15 @@ import { useRouter } from '../router';
 import { LocationPickerModal } from '../components/map/LocationPickerModal';
 import { useTranslation } from '../context/useTranslation';
 import { announceToScreenReader } from '../components/ui/LiveAnnouncer';
+import { MUNICIPAL_WARDS } from '../config/wards';
+import {
+  computeClientSha256,
+  computeClientDHash,
+  extractClientExif,
+  getBrowserGeolocation,
+  type ClientImageAnalysis,
+} from '../lib/clientImageVerification';
 import type { ComplaintCategory, ComplaintPriority } from '../types/complaint';
-import type { DuplicateCandidate } from '../types/moderation';
 
 export function ReportIssuePage() {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
@@ -36,7 +43,8 @@ export function ReportIssuePage() {
   // Form State
   const [title, setTitle] = useState('');
   const [categoryId, setCategoryId] = useState('');
-  const [priority, setPriority] = useState<ComplaintPriority>('MEDIUM');
+  const [priority, setPriority] = useState<ComplaintPriority>('LOW');
+  const [duration, setDuration] = useState<string>('JUST_NOTICED');
   const [locality, setLocality] = useState('');
   const [locationAddress, setLocationAddress] = useState('');
   const [ward, setWard] = useState('');
@@ -44,10 +52,34 @@ export function ReportIssuePage() {
   const [latitude, setLatitude] = useState<string>('');
   const [longitude, setLongitude] = useState<string>('');
 
-  // Evidence attachments state (Module 12)
+  const mapDurationToPriority = (dur: string): ComplaintPriority => {
+    switch (dur) {
+      case 'JUST_NOTICED':
+        return 'LOW';
+      case 'DAYS_1_TO_7':
+      case 'WEEKS_1_TO_4':
+        return 'MEDIUM';
+      case 'MONTHS_1_TO_6':
+        return 'HIGH';
+      case 'MORE_THAN_6_MONTHS':
+        return 'URGENT';
+      default:
+        return 'MEDIUM';
+    }
+  };
+
+  const handleDurationChange = (val: string) => {
+    setDuration(val);
+    setPriority(mapDurationToPriority(val));
+  };
+
+  // Evidence attachments state (Module 12 & AI Verification)
   const [evidenceFiles, setEvidenceFiles] = useState<File[]>([]);
+  const [analyzedImages, setAnalyzedImages] = useState<ClientImageAnalysis[]>([]);
   const [evidenceError, setEvidenceError] = useState<string | null>(null);
+  const [isAnalyzingPhoto, setIsAnalyzingPhoto] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   // UI / Submission state
   const [submitting, setSubmitting] = useState(false);
@@ -57,10 +89,6 @@ export function ReportIssuePage() {
   const [isMapPickerOpen, setIsMapPickerOpen] = useState(false);
   const [locationSource, setLocationSource] = useState<'GPS_DEVICE' | 'MAP_PICKER' | 'MANUAL_ENTRY'>('MANUAL_ENTRY');
   const [isLocationPublic, setIsLocationPublic] = useState(true);
-
-  // Module 14: Duplicate detection advisory state
-  const [duplicateCandidates, setDuplicateCandidates] = useState<DuplicateCandidate[]>([]);
-  const [duplicateWarningDismissed, setDuplicateWarningDismissed] = useState(false);
 
   // Success state
   const [submittedData, setSubmittedData] = useState<{
@@ -84,7 +112,12 @@ export function ReportIssuePage() {
         if (parsed.title || parsed.description) {
           setTitle(parsed.title || '');
           if (parsed.categoryId) setCategoryId(parsed.categoryId);
-          if (parsed.priority) setPriority(parsed.priority);
+          if (parsed.duration) {
+            setDuration(parsed.duration);
+            setPriority(mapDurationToPriority(parsed.duration));
+          } else if (parsed.priority) {
+            setPriority(parsed.priority);
+          }
           setLocality(parsed.locality || '');
           setLocationAddress(parsed.locationAddress || '');
           setWard(parsed.ward || '');
@@ -110,6 +143,7 @@ export function ReportIssuePage() {
           title,
           categoryId,
           priority,
+          duration,
           locality,
           locationAddress,
           ward,
@@ -138,67 +172,27 @@ export function ReportIssuePage() {
   };
 
   // Fetch active categories on mount
-  useEffect(() => {
-    let isMounted = true;
-    async function loadCategories() {
-      try {
-        const res = await fetch('/api/meta/categories');
-        const json = await res.json();
-        if (isMounted && json.success && Array.isArray(json.data)) {
-          setCategories(json.data);
-          if (json.data.length > 0) {
-            setCategoryId(json.data[0].id);
-          }
+  const loadCategories = useCallback(async () => {
+    setLoadingCategories(true);
+    try {
+      const res = await fetch('/api/meta/categories');
+      const json = await res.json();
+      if (json.success && Array.isArray(json.data)) {
+        setCategories(json.data);
+        if (json.data.length > 0) {
+          setCategoryId((prev) => prev || json.data[0].id);
         }
-      } catch {
-        if (isMounted) {
-          setErrorMsg('Failed to load categories. Please check your internet connection.');
-        }
-      } finally {
-        if (isMounted) setLoadingCategories(false);
       }
+    } catch {
+      setErrorMsg('Failed to load categories. Please check your internet connection.');
+    } finally {
+      setLoadingCategories(false);
     }
-    loadCategories();
-    return () => {
-      isMounted = false;
-    };
   }, []);
 
-  // Module 14: Debounced duplicate detection
   useEffect(() => {
-    if (title.trim().length < 5 || description.trim().length < 8 || !categoryId) {
-      setDuplicateCandidates([]);
-      return;
-    }
-
-    const timer = setTimeout(async () => {
-      try {
-        const res = await fetch('/api/moderation/duplicates/check', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            title: title.trim(),
-            description: description.trim(),
-            categoryId,
-            locality: locality.trim() || undefined,
-            ward: ward.trim() || undefined,
-            latitude: latitude ? parseFloat(latitude) : undefined,
-            longitude: longitude ? parseFloat(longitude) : undefined,
-          }),
-        });
-        const data = await res.json();
-        if (data.success && data.data?.candidates?.length > 0) {
-          setDuplicateCandidates(data.data.candidates);
-        } else {
-          setDuplicateCandidates([]);
-        }
-      } catch {
-        // Non-blocking duplicate check
-      }
-    }, 600);
-
-    return () => clearTimeout(timer);
-  }, [title, description, categoryId, locality, ward, latitude, longitude]);
+    void loadCategories();
+  }, [loadCategories]);
 
   // Geolocation handler (requested explicitly by user click)
   const handleGetLocation = () => {
@@ -252,7 +246,7 @@ export function ReportIssuePage() {
     }
   };
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setEvidenceError(null);
     if (!e.target.files) return;
 
@@ -262,12 +256,12 @@ export function ReportIssuePage() {
       return;
     }
 
-    const allowed = ['jpg', 'jpeg', 'png', 'webp', 'pdf'];
+    const allowed = ['jpg', 'jpeg', 'png', 'webp'];
     const valid: File[] = [];
     for (const f of selected) {
       const ext = f.name.split('.').pop()?.toLowerCase();
       if (!ext || !allowed.includes(ext)) {
-        setEvidenceError(`Unsupported format for '${f.name}'. Allowed: JPG, PNG, WebP, PDF.`);
+        setEvidenceError(`Unsupported format for '${f.name}'. Allowed photographic formats: JPG, PNG, WebP.`);
         return;
       }
       if (f.size > 10 * 1024 * 1024) {
@@ -277,10 +271,65 @@ export function ReportIssuePage() {
       valid.push(f);
     }
 
-    setEvidenceFiles((prev) => [...prev, ...valid]);
+    if (valid.length === 0) return;
+
+    setIsAnalyzingPhoto(true);
+    try {
+      // Best-effort device GPS capture with user consent
+      let deviceGps: { latitude: number; longitude: number; accuracy: number } | null = null;
+      try {
+        deviceGps = await getBrowserGeolocation();
+        // If user didn't enter latitude/longitude yet, auto-populate from device GPS
+        if (deviceGps && !latitude && !longitude) {
+          setLatitude(String(deviceGps.latitude));
+          setLongitude(String(deviceGps.longitude));
+          setLocationSource('GPS_DEVICE');
+        }
+      } catch {}
+
+      const newAnalyzed: ClientImageAnalysis[] = [];
+      for (const file of valid) {
+        const previewUrl = URL.createObjectURL(file);
+        const [sha256, perceptualHash, exif] = await Promise.all([
+          computeClientSha256(file),
+          computeClientDHash(file),
+          extractClientExif(file),
+        ]);
+
+        newAnalyzed.push({
+          file,
+          previewUrl,
+          sha256,
+          perceptualHash,
+          capturedAt: exif.capturedAt,
+          exifLatitude: exif.latitude,
+          exifLongitude: exif.longitude,
+          browserCapturedAt: new Date(),
+          browserLatitude: deviceGps?.latitude,
+          browserLongitude: deviceGps?.longitude,
+          browserAccuracy: deviceGps?.accuracy,
+        });
+      }
+
+      setEvidenceFiles((prev) => [...prev, ...valid]);
+      setAnalyzedImages((prev) => [...prev, ...newAnalyzed]);
+    } catch {
+      setEvidenceFiles((prev) => [...prev, ...valid]);
+    } finally {
+      setIsAnalyzingPhoto(false);
+      // Reset input value to allow re-selection
+      if (e.target) e.target.value = '';
+    }
   };
 
   const handleRemoveFile = (index: number) => {
+    setAnalyzedImages((prev) => {
+      const target = prev[index];
+      if (target?.previewUrl) {
+        URL.revokeObjectURL(target.previewUrl);
+      }
+      return prev.filter((_, i) => i !== index);
+    });
     setEvidenceFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
@@ -298,6 +347,10 @@ export function ReportIssuePage() {
       setErrorMsg('Please select a civic category.');
       return;
     }
+    if (!ward.trim()) {
+      setErrorMsg('Municipal Ward is mandatory for municipal complaint filing and triage.');
+      return;
+    }
     if (locality.trim().length < 2) {
       setErrorMsg('Please specify a locality or landmark (at least 2 characters).');
       return;
@@ -310,21 +363,38 @@ export function ReportIssuePage() {
       setErrorMsg('Detailed description must be at least 10 characters long.');
       return;
     }
+    if (evidenceFiles.length === 0) {
+      setErrorMsg('Photographic evidence is mandatory. Please capture or attach at least one photo of the civic issue.');
+      return;
+    }
 
     setSubmitting(true);
     try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('civora_token') : null;
+      const primaryImg = analyzedImages[0];
+
+      const durationLabels: Record<string, string> = {
+        JUST_NOTICED: 'Just noticed',
+        DAYS_1_TO_7: '1–7 days',
+        WEEKS_1_TO_4: '1–4 weeks',
+        MONTHS_1_TO_6: '1–6 months',
+        MORE_THAN_6_MONTHS: 'More than 6 months',
+        NOT_SURE: 'Not sure',
+      };
+
+      const durationNote = `\n\n[Problem Duration: ${durationLabels[duration] || 'Not specified'}]`;
+
       const payload: any = {
         title: title.trim(),
         categoryId,
         priority,
         locality: locality.trim(),
+        ward: ward.trim(),
         locationAddress: locationAddress.trim(),
-        description: description.trim(),
+        description: `${description.trim()}${durationNote}`,
+        clientPerceptualHash: primaryImg?.perceptualHash || undefined,
+        idempotencyKey: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : undefined,
       };
-
-      if (ward.trim()) {
-        payload.ward = ward.trim();
-      }
 
       if (latitude && !isNaN(Number(latitude))) {
         payload.latitude = parseFloat(latitude);
@@ -335,12 +405,17 @@ export function ReportIssuePage() {
         payload.longitude = parseFloat(longitude);
       }
 
+      const reqHeaders: Record<string, string> = {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      };
+      if (token) {
+        reqHeaders['Authorization'] = `Bearer ${token}`;
+      }
+
       const res = await fetch('/api/complaints', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
+        headers: reqHeaders,
         credentials: 'include',
         body: JSON.stringify(payload),
       });
@@ -356,7 +431,7 @@ export function ReportIssuePage() {
         return;
       }
 
-      // If initial evidence files were attached, upload them immediately to Module 12 endpoint
+      // Mandatory evidence upload with client verification metadata
       if (evidenceFiles.length > 0 && json.data?.complaint?.id) {
         try {
           const formData = new FormData();
@@ -364,11 +439,36 @@ export function ReportIssuePage() {
           formData.append('evidencePurpose', 'CITIZEN_SUPPORTING');
           formData.append(
             'description',
-            'Initial photograph/document evidence submitted during complaint filing.'
+            'Photographic evidence submitted during complaint filing with capture verification.'
           );
+
+          if (primaryImg) {
+            if (primaryImg.perceptualHash) {
+              formData.append('clientPerceptualHash', primaryImg.perceptualHash);
+            }
+            if (primaryImg.browserCapturedAt) {
+              formData.append('browserCaptureTimestamp', primaryImg.browserCapturedAt.toISOString());
+            }
+            if (primaryImg.exifLatitude !== null && primaryImg.exifLongitude !== null) {
+              formData.append('browserLatitude', String(primaryImg.exifLatitude));
+              formData.append('browserLongitude', String(primaryImg.exifLongitude));
+            } else if (primaryImg.browserLatitude && primaryImg.browserLongitude) {
+              formData.append('browserLatitude', String(primaryImg.browserLatitude));
+              formData.append('browserLongitude', String(primaryImg.browserLongitude));
+              if (primaryImg.browserAccuracy) {
+                formData.append('browserAccuracy', String(primaryImg.browserAccuracy));
+              }
+            }
+          }
+
+          const uploadHeaders: Record<string, string> = {};
+          if (token) {
+            uploadHeaders['Authorization'] = `Bearer ${token}`;
+          }
 
           await fetch(`/api/evidence/complaints/${json.data.complaint.id}/upload`, {
             method: 'POST',
+            headers: uploadHeaders,
             credentials: 'include',
             body: formData,
           });
@@ -400,7 +500,8 @@ export function ReportIssuePage() {
   const handleResetForm = () => {
     setTitle('');
     if (categories.length > 0) setCategoryId(categories[0].id);
-    setPriority('MEDIUM');
+    setPriority('LOW');
+    setDuration('JUST_NOTICED');
     setLocality('');
     setLocationAddress('');
     setWard('');
@@ -608,22 +709,36 @@ export function ReportIssuePage() {
                       }))}
                       disabled={loadingCategories}
                     />
+                    {!loadingCategories && categories.length === 0 && (
+                      <div className="mt-2 flex items-center justify-between rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+                        <span>Municipal complaint categories are initializing...</span>
+                        <button
+                          type="button"
+                          onClick={() => void loadCategories()}
+                          className="font-semibold text-emerald-700 underline hover:text-emerald-900"
+                        >
+                          Retry
+                        </button>
+                      </div>
+                    )}
                   </FormField>
 
                   <FormField
-                    id="issue-priority"
-                    label="Citizen Urgency Assessment"
-                    helperText="Assists municipal triage priority"
+                    id="issue-duration"
+                    label={t('duration.question')}
+                    helperText={t('duration.helper')}
                   >
                     <Select
-                      id="issue-priority"
-                      value={priority}
-                      onChange={(e) => setPriority(e.target.value as ComplaintPriority)}
+                      id="issue-duration"
+                      value={duration}
+                      onChange={(e) => handleDurationChange(e.target.value)}
                       options={[
-                        { value: 'LOW', label: 'Low — General maintenance' },
-                        { value: 'MEDIUM', label: 'Medium — Normal attention' },
-                        { value: 'HIGH', label: 'High — Immediate hazard' },
-                        { value: 'URGENT', label: 'Urgent — Safety/structural emergency' },
+                        { value: 'JUST_NOTICED', label: t('duration.justNoticed') },
+                        { value: 'DAYS_1_TO_7', label: t('duration.days1to7') },
+                        { value: 'WEEKS_1_TO_4', label: t('duration.weeks1to4') },
+                        { value: 'MONTHS_1_TO_6', label: t('duration.months1to6') },
+                        { value: 'MORE_THAN_6_MONTHS', label: t('duration.moreThan6Months') },
+                        { value: 'NOT_SURE', label: t('duration.notSure') },
                       ]}
                     />
                   </FormField>
@@ -649,15 +764,21 @@ export function ReportIssuePage() {
 
                   <FormField
                     id="issue-ward"
-                    label="Ward Number / Name"
-                    helperText="Optional municipal ward identifier"
+                    label="Municipal Ward"
+                    required
+                    helperText="Mandatory municipal ward jurisdiction"
                     error={fieldErrors.ward?.[0]}
                   >
-                    <TextInput
+                    <Select
                       id="issue-ward"
-                      placeholder="e.g. Ward 112 (Domlur)"
                       value={ward}
                       onChange={(e) => setWard(e.target.value)}
+                      placeholder="Select Municipal Ward..."
+                      options={MUNICIPAL_WARDS.map((w) => ({
+                        value: `${w.number} - ${w.name}`,
+                        label: `${w.number} — ${w.name} (${w.zone})`,
+                      }))}
+                      required
                     />
                   </FormField>
                 </div>
@@ -766,101 +887,134 @@ export function ReportIssuePage() {
                   </div>
                 </div>
 
-                {/* Supporting Photographic & Document Evidence (Module 12) */}
+                {/* Supporting Photographic Evidence (Mandatory & AI Verified) */}
                 <div className="p-4 rounded-xl bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 border border-[#DED8CB] dark:border-[#283931] space-y-3">
                   <div className="flex items-center justify-between">
                     <div>
-                      <span className="text-xs font-semibold text-[#202522] dark:text-[#E8F0EC] block flex items-center gap-1.5">
+                      <span className="text-xs font-semibold text-[#202522] dark:text-[#E8F0EC] flex items-center gap-1.5">
                         <CameraIcon className="w-4 h-4 text-[#185541] dark:text-[#78C7AE]" />
-                        Supporting Photographs & Documents (Optional)
+                        Photographic Evidence (Mandatory)
+                        <span className="text-red-500 font-bold">*</span>
                       </span>
                       <span className="text-[11px] text-[#54625A] dark:text-[#C5D4C9]">
-                        Attach road, garbage, or streetlight photos (JPG, PNG, WebP, PDF • Max 10MB each)
+                        Real photographs required for AI verification, duplicate detection and official inspection (JPG, PNG, WebP • Max 10MB each)
                       </span>
                     </div>
+                    <Badge variant={evidenceFiles.length > 0 ? 'success' : 'danger'} size="sm">
+                      {evidenceFiles.length > 0 ? `${evidenceFiles.length} Attached` : 'Required'}
+                    </Badge>
                   </div>
 
                   {evidenceError && <Alert variant="error">{evidenceError}</Alert>}
 
-                  <div
-                    onClick={() => fileInputRef.current?.click()}
-                    className="border-2 border-dashed border-[#C2BAA8] dark:border-[#3D5449] hover:border-[#173D32] dark:hover:border-[#7BC4B2] rounded-xl p-4 text-center cursor-pointer transition-colors bg-[#ECE7DB]/30 dark:bg-[#1D2A25]/30"
-                  >
-                    <CameraIcon className="w-6 h-6 text-[#54625A] dark:text-[#C5D4C9] mx-auto mb-1.5" />
-                    <p className="text-xs text-[#202522] dark:text-[#F5F2EA] font-semibold">Click to attach supporting files</p>
-                    <p className="text-[11px] text-[#54625A] dark:text-[#C5D4C9] mt-0.5">Up to 5 files per complaint submission</p>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      multiple
-                      accept=".jpg,.jpeg,.png,.webp,.pdf,image/jpeg,image/png,image/webp,application/pdf"
-                      onChange={handleFileSelect}
-                      className="hidden"
-                    />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {/* Live Camera Button */}
+                    <button
+                      type="button"
+                      onClick={() => cameraInputRef.current?.click()}
+                      disabled={isAnalyzingPhoto}
+                      className="flex items-center justify-center gap-2 p-3 rounded-xl border border-[#173D32] dark:border-[#7BC4B2] bg-[#173D32]/10 dark:bg-[#7BC4B2]/10 hover:bg-[#173D32]/20 text-[#173D32] dark:text-[#7BC4B2] font-semibold text-xs cursor-pointer transition-colors"
+                    >
+                      <CameraIcon className="w-4 h-4" />
+                      Take Live Photo (Camera)
+                    </button>
+
+                    {/* Choose from Device Button */}
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isAnalyzingPhoto}
+                      className="flex items-center justify-center gap-2 p-3 rounded-xl border border-[#DED8CB] dark:border-[#283931] bg-white dark:bg-[#16201C] hover:bg-[#ECE7DB]/50 text-[#202522] dark:text-[#F5F2EA] text-xs font-semibold cursor-pointer transition-colors"
+                    >
+                      Browse Image Files
+                    </button>
                   </div>
 
-                  {evidenceFiles.length > 0 && (
-                    <div className="space-y-1.5 bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 p-2.5 rounded-lg border border-[#DED8CB] dark:border-[#283931]">
-                      <span className="text-[11px] font-semibold text-[#202522] dark:text-[#F5F2EA] block mb-1">
-                        Files ready to attach ({evidenceFiles.length}):
+                  {/* Hidden file inputs */}
+                  <input
+                    ref={cameraInputRef}
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    onChange={handleFileSelect}
+                    className="hidden"
+                  />
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    multiple
+                    accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
+                    onChange={handleFileSelect}
+                    className="hidden"
+                  />
+
+                  {isAnalyzingPhoto && (
+                    <div className="p-3 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-lg text-xs text-emerald-800 dark:text-emerald-300 flex items-center gap-2">
+                      <span className="animate-spin inline-block w-4 h-4 border-2 border-emerald-600 border-t-transparent rounded-full" />
+                      Extracting EXIF metadata, GPS coordinates & computing perceptual hash...
+                    </div>
+                  )}
+
+                  {/* Analyzed Images Rich Preview Grid */}
+                  {analyzedImages.length > 0 && (
+                    <div className="space-y-2 pt-1">
+                      <span className="text-[11px] font-semibold text-[#202522] dark:text-[#F5F2EA] block">
+                        Verified Evidence ({analyzedImages.length}/5):
                       </span>
-                      {evidenceFiles.map((file, idx) => (
-                        <div
-                          key={idx}
-                          className="flex items-center justify-between text-xs text-[#202522] dark:text-[#F5F2EA] bg-white dark:bg-[#16201C] px-2.5 py-1 rounded border border-[#DED8CB] dark:border-[#283931]"
-                        >
-                          <span className="truncate max-w-[280px]">{file.name}</span>
-                          <div className="flex items-center gap-2">
-                            <span className="text-[10px] text-[#54625A] dark:text-[#C5D4C9] font-mono">
-                              {Math.round(file.size / 1024)} KB
-                            </span>
+                      <div className="grid grid-cols-1 gap-2.5">
+                        {analyzedImages.map((img, idx) => (
+                          <div
+                            key={idx}
+                            className="flex items-center justify-between p-2.5 rounded-lg bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] gap-3"
+                          >
+                            <img
+                              src={img.previewUrl}
+                              alt={`Evidence ${idx + 1}`}
+                              className="w-14 h-14 object-cover rounded-md border border-[#DED8CB] dark:border-[#283931] shrink-0"
+                            />
+                            <div className="flex-1 min-w-0 text-left">
+                              <p className="text-xs font-semibold text-[#202522] dark:text-[#F5F2EA] truncate">
+                                {img.file.name}
+                              </p>
+                              <div className="flex flex-wrap items-center gap-1.5 mt-1">
+                                <span className="text-[10px] text-[#54625A] dark:text-[#C5D4C9] font-mono">
+                                  {Math.round(img.file.size / 1024)} KB
+                                </span>
+                                {img.capturedAt ? (
+                                  <span className="px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 text-[10px] font-medium">
+                                    EXIF: {new Date(img.capturedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                  </span>
+                                ) : (
+                                  <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px]">
+                                    Captured: Now
+                                  </span>
+                                )}
+                                {(img.exifLatitude !== null || img.browserLatitude) && (
+                                  <span className="px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 text-[10px] font-medium">
+                                    GPS: Verified
+                                  </span>
+                                )}
+                                {img.perceptualHash && (
+                                  <span className="px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 text-[10px] font-mono">
+                                    FP: {img.perceptualHash.slice(0, 8)}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
                             <button
                               type="button"
                               onClick={() => handleRemoveFile(idx)}
-                              className="text-[#9C3B2D] hover:text-[#832E22]"
+                              className="p-1 text-[#9C3B2D] hover:text-[#832E22] rounded hover:bg-red-50 dark:hover:bg-red-950/20"
+                              title="Remove photo"
                             >
-                              <CloseIcon className="w-3.5 h-3.5" />
+                              <CloseIcon className="w-4 h-4" />
                             </button>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
-
-                {/* Module 14: Duplicate Complaint Advisory Banner */}
-                {duplicateCandidates.length > 0 && !duplicateWarningDismissed && (
-                  <div className="p-4 rounded-xl bg-[#FDF6ED] dark:bg-[#281D0E] border border-[#F2D7A5] dark:border-[#533916] text-[#854F0B] dark:text-[#F3BA6C] text-xs space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="font-semibold text-[#854F0B] dark:text-[#F3BA6C] flex items-center gap-1.5">
-                        Notice: Similar civic reports found in this area
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => setDuplicateWarningDismissed(true)}
-                        className="text-[#854F0B] dark:text-[#F3BA6C] hover:underline text-xs font-semibold cursor-pointer"
-                      >
-                        Dismiss Notice
-                      </button>
-                    </div>
-                    <p className="text-[#3E4B44] dark:text-[#C5D4C9] leading-relaxed">
-                      We detected {duplicateCandidates.length} existing public complaint(s) with matching details. Multiple reports reinforce community demand and accelerate resolution! If your issue adds fresh details or photos, you are encouraged to submit.
-                    </p>
-                    <div className="space-y-1.5 pt-1">
-                      {duplicateCandidates.slice(0, 2).map((dc) => (
-                        <div
-                          key={dc.id}
-                          className="p-2 rounded bg-white dark:bg-[#16201C] border border-[#F2D7A5] dark:border-[#533916] flex items-center justify-between"
-                        >
-                          <span className="font-medium text-[#202522] dark:text-[#E8F0EC] truncate pr-2">{dc.title}</span>
-                          <span className="text-[11px] text-[#854F0B] dark:text-[#F3BA6C] font-mono shrink-0">
-                            {dc.trackingId} &bull; {Math.round(dc.similarityScore * 100)}% match
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
 
                 {/* Submission CTA */}
                 <div className="pt-4 flex items-center justify-end gap-3">

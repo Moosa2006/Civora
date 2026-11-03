@@ -10,6 +10,8 @@ import {
 import { prisma } from '../lib/prisma.js';
 import { StorageService } from '../lib/storageService.js';
 import { NotificationService } from '../lib/notificationService.js';
+import { extractExifFromBuffer, generatePerceptualHash } from '../lib/imageAnalysis.js';
+import { triggerComplaintAiVerification } from '../services/gemini.service.js';
 import {
   uploadEvidenceMetadataSchema,
   reviewEvidenceSchema,
@@ -138,6 +140,11 @@ export async function uploadEvidence(req: Request, res: Response, next: NextFunc
       description,
       siteInspectionId,
       replacedDocumentId,
+      clientPerceptualHash,
+      browserCaptureTimestamp,
+      browserLatitude,
+      browserLongitude,
+      browserAccuracy,
     } = metaParse.data;
 
     // Citizens can ONLY upload CITIZEN_SUPPORTING evidence and it must be PUBLIC
@@ -201,6 +208,17 @@ export async function uploadEvidence(req: Request, res: Response, next: NextFunc
         throw storageErr;
       }
 
+      // Extract EXIF metadata & compute 64-bit perceptual hash (dHash)
+      const exif = extractExifFromBuffer(file.buffer);
+      const perceptualHash = generatePerceptualHash(file.buffer, clientPerceptualHash || undefined);
+
+      const capturedAt = exif.capturedAt || null;
+      const browserCaptureDt = browserCaptureTimestamp ? new Date(browserCaptureTimestamp) : null;
+      const captureLatitude = exif.latitude !== null ? exif.latitude : (browserLatitude ?? null);
+      const captureLongitude = exif.longitude !== null ? exif.longitude : (browserLongitude ?? null);
+      const captureAccuracy = browserAccuracy ?? null;
+      const isGpsVerified = Boolean(exif.latitude !== null || (browserLatitude !== undefined && browserLatitude !== null));
+
       // 2. Persist record in database atomically
       const doc = await prisma.$transaction(async (tx) => {
         const created = await tx.document.create({
@@ -214,6 +232,13 @@ export async function uploadEvidence(req: Request, res: Response, next: NextFunc
             visibility,
             description: description || null,
             sha256Checksum: storeResult.sha256Checksum,
+            perceptualHash,
+            capturedAt,
+            browserCaptureTimestamp: browserCaptureDt,
+            captureLatitude: captureLatitude !== null ? captureLatitude : null,
+            captureLongitude: captureLongitude !== null ? captureLongitude : null,
+            captureAccuracy,
+            isGpsVerified,
             reviewStatus: EvidenceReviewStatus.PENDING_REVIEW,
             uploaderId: req.user!.id,
             complaintId: complaint.id,
@@ -253,6 +278,8 @@ export async function uploadEvidence(req: Request, res: Response, next: NextFunc
               evidencePurpose: created.evidencePurpose,
               fileSize: Number(created.fileSize),
               sha256Checksum: created.sha256Checksum,
+              perceptualHash: created.perceptualHash,
+              isGpsVerified: created.isGpsVerified,
               uploaderName: req.user!.name,
               isReplacement: Boolean(replacedDocumentId),
             },
@@ -262,7 +289,19 @@ export async function uploadEvidence(req: Request, res: Response, next: NextFunc
         return created;
       });
 
-      // 5. Dispatch notification
+      // 5. Trigger non-blocking AI verification for images
+      if (file.mimetype.startsWith('image/')) {
+        triggerComplaintAiVerification(complaint.id, file.buffer, file.mimetype, {
+          sha256Checksum: storeResult.sha256Checksum,
+          perceptualHash,
+          capturedAt,
+          browserCaptureTimestamp: browserCaptureDt,
+          captureLat: captureLatitude,
+          captureLng: captureLongitude,
+        });
+      }
+
+      // 6. Dispatch notification
       await NotificationService.notifyEvidenceUploaded(
         complaint,
         doc,
@@ -273,6 +312,8 @@ export async function uploadEvidence(req: Request, res: Response, next: NextFunc
       createdDocuments.push({
         ...doc,
         fileSize: Number(doc.fileSize),
+        captureLatitude: doc.captureLatitude ? Number(doc.captureLatitude) : null,
+        captureLongitude: doc.captureLongitude ? Number(doc.captureLongitude) : null,
       });
     }
 
@@ -362,6 +403,13 @@ export async function getComplaintEvidence(req: Request, res: Response, next: Ne
       visibility: doc.visibility,
       description: doc.description,
       sha256Checksum: doc.sha256Checksum,
+      perceptualHash: doc.perceptualHash,
+      capturedAt: doc.capturedAt,
+      browserCaptureTimestamp: doc.browserCaptureTimestamp,
+      captureLatitude: doc.captureLatitude ? Number(doc.captureLatitude) : null,
+      captureLongitude: doc.captureLongitude ? Number(doc.captureLongitude) : null,
+      captureAccuracy: doc.captureAccuracy,
+      isGpsVerified: doc.isGpsVerified,
       reviewStatus: doc.reviewStatus,
       reviewedAt: doc.reviewedAt,
       reviewedBy: isStaff || isOwner ? doc.reviewedBy : undefined,

@@ -3,7 +3,13 @@ import { useTranslation } from '../../context/useTranslation.js';
 import { announceToScreenReader } from '../ui/LiveAnnouncer.js';
 import type { SupportedLocale } from '../../i18n/index.js';
 
-export function LanguageSelector({ compact = false }: { compact?: boolean }) {
+export function LanguageSelector({
+  compact = false,
+  variant = 'default',
+}: {
+  compact?: boolean;
+  variant?: 'default' | 'forest-pill';
+}) {
   const { locale, setLocale, availableLocales, isChangingLocale } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -91,17 +97,15 @@ export function LanguageSelector({ compact = false }: { compact?: boolean }) {
         onClick={() => setIsOpen((prev) => !prev)}
         onKeyDown={handleTriggerKeyDown}
         disabled={isChangingLocale}
-        className={`
-          inline-flex items-center justify-between gap-2 px-3 py-1.5 rounded-lg
-          text-xs font-semibold text-[#E4E0D5] bg-[#112F26] border border-[#A8BFAE]/30
-          hover:bg-[#0C241D] hover:text-white transition-colors cursor-pointer
-          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A8BFAE]
-          ${compact ? 'text-[11px] px-2 py-1' : 'min-h-[36px]'}
-        `.trim()}
+        className={
+          variant === 'forest-pill'
+            ? `inline-flex items-center justify-between gap-2 px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium text-white bg-[#0B3D2E] hover:bg-[#072B20] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0B3D2E] shadow-2xs`
+            : `inline-flex items-center justify-between gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold text-[#E4E0D5] bg-[#112F26] border border-[#A8BFAE]/30 hover:bg-[#0C241D] hover:text-white transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A8BFAE] ${compact ? 'text-[11px] px-2 py-1' : 'min-h-[36px]'}`
+        }
       >
         <span className="flex items-center gap-1.5">
           <svg
-            className="w-4 h-4 text-[#A8BFAE]"
+            className={`w-4 h-4 ${variant === 'forest-pill' ? 'text-white' : 'text-[#A8BFAE]'}`}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -114,10 +118,10 @@ export function LanguageSelector({ compact = false }: { compact?: boolean }) {
               d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"
             />
           </svg>
-          <span className="font-medium">{currentLocaleInfo.nativeName}</span>
+          <span className="font-medium">{currentLocaleInfo.name}</span>
         </span>
         <svg
-          className={`w-3.5 h-3.5 text-[#A8BFAE] transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          className={`w-3.5 h-3.5 ${variant === 'forest-pill' ? 'text-white' : 'text-[#A8BFAE]'} transition-transform ${isOpen ? 'rotate-180' : ''}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

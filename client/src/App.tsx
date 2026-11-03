@@ -38,10 +38,12 @@ const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then((m) => ({ de
 
 function AppContent() {
   const { currentPath } = useRouter();
-  const cleanPath = currentPath.split('?')[0];
+  // Strip query string and normalize trailing slash (except root '/')
+  const rawPath = currentPath.split('?')[0];
+  const cleanPath = rawPath.length > 1 && rawPath.endsWith('/') ? rawPath.slice(0, -1) : (rawPath || '/');
 
   const renderCurrentPage = () => {
-    if (cleanPath === '/engagement' || cleanPath === '/engagement/') {
+    if (cleanPath === '/engagement') {
       return <EngagementHubPage />;
     }
     if (cleanPath === '/engagement/proposals/new') {
@@ -53,13 +55,14 @@ function AppContent() {
     if (cleanPath.startsWith('/engagement/polls/')) {
       return <PollDetailPage />;
     }
-    if (cleanPath.startsWith('/tenders/') && cleanPath !== '/tenders/') {
+    if (cleanPath.startsWith('/tenders/') && cleanPath !== '/tenders') {
       return <TenderDetailPage />;
     }
 
     switch (cleanPath) {
       case '/':
       case '':
+      case '/dashboard':
         return <LandingPage />;
       case '/map':
       case '/explore':
@@ -72,6 +75,7 @@ function AppContent() {
         return <TrackComplaintPage />;
       case '/my-complaints':
         return <MyComplaintsPage />;
+      case '/admin':
       case '/admin/complaints':
         return <AdminComplaintsPage />;
       case '/admin/moderation':
@@ -82,15 +86,14 @@ function AppContent() {
       case '/rules':
         return <PlatformRulesPage />;
       case '/tenders':
-      case '/tenders/':
         return <TendersPage />;
       case '/contractor':
-      case '/contractor/':
       case '/contractor/workspace':
         return <ContractorWorkspacePage />;
       case '/admin/tenders':
       case '/official/tenders':
         return <AdminTendersPage />;
+      case '/official':
       case '/official/workspace':
         return <OfficialWorkspacePage />;
       case '/notifications':
