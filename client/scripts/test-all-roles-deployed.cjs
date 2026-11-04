@@ -91,3 +91,4 @@ const ROLES = [
 
   await browser.close();
 })();
+
