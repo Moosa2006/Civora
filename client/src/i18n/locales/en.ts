@@ -94,6 +94,8 @@ export const en = {
     dropdownExecution: 'Execution',
     dropdownMore: 'More',
     dashboard: 'Dashboard',
+    switchToDark: 'Switch to dark mode',
+    switchToLight: 'Switch to light mode',
   },
 
   home: {
@@ -230,6 +232,10 @@ export const en = {
     settingsTitle: 'Accessibility & Language Preferences',
     settingsDesc: 'Customize your browsing experience with adjustable text sizes, motion preferences, contrast, and regional languages.',
     languageLabel: 'Platform Language',
+    themeLabel: 'Appearance & Theme',
+    themeLight: 'Light',
+    themeDark: 'Dark',
+    themeSystem: 'System',
     textSizeLabel: 'Text Sizing',
     textNormal: 'Standard (100%)',
     textLarge: 'Large (115%)',

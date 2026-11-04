@@ -96,6 +96,8 @@ export const hi: TranslationDictionary = {
     dropdownExecution: 'कार्यान्वयन',
     dropdownMore: 'अधिक',
     dashboard: 'डैशबोर्ड',
+    switchToDark: 'डार्क मोड में बदलें',
+    switchToLight: 'लाइट मोड में बदलें',
   },
 
   home: {
@@ -232,6 +234,10 @@ export const hi: TranslationDictionary = {
     settingsTitle: 'सुलभता एवं भाषा प्राथमिकताएं',
     settingsDesc: 'अक्षर आकार, गति, उच्च कंट्रास्ट और क्षेत्रीय भाषा के साथ अपने अनुभव को अनुकूलित करें।',
     languageLabel: 'मंच की भाषा',
+    themeLabel: 'दिखावट एवं थीम',
+    themeLight: 'लाइट',
+    themeDark: 'डार्क',
+    themeSystem: 'सिस्टम',
     textSizeLabel: 'अक्षर का आकार',
     textNormal: 'मानक (१००%)',
     textLarge: 'बड़ा (११५%)',

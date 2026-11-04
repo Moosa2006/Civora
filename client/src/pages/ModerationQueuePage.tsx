@@ -199,46 +199,45 @@ export function ModerationQueuePage() {
   };
 
   return (
-    <Container size="lg" className="space-y-8">
-      {/* Heading */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center space-x-2 mb-1">
+    <Container size="xl" className="space-y-8">
+      {/* Standardized Page Header */}
+      <PageHeading
+        title="Content Moderation & Abuse Triage"
+        description="Investigate citizen abuse reports, review potential duplicate submissions, and enforce platform standards with auditable reason requirements."
+        className="mb-0"
+        eyebrow={
+          <div className="flex items-center gap-2">
             <Badge variant="info">Staff Oversight</Badge>
-            <span className="text-xs text-[#C5D4C9] dark:text-[#54625A]">Module 14 Moderation & Trust</span>
+            <span className="text-xs text-[#6B7280] dark:text-[#9CA3AF]">Moderation & Trust</span>
           </div>
-          <PageHeading
-            title="Content Moderation & Abuse Triage"
-            description="Investigate citizen abuse reports, review potential duplicate submissions, and enforce platform standards with auditable reason requirements."
-          />
-        </div>
-
-        {/* Navigation Tabs */}
-        <div className="flex bg-[#ECE7DB] dark:bg-[#1D2A25] border border-[#DED8CB] dark:border-[#283931] rounded-xl p-1 self-start">
-          <button
-            onClick={() => setActiveTab('queue')}
-            className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
-              activeTab === 'queue'
-                ? 'bg-[#173D32] text-white shadow-xs'
-                : 'text-[#54625A] dark:text-[#C5D4C9] hover:text-[#202522] dark:hover:text-[#E8F0EC]'
-            }`}
-          >
-            Review Queue
-          </button>
-          {user?.role === 'ADMIN' && (
+        }
+        actions={
+          <div className="flex gap-1.5 bg-[#F3F4F6]/80 dark:bg-[#273548]/80 border border-[#E5E7EB] dark:border-[#374151] rounded-xl p-1">
             <button
-              onClick={() => setActiveTab('metrics')}
-              className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
-                activeTab === 'metrics'
-                  ? 'bg-[#173D32] text-white shadow-xs'
-                  : 'text-[#54625A] dark:text-[#C5D4C9] hover:text-[#202522] dark:hover:text-[#E8F0EC]'
+              type="button"
+              data-active={activeTab === 'queue'}
+              onClick={() => setActiveTab('queue')}
+              className={`civora-liquid-tab px-4 py-1.5 rounded-lg text-xs font-semibold ${
+                activeTab === 'queue' ? '' : 'text-[#4B5563] dark:text-[#D1D5DB]'
               }`}
             >
-              Metrics & Trends
+              Review Queue
             </button>
-          )}
-        </div>
-      </div>
+            {user?.role === 'ADMIN' && (
+              <button
+                type="button"
+                data-active={activeTab === 'metrics'}
+                onClick={() => setActiveTab('metrics')}
+                className={`civora-liquid-tab px-4 py-1.5 rounded-lg text-xs font-semibold ${
+                  activeTab === 'metrics' ? '' : 'text-[#4B5563] dark:text-[#D1D5DB]'
+                }`}
+              >
+                Metrics & Trends
+              </button>
+            )}
+          </div>
+        }
+      />
 
       {error && (
         <Alert variant="error" title="Notice" onDismiss={() => setError(null)}>
@@ -250,19 +249,19 @@ export function ModerationQueuePage() {
       {metrics && activeTab === 'queue' && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <Card className="p-4">
-            <span className="text-xs text-[#54625A] dark:text-[#C5D4C9]">Total Abuse Reports</span>
-            <div className="text-2xl font-bold text-[#202522] dark:text-[#F5F2EA] mt-1">{metrics.totalReports}</div>
+            <span className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">Total Abuse Reports</span>
+            <div className="text-2xl font-bold text-[#111827] dark:text-[#F9FAFB] mt-1">{metrics.totalReports}</div>
           </Card>
           <Card className="p-4">
-            <span className="text-xs text-[#54625A] dark:text-[#C5D4C9]">Open Moderation Cases</span>
+            <span className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">Open Moderation Cases</span>
             <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mt-1">{metrics.openCases}</div>
           </Card>
           <Card className="p-4">
-            <span className="text-xs text-[#54625A] dark:text-[#C5D4C9]">Actions Enacted</span>
-            <div className="text-2xl font-bold text-blue-700 dark:text-blue-400 mt-1">{metrics.actionTakenCases}</div>
+            <span className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">Actions Enacted</span>
+            <div className="text-2xl font-bold text-[#0B6640] dark:text-[#34D399] mt-1">{metrics.actionTakenCases}</div>
           </Card>
           <Card className="p-4">
-            <span className="text-xs text-[#54625A] dark:text-[#C5D4C9]">Active Account Restrictions</span>
+            <span className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">Active Account Restrictions</span>
             <div className="text-2xl font-bold text-rose-700 dark:text-rose-400 mt-1">{metrics.activeRestrictions}</div>
           </Card>
         </div>
@@ -274,7 +273,7 @@ export function ModerationQueuePage() {
           {/* Filters Bar */}
           <Card className="p-4 flex flex-wrap items-center gap-4">
             <div className="flex items-center space-x-2">
-              <span className="text-xs font-semibold text-[#3E4B44] dark:text-[#C5D4C9]">Status:</span>
+              <span className="text-xs font-semibold text-[#374151] dark:text-[#D1D5DB]">Status:</span>
               <Select
                 value={statusFilter}
                 onChange={(e: ChangeEvent<HTMLSelectElement>) => setStatusFilter(e.target.value)}
@@ -289,7 +288,7 @@ export function ModerationQueuePage() {
             </div>
 
             <div className="flex items-center space-x-2">
-              <span className="text-xs font-semibold text-[#3E4B44] dark:text-[#C5D4C9]">Target Type:</span>
+              <span className="text-xs font-semibold text-[#374151] dark:text-[#D1D5DB]">Target Type:</span>
               <Select
                 value={targetTypeFilter}
                 onChange={(e: ChangeEvent<HTMLSelectElement>) => setTargetTypeFilter(e.target.value)}
@@ -325,11 +324,11 @@ export function ModerationQueuePage() {
               {cases.map((c) => (
                 <div
                   key={c.id}
-                  className="p-5 rounded-2xl bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] hover:border-[#173D32]/40 dark:hover:border-[#7BC4B2]/40 shadow-xs transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4"
+                  className="p-5 rounded-2xl bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] hover:border-[#0B3D2E]/40 dark:hover:border-[#34D399]/50 shadow-xs transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4"
                 >
                   <div className="space-y-1.5 flex-1">
                     <div className="flex items-center space-x-2.5">
-                      <span className="font-mono text-xs font-bold text-[#3E4B44] dark:text-[#C5D4C9]">
+                      <span className="font-mono text-xs font-bold text-[#374151] dark:text-[#D1D5DB]">
                         {c.caseNumber}
                       </span>
                       <Badge variant={getPriorityBadgeVariant(c.priority)}>
@@ -338,17 +337,17 @@ export function ModerationQueuePage() {
                       <Badge variant="neutral">
                         {c.targetType.replace(/_/g, ' ')}
                       </Badge>
-                      <span className="text-xs text-[#C5D4C9] dark:text-[#54625A]">
-                        Score: <span className="font-semibold text-[#3E4B44] dark:text-[#C5D4C9]">{c.riskScore}/100</span>
+                      <span className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
+                        Score: <span className="font-semibold text-[#374151] dark:text-[#D1D5DB]">{c.riskScore}/100</span>
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-3 text-xs text-[#54625A] dark:text-[#C5D4C9]">
+                    <div className="flex items-center gap-3 text-xs text-[#6B7280] dark:text-[#D1D5DB]">
                       <span>
-                        Reports filed: <strong className="text-[#202522] dark:text-[#E8F0EC]">{c._count?.reports || 0}</strong>
+                        Reports filed: <strong className="text-[#111827] dark:text-[#F9FAFB]">{c._count?.reports || 0}</strong>
                       </span>
                       <span>&bull;</span>
-                      <span>Status: <strong className="text-[#202522] dark:text-[#E8F0EC]">{c.status.replace(/_/g, ' ')}</strong></span>
+                      <span>Status: <strong className="text-[#111827] dark:text-[#F9FAFB]">{c.status.replace(/_/g, ' ')}</strong></span>
                       <span>&bull;</span>
                       <span>Created: {new Date(c.createdAt).toLocaleDateString()}</span>
                     </div>
@@ -358,7 +357,7 @@ export function ModerationQueuePage() {
                         {c.riskFactors.map((rf, idx) => (
                           <span
                             key={idx}
-                            className="px-2 py-0.5 rounded text-[10px] bg-[#ECE7DB] dark:bg-[#1D2A25] text-[#3E4B44] dark:text-[#C5D4C9] border border-[#DED8CB] dark:border-[#283931]"
+                            className="px-2 py-0.5 rounded text-[10px] bg-[#F3F4F6] dark:bg-[#273548] text-[#374151] dark:text-[#D1D5DB] border border-[#E5E7EB] dark:border-[#374151]"
                           >
                             {rf.replace(/_/g, ' ')}
                           </span>
@@ -385,11 +384,11 @@ export function ModerationQueuePage() {
       {activeTab === 'metrics' && metrics && (
         <div className="space-y-6">
           <Card className="p-6 space-y-4">
-            <h3 className="text-base font-bold text-[#202522] dark:text-[#F5F2EA]">Abuse Report Reason Breakdown</h3>
+            <h3 className="text-base font-bold text-[#111827] dark:text-[#F9FAFB]">Abuse Report Reason Breakdown</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {metrics.reasonDistribution.map((item, i) => (
-                <div key={i} className="p-4 rounded-xl bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 border border-[#DED8CB] dark:border-[#283931] flex items-center justify-between">
-                  <span className="text-xs font-semibold text-[#3E4B44] dark:text-[#C5D4C9]">{item.reason.replace(/_/g, ' ')}</span>
+                <div key={i} className="p-4 rounded-xl bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151] flex items-center justify-between">
+                  <span className="text-xs font-semibold text-[#374151] dark:text-[#D1D5DB]">{item.reason.replace(/_/g, ' ')}</span>
                   <Badge variant="info">{item.count}</Badge>
                 </div>
               ))}
@@ -405,22 +404,24 @@ export function ModerationQueuePage() {
           role="dialog"
           aria-modal="true"
         >
-          <div className="relative w-full max-w-2xl bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] rounded-2xl shadow-2xl p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-[#DED8CB] dark:border-[#283931] pb-3">
+          <div className="relative w-full max-w-2xl bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-2xl shadow-2xl p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
               <div>
-                <h3 className="text-lg font-bold text-[#202522] dark:text-[#F5F2EA] flex items-center gap-2">
+                <h3 className="text-lg font-bold text-[#111827] dark:text-[#F9FAFB] flex items-center gap-2">
                   <span>Case Review: {selectedCase.caseNumber}</span>
                   <Badge variant={getPriorityBadgeVariant(selectedCase.priority)}>
                     {selectedCase.priority}
                   </Badge>
                 </h3>
-                <span className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
+                <span className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
                   Target Content: {selectedCase.targetType.replace(/_/g, ' ')}
                 </span>
               </div>
               <button
+                type="button"
+                aria-label="Close dialog"
                 onClick={() => setSelectedCase(null)}
-                className="text-[#54625A] dark:text-[#C5D4C9] hover:text-[#202522] dark:hover:text-[#F5F2EA] p-1 rounded-lg cursor-pointer"
+                className="civora-liquid-btn civora-liquid-btn--ghost px-2.5 py-1 rounded-lg text-sm font-bold"
               >
                 &times;
               </button>
@@ -433,32 +434,32 @@ export function ModerationQueuePage() {
             )}
 
             {/* Target Content Snapshot */}
-            <div className="p-4 bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 rounded-xl border border-[#DED8CB] dark:border-[#283931] space-y-2">
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#3E4B44] dark:text-[#C5D4C9]">
+            <div className="p-4 bg-[#F9FAFB] dark:bg-[#182230] rounded-xl border border-[#E5E7EB] dark:border-[#374151] space-y-2">
+              <span className="text-xs font-semibold uppercase tracking-wider text-[#374151] dark:text-[#D1D5DB]">
                 Target Content Preview
               </span>
-              <p className="text-sm text-[#202522] dark:text-[#E8F0EC] italic">
+              <p className="text-sm text-[#111827] dark:text-[#F9FAFB] italic">
                 {selectedCase.targetContent?.snippet || 'Content snapshot unavailable.'}
               </p>
-              <div className="flex items-center gap-3 text-xs text-[#54625A] dark:text-[#C5D4C9] pt-1">
+              <div className="flex items-center gap-3 text-xs text-[#6B7280] dark:text-[#D1D5DB] pt-1">
                 <span>Moderation State: <strong>{selectedCase.targetContent?.isModerated ? 'HIDDEN' : 'VISIBLE'}</strong></span>
               </div>
             </div>
 
             {/* Citizen Abuse Reports */}
             <div className="space-y-3">
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#3E4B44] dark:text-[#C5D4C9] block">
+              <span className="text-xs font-semibold uppercase tracking-wider text-[#374151] dark:text-[#D1D5DB] block">
                 Citizen Abuse Reports ({selectedCase.reports?.length || 0})
               </span>
               <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
                 {selectedCase.reports?.map((r) => (
-                  <div key={r.id} className="p-3 bg-[#ECE7DB]/40 dark:bg-[#1D2A25]/40 rounded-lg border border-[#DED8CB] dark:border-[#283931] text-xs space-y-1">
+                  <div key={r.id} className="p-3 bg-[#F9FAFB] dark:bg-[#182230] rounded-lg border border-[#E5E7EB] dark:border-[#374151] text-xs space-y-1">
                     <div className="flex items-center justify-between">
-                      <span className="font-semibold text-rose-300">{r.reason.replace(/_/g, ' ')}</span>
-                      <span className="text-[#C5D4C9] dark:text-[#54625A]">{new Date(r.createdAt).toLocaleDateString()}</span>
+                      <span className="font-semibold text-rose-700 dark:text-rose-300">{r.reason.replace(/_/g, ' ')}</span>
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB]">{new Date(r.createdAt).toLocaleDateString()}</span>
                     </div>
-                    {r.explanation && <p className="text-[#3E4B44] dark:text-[#C5D4C9]">{r.explanation}</p>}
-                    <span className="text-[10px] text-[#C5D4C9] dark:text-[#54625A] block">
+                    {r.explanation && <p className="text-[#374151] dark:text-[#D1D5DB]">{r.explanation}</p>}
+                    <span className="text-[10px] text-[#6B7280] dark:text-[#D1D5DB] block">
                       Reporter Identity: [Shielded under Platform Privacy Standards]
                     </span>
                   </div>
@@ -468,18 +469,18 @@ export function ModerationQueuePage() {
 
             {/* Appeals on this Case */}
             {selectedCase.appeals && selectedCase.appeals.length > 0 && (
-              <div className="space-y-3 p-4 bg-purple-950/20 border border-purple-800/40 rounded-xl">
-                <span className="text-xs font-semibold uppercase tracking-wider text-purple-300 block">
+              <div className="space-y-3 p-4 bg-[#F9FAFB] dark:bg-[#273548] border border-[#E5E7EB] dark:border-[#374151] rounded-xl">
+                <span className="text-xs font-semibold uppercase tracking-wider text-[#0B3D2E] dark:text-[#34D399] block">
                   Citizen Appeals ({selectedCase.appeals.length})
                 </span>
                 <div className="space-y-2">
                   {selectedCase.appeals.map((a) => (
-                    <div key={a.id} className="p-3 bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 rounded-lg border border-[#DED8CB] dark:border-[#283931] text-xs space-y-2">
+                    <div key={a.id} className="p-3 bg-white dark:bg-[#182230] rounded-lg border border-[#E5E7EB] dark:border-[#374151] text-xs space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="font-semibold text-[#202522] dark:text-[#E8F0EC]">Appeal Status: {a.status}</span>
-                        <span className="text-[#C5D4C9] dark:text-[#54625A]">{new Date(a.createdAt).toLocaleDateString()}</span>
+                        <span className="font-semibold text-[#111827] dark:text-[#F9FAFB]">Appeal Status: {a.status}</span>
+                        <span className="text-[#6B7280] dark:text-[#D1D5DB]">{new Date(a.createdAt).toLocaleDateString()}</span>
                       </div>
-                      <p className="text-[#3E4B44] dark:text-[#C5D4C9]">&ldquo;{a.reason}&rdquo;</p>
+                      <p className="text-[#374151] dark:text-[#D1D5DB]">&ldquo;{a.reason}&rdquo;</p>
                       {a.status === 'PENDING' && (
                         <Button
                           size="sm"
@@ -496,11 +497,11 @@ export function ModerationQueuePage() {
             )}
 
             {/* Decision Controls Form */}
-            <form onSubmit={handleApplyAction} className="space-y-4 pt-3 border-t border-[#DED8CB] dark:border-[#283931]">
-              <h4 className="text-sm font-bold text-[#202522] dark:text-[#F5F2EA]">Execute Moderation Decision</h4>
+            <form onSubmit={handleApplyAction} className="space-y-4 pt-3 border-t border-[#E5E7EB] dark:border-[#374151]">
+              <h4 className="text-sm font-bold text-[#111827] dark:text-[#F9FAFB]">Execute Moderation Decision</h4>
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[#3E4B44] dark:text-[#C5D4C9] mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#374151] dark:text-[#D1D5DB] mb-1.5">
                   Action Type *
                 </label>
                 <Select
@@ -517,7 +518,7 @@ export function ModerationQueuePage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[#3E4B44] dark:text-[#C5D4C9] mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#374151] dark:text-[#D1D5DB] mb-1.5">
                   Mandatory Public Reason * (Required for audit and citizen explanation)
                 </label>
                 <TextArea
@@ -548,15 +549,15 @@ export function ModerationQueuePage() {
           role="dialog"
           aria-modal="true"
         >
-          <div className="relative w-full max-w-md bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] rounded-2xl shadow-2xl p-6 space-y-4">
-            <h3 className="text-base font-bold text-[#202522] dark:text-[#F5F2EA]">Adjudicate Citizen Appeal</h3>
-            <p className="text-xs text-[#3E4B44] dark:text-[#C5D4C9] italic bg-[#ECE7DB]/60 dark:bg-[#1D2A25]/60 border border-[#DED8CB] dark:border-[#283931] p-3 rounded-lg">
+          <div className="relative w-full max-w-md bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-2xl shadow-2xl p-6 space-y-4">
+            <h3 className="text-base font-bold text-[#111827] dark:text-[#F9FAFB]">Adjudicate Citizen Appeal</h3>
+            <p className="text-xs text-[#374151] dark:text-[#D1D5DB] italic bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151] p-3 rounded-lg">
               &ldquo;{selectedAppeal.reason}&rdquo;
             </p>
 
             <form onSubmit={handleReviewAppeal} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-[#3E4B44] dark:text-[#C5D4C9] mb-1">
+                <label className="block text-xs font-semibold text-[#374151] dark:text-[#D1D5DB] mb-1">
                   Appeal Outcome
                 </label>
                 <Select
@@ -570,7 +571,7 @@ export function ModerationQueuePage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#3E4B44] dark:text-[#C5D4C9] mb-1">
+                <label className="block text-xs font-semibold text-[#374151] dark:text-[#D1D5DB] mb-1">
                   Mandatory Review Reason *
                 </label>
                 <TextArea

@@ -255,9 +255,9 @@ export function RegisterPage() {
   if (isAuthenticated) {
     return (
       <Container size="md" className="py-12">
-        <Card className="text-center p-8 border border-[#173D32]/30 bg-[#E8F1EC] dark:bg-[#14261F]">
-          <h2 className="text-xl font-semibold text-[#202522] dark:text-[#F5F2EA] mb-2">You are already signed in</h2>
-          <p className="text-[#3E4B44] dark:text-[#C5D4C9] text-sm mb-6">
+        <Card className="text-center p-8 border border-[#0B3D2E]/30 dark:border-[#34D399]/35 bg-[#E8F1EC] dark:bg-[#1F2937]">
+          <h2 className="text-xl font-semibold text-[#111827] dark:text-[#F9FAFB] mb-2">You are already signed in</h2>
+          <p className="text-[#374151] dark:text-[#D1D5DB] text-sm mb-6">
             You are currently authenticated in Civora. Registration is only required for new platform accounts.
           </p>
           <Button variant="primary" onClick={() => navigate('/')}>
@@ -274,60 +274,57 @@ export function RegisterPage() {
         <img
           src="/civora_icon.jpeg"
           alt="Civora"
-          className="w-14 h-14 rounded-2xl object-contain bg-white p-1 shadow-xs border border-gray-100"
+          className="w-14 h-14 rounded-2xl object-contain bg-white p-1 shadow-xs border border-gray-100 dark:border-[#374151] dark:ring-1 dark:ring-white/15"
         />
       </div>
 
       <PageHeading
         title="Civora Registration & Onboarding"
         description="Create your citizen account to report and track neighborhood issues, or register your engineering firm for municipal civic works procurement."
-        className="text-center mb-6"
+        className="text-center md:justify-center mb-6"
       />
 
       {/* Tab Selector */}
       <div className="flex justify-center mb-8">
-        <div className="inline-flex rounded-xl p-1 bg-[#ECE7DB] dark:bg-[#1D2A25] border border-[#DED8CB] dark:border-[#283931] shadow-xs">
+        <div className="inline-flex flex-wrap justify-center gap-1.5 rounded-xl p-1.5 bg-[#F3F4F6]/80 dark:bg-[#273548]/80 border border-[#E5E7EB] dark:border-[#374151] shadow-2xs">
           <button
             type="button"
+            data-active={activeTab === 'citizen'}
             onClick={() => {
               setActiveTab('citizen');
               setErrorMessage(null);
               setSuccessMessage(null);
             }}
-            className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${
-              activeTab === 'citizen'
-                ? 'bg-[#173D32] text-[#F4F0E6] shadow-xs'
-                : 'text-[#54625A] dark:text-[#C5D4C9] hover:text-[#202522] dark:hover:text-[#F5F2EA] hover:bg-[#DED8CB]/60 dark:hover:bg-[#283931]/60'
+            className={`civora-liquid-tab px-5 py-2 rounded-lg text-sm font-medium ${
+              activeTab === 'citizen' ? 'font-semibold' : 'text-[#4B5563] dark:text-[#D1D5DB]'
             }`}
           >
             Citizen Account
           </button>
           <button
             type="button"
+            data-active={activeTab === 'contractor'}
             onClick={() => {
               setActiveTab('contractor');
               setErrorMessage(null);
               setSuccessMessage(null);
             }}
-            className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${
-              activeTab === 'contractor'
-                ? 'bg-[#173D32] text-[#F4F0E6] shadow-xs'
-                : 'text-[#54625A] dark:text-[#C5D4C9] hover:text-[#202522] dark:hover:text-[#F5F2EA] hover:bg-[#DED8CB]/60 dark:hover:bg-[#283931]/60'
+            className={`civora-liquid-tab px-5 py-2 rounded-lg text-sm font-medium ${
+              activeTab === 'contractor' ? 'font-semibold' : 'text-[#4B5563] dark:text-[#D1D5DB]'
             }`}
           >
             Contractor Application
           </button>
           <button
             type="button"
+            data-active={activeTab === 'status'}
             onClick={() => {
               setActiveTab('status');
               setErrorMessage(null);
               setSuccessMessage(null);
             }}
-            className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${
-              activeTab === 'status'
-                ? 'bg-[#173D32] text-[#F4F0E6] shadow-xs'
-                : 'text-[#54625A] dark:text-[#C5D4C9] hover:text-[#202522] dark:hover:text-[#F5F2EA] hover:bg-[#DED8CB]/60 dark:hover:bg-[#283931]/60'
+            className={`civora-liquid-tab px-5 py-2 rounded-lg text-sm font-medium ${
+              activeTab === 'status' ? 'font-semibold' : 'text-[#4B5563] dark:text-[#D1D5DB]'
             }`}
           >
             Track Status
@@ -338,9 +335,9 @@ export function RegisterPage() {
       {/* 1. CITIZEN REGISTRATION FORM */}
       {activeTab === 'citizen' && (
         <Card className="max-w-xl mx-auto p-6 md:p-8 shadow-xs">
-          <div className="mb-6 pb-4 border-b border-[#DED8CB] dark:border-[#283931]">
-            <h3 className="text-lg font-semibold text-[#202522] dark:text-[#F5F2EA]">Public Citizen Registration</h3>
-            <p className="text-xs text-[#54625A] dark:text-[#C5D4C9] mt-1">
+          <div className="mb-6 pb-4 border-b border-[#E5E7EB] dark:border-[#374151]">
+            <h3 className="text-lg font-semibold text-[#111827] dark:text-[#F9FAFB]">Public Citizen Registration</h3>
+            <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] mt-1">
               Immediate access to report potholes, overflowing drains, broken lights, and monitor municipal SLAs.
             </p>
           </div>
@@ -409,14 +406,16 @@ export function RegisterPage() {
                   disabled={isSubmitting}
                   className="pr-20"
                 />
-                <button
-                  type="button"
-                  onClick={() => setCitShowPassword((prev) => !prev)}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-medium text-[#4A5750] hover:text-[#202522] dark:text-[#A8BFAE] dark:hover:text-[#E8F0EC] px-2 py-1 rounded bg-[#ECE7DB] hover:bg-[#DED8CB] dark:bg-[#1D2A25] dark:hover:bg-[#283931] transition-colors border border-[#DED8CB] dark:border-[#283931]"
-                  tabIndex={-1}
-                >
-                  {citShowPassword ? 'Hide' : 'Show'}
-                </button>
+                <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                  <button
+                    type="button"
+                    onClick={() => setCitShowPassword((prev) => !prev)}
+                    className="civora-liquid-btn civora-liquid-btn--secondary text-xs font-medium px-2.5 py-1 rounded-md"
+                    tabIndex={-1}
+                  >
+                    {citShowPassword ? 'Hide' : 'Show'}
+                  </button>
+                </div>
               </div>
             </FormField>
 
@@ -446,12 +445,12 @@ export function RegisterPage() {
             </div>
           </form>
 
-          <div className="mt-8 pt-6 border-t border-[#DED8CB] dark:border-[#283931] text-center text-sm text-[#54625A] dark:text-[#C5D4C9]">
+          <div className="mt-8 pt-6 border-t border-[#E5E7EB] dark:border-[#374151] text-center text-sm text-[#6B7280] dark:text-[#D1D5DB]">
             Already registered?{' '}
             <button
               type="button"
               onClick={() => navigate('/login')}
-              className="text-blue-400 hover:text-blue-300 font-semibold underline underline-offset-4 cursor-pointer"
+              className="civora-liquid-btn civora-liquid-btn--text px-2 py-0.5 rounded-md font-semibold text-sm"
             >
               Sign In Here
             </button>
@@ -462,14 +461,14 @@ export function RegisterPage() {
       {/* 2. CONTRACTOR APPLICATION FORM */}
       {activeTab === 'contractor' && (
         <Card className="max-w-2xl mx-auto p-6 md:p-8 shadow-xs">
-          <div className="mb-6 pb-4 border-b border-[#DED8CB] dark:border-[#283931]">
+          <div className="mb-6 pb-4 border-b border-[#E5E7EB] dark:border-[#374151]">
             <div className="flex items-center gap-2 mb-1">
-              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#E8F1EC] dark:bg-[#14261F] text-[#185541] dark:text-[#78C7AE] border border-[#A8C9B8] dark:border-[#204A3A]">
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#E8F1EC] dark:bg-[#34D399]/12 text-[#185541] dark:text-[#34D399] border border-[#A8C9B8] dark:border-[#34D399]/35">
                 Verified Vendor Portal
               </span>
             </div>
-            <h3 className="text-xl font-bold text-[#202522] dark:text-[#F5F2EA]">Contractor Organization Onboarding</h3>
-            <p className="text-xs text-[#54625A] dark:text-[#C5D4C9] mt-1 leading-relaxed">
+            <h3 className="text-xl font-bold text-[#111827] dark:text-[#F9FAFB]">Contractor Organization Onboarding</h3>
+            <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] mt-1 leading-relaxed">
               Register your engineering company or authorized firm to participate in e-tenders, submit bids, and execute public infrastructure work orders. All applications require administrative verification before portal bidding privileges are enabled.
             </p>
           </div>
@@ -481,30 +480,30 @@ export function RegisterPage() {
           )}
 
           {submittedContractorData ? (
-            <div className="p-6 rounded-xl border border-[#A8C9B8] dark:border-[#204A3A] bg-[#E8F1EC]/60 dark:bg-[#14261F]/60 text-center space-y-4">
-              <div className="w-12 h-12 rounded-full bg-[#173D32] text-[#F4F0E6] mx-auto flex items-center justify-center text-xl font-bold">
+            <div className="p-6 rounded-xl border border-[#A8C9B8] dark:border-[#34D399]/35 bg-[#E8F1EC]/60 dark:bg-[#34D399]/10 text-center space-y-4">
+              <div className="w-12 h-12 rounded-full bg-[#0B3D2E] dark:bg-[#0D7A58] text-white mx-auto flex items-center justify-center text-xl font-bold">
                 ✓
               </div>
-              <h4 className="text-lg font-bold text-[#202522] dark:text-[#F5F2EA]">Application Received & Under Review</h4>
-              <p className="text-xs text-[#3E4B44] dark:text-[#C5D4C9] leading-relaxed max-w-md mx-auto">
+              <h4 className="text-lg font-bold text-[#111827] dark:text-[#F9FAFB]">Application Received & Under Review</h4>
+              <p className="text-xs text-[#374151] dark:text-[#D1D5DB] leading-relaxed max-w-md mx-auto">
                 Your application for <strong>{submittedContractorData.companyName}</strong> has been submitted to the municipal procurement board.
               </p>
 
-              <div className="p-4 rounded-lg bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 border border-[#DED8CB] dark:border-[#283931] text-left text-xs space-y-2 max-w-sm mx-auto">
+              <div className="p-4 rounded-lg bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151] text-left text-xs space-y-2 max-w-sm mx-auto">
                 <div className="flex justify-between">
-                  <span className="text-[#54625A] dark:text-[#C5D4C9]">Registration Number:</span>
-                  <span className="font-mono font-medium text-[#202522] dark:text-[#F5F2EA]">{submittedContractorData.registrationNumber}</span>
+                  <span className="text-[#6B7280] dark:text-[#D1D5DB]">Registration Number:</span>
+                  <span className="font-mono font-medium text-[#111827] dark:text-[#F9FAFB]">{submittedContractorData.registrationNumber}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#54625A] dark:text-[#C5D4C9]">Class:</span>
-                  <span className="font-medium text-[#185541] dark:text-[#78C7AE]">{submittedContractorData.licenseClass}</span>
+                  <span className="text-[#6B7280] dark:text-[#D1D5DB]">Class:</span>
+                  <span className="font-medium text-[#185541] dark:text-[#34D399]">{submittedContractorData.licenseClass}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#54625A] dark:text-[#C5D4C9]">Official Contact:</span>
-                  <span className="font-medium text-[#202522] dark:text-[#F5F2EA]">{submittedContractorData.contactPerson}</span>
+                  <span className="text-[#6B7280] dark:text-[#D1D5DB]">Official Contact:</span>
+                  <span className="font-medium text-[#111827] dark:text-[#F9FAFB]">{submittedContractorData.contactPerson}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#54625A] dark:text-[#C5D4C9]">Status:</span>
+                  <span className="text-[#6B7280] dark:text-[#D1D5DB]">Status:</span>
                   <Badge variant="warning">UNDER_REVIEW</Badge>
                 </div>
               </div>
@@ -528,7 +527,7 @@ export function RegisterPage() {
             <form onSubmit={handleContractorSubmit} className="space-y-6" noValidate>
               {/* Section A: Company Details */}
               <div className="space-y-4">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#54625A] dark:text-[#C5D4C9] border-b border-[#DED8CB] dark:border-[#283931] pb-2">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#D1D5DB] border-b border-[#E5E7EB] dark:border-[#374151] pb-2">
                   1. Company & Entity Information
                 </h4>
 
@@ -607,8 +606,8 @@ export function RegisterPage() {
                 </FormField>
 
                 <div>
-                  <label className="block text-xs font-medium text-[#3E4B44] dark:text-[#C5D4C9] mb-2">
-                    Work Specialization Categories <span className="text-red-400">*</span>
+                  <label className="block text-xs font-medium text-[#374151] dark:text-[#D1D5DB] mb-2">
+                    Work Specialization Categories <span className="text-rose-600 dark:text-red-400">*</span>
                   </label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {availableCategories.map((cat) => (
@@ -616,15 +615,15 @@ export function RegisterPage() {
                         key={cat.id}
                         className={`flex items-center gap-2 p-2.5 rounded-lg border text-xs cursor-pointer transition-colors ${
                           compCategories.includes(cat.id)
-                            ? 'bg-emerald-950/40 border-emerald-500/50 text-emerald-200'
-                            : 'bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 border-[#DED8CB] dark:border-[#283931] text-[#3E4B44] dark:text-[#C5D4C9] hover:bg-[#DED8CB]/50 dark:hover:bg-[#283931]/50'
+                            ? 'bg-[#E5ECE8] dark:bg-emerald-950/40 border-[#0B3D2E] dark:border-emerald-500/50 text-[#0B3D2E] dark:text-emerald-200 font-medium'
+                            : 'bg-[#F9FAFB] dark:bg-[#182230] border-[#E5E7EB] dark:border-[#374151] text-[#374151] dark:text-[#D1D5DB] hover:bg-[#F3F4F6] dark:hover:bg-[#273548]/70'
                         }`}
                       >
                         <input
                           type="checkbox"
                           checked={compCategories.includes(cat.id)}
                           onChange={() => handleCategoryToggle(cat.id)}
-                          className="rounded text-emerald-600 focus:ring-emerald-500"
+                          className="rounded text-[#0B3D2E] accent-[#0B3D2E] dark:accent-[#34D399] focus:ring-[#0B3D2E] dark:focus:ring-[#34D399]"
                         />
                         <span>{cat.label}</span>
                       </label>
@@ -635,7 +634,7 @@ export function RegisterPage() {
 
               {/* Section B: Signatory & Account Credentials */}
               <div className="space-y-4 pt-2">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#54625A] dark:text-[#C5D4C9] border-b border-[#DED8CB] dark:border-[#283931] pb-2">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#D1D5DB] border-b border-[#E5E7EB] dark:border-[#374151] pb-2">
                   2. Authorized Signatory & Portal Credentials
                 </h4>
 
@@ -689,14 +688,16 @@ export function RegisterPage() {
                         disabled={isSubmitting}
                         className="pr-16"
                       />
-                      <button
-                        type="button"
-                        onClick={() => setContShowPassword((prev) => !prev)}
-                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-[#54625A] dark:text-[#C5D4C9] hover:text-white"
-                        tabIndex={-1}
-                      >
-                        {contShowPassword ? 'Hide' : 'Show'}
-                      </button>
+                      <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                        <button
+                          type="button"
+                          onClick={() => setContShowPassword((prev) => !prev)}
+                          className="civora-liquid-btn civora-liquid-btn--secondary text-xs font-medium px-2.5 py-1 rounded-md"
+                          tabIndex={-1}
+                        >
+                          {contShowPassword ? 'Hide' : 'Show'}
+                        </button>
+                      </div>
                     </div>
                   </FormField>
 
@@ -719,24 +720,24 @@ export function RegisterPage() {
                   type="submit"
                   variant="primary"
                   size="lg"
-                  className="w-full bg-emerald-600 hover:bg-emerald-500 text-white"
+                  className="w-full"
                   isLoading={isSubmitting}
                 >
                   Submit Contractor Application for Review
                 </Button>
-                <p className="text-[11px] text-[#54625A] dark:text-[#C5D4C9] text-center mt-2">
+                <p className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB] text-center mt-2">
                   By submitting, you certify that the provided business credentials and tax identifiers are valid.
                 </p>
               </div>
             </form>
           )}
 
-          <div className="mt-8 pt-6 border-t border-[#DED8CB] dark:border-[#283931] text-center text-sm text-[#54625A] dark:text-[#C5D4C9]">
+          <div className="mt-8 pt-6 border-t border-[#E5E7EB] dark:border-[#374151] text-center text-sm text-[#6B7280] dark:text-[#D1D5DB]">
             Already verified?{' '}
             <button
               type="button"
               onClick={() => navigate('/login')}
-              className="text-blue-400 hover:text-blue-300 font-semibold underline underline-offset-4 cursor-pointer"
+              className="civora-liquid-btn civora-liquid-btn--text px-2 py-0.5 rounded-md font-semibold text-sm"
             >
               Sign In to Contractor Portal
             </button>
@@ -747,9 +748,9 @@ export function RegisterPage() {
       {/* 3. TRACK APPLICATION STATUS */}
       {activeTab === 'status' && (
         <Card className="max-w-xl mx-auto p-6 md:p-8 shadow-xs">
-          <div className="mb-6 pb-4 border-b border-[#DED8CB] dark:border-[#283931]">
-            <h3 className="text-lg font-semibold text-[#202522] dark:text-[#F5F2EA]">Track Contractor Application</h3>
-            <p className="text-xs text-[#54625A] dark:text-[#C5D4C9] mt-1">
+          <div className="mb-6 pb-4 border-b border-[#E5E7EB] dark:border-[#374151]">
+            <h3 className="text-lg font-semibold text-[#111827] dark:text-[#F9FAFB]">Track Contractor Application</h3>
+            <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] mt-1">
               Enter the registration number or work email address used during contractor registration to verify verification status.
             </p>
           </div>
@@ -783,11 +784,11 @@ export function RegisterPage() {
           )}
 
           {statusResult && (
-            <div className="p-5 rounded-xl border border-[#DED8CB] dark:border-[#283931] bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 space-y-4">
+            <div className="p-5 rounded-xl border border-[#E5E7EB] dark:border-[#374151] bg-[#F9FAFB] dark:bg-[#182230] space-y-4">
               <div className="flex items-start justify-between">
                 <div>
-                  <h4 className="text-base font-bold text-[#202522] dark:text-[#F5F2EA]">{statusResult.companyName}</h4>
-                  <p className="text-xs text-[#54625A] dark:text-[#C5D4C9] font-mono mt-0.5">{statusResult.registrationNumber}</p>
+                  <h4 className="text-base font-bold text-[#111827] dark:text-[#F9FAFB]">{statusResult.companyName}</h4>
+                  <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] font-mono mt-0.5">{statusResult.registrationNumber}</p>
                 </div>
                 <Badge
                   variant={
@@ -802,31 +803,31 @@ export function RegisterPage() {
                 </Badge>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 text-xs border-t border-[#DED8CB] dark:border-[#283931] pt-3">
+              <div className="grid grid-cols-2 gap-3 text-xs border-t border-[#E5E7EB] dark:border-[#374151] pt-3">
                 <div>
-                  <span className="text-[#54625A] dark:text-[#C5D4C9] block">Contact Person</span>
-                  <span className="text-[#202522] dark:text-[#F5F2EA] font-medium">{statusResult.contactPerson}</span>
+                  <span className="text-[#6B7280] dark:text-[#D1D5DB] block">Contact Person</span>
+                  <span className="text-[#111827] dark:text-[#F9FAFB] font-medium">{statusResult.contactPerson}</span>
                 </div>
                 <div>
-                  <span className="text-[#54625A] dark:text-[#C5D4C9] block">Class</span>
-                  <span className="text-[#202522] dark:text-[#F5F2EA] font-medium">{statusResult.licenseClass}</span>
+                  <span className="text-[#6B7280] dark:text-[#D1D5DB] block">Class</span>
+                  <span className="text-[#111827] dark:text-[#F9FAFB] font-medium">{statusResult.licenseClass}</span>
                 </div>
                 <div>
-                  <span className="text-[#54625A] dark:text-[#C5D4C9] block">Region</span>
-                  <span className="text-[#202522] dark:text-[#F5F2EA] font-medium">{statusResult.operatingRegion}</span>
+                  <span className="text-[#6B7280] dark:text-[#D1D5DB] block">Region</span>
+                  <span className="text-[#111827] dark:text-[#F9FAFB] font-medium">{statusResult.operatingRegion}</span>
                 </div>
                 <div>
-                  <span className="text-[#54625A] dark:text-[#C5D4C9] block">Submitted At</span>
-                  <span className="text-[#202522] dark:text-[#F5F2EA] font-medium">
+                  <span className="text-[#6B7280] dark:text-[#D1D5DB] block">Submitted At</span>
+                  <span className="text-[#111827] dark:text-[#F9FAFB] font-medium">
                     {new Date(statusResult.submittedAt).toLocaleDateString()}
                   </span>
                 </div>
               </div>
 
               {statusResult.status === 'APPROVED' && (
-                <div className="p-3 rounded-lg bg-[#E8F1EC] dark:bg-[#14261F] border border-[#A8C9B8] dark:border-[#204A3A] text-xs text-[#185541] dark:text-[#78C7AE]">
-                  <p className="font-semibold text-[#202522] dark:text-[#F5F2EA] mb-1">Application Verified & Approved</p>
-                  <p className="mb-2 text-[#3E4B44] dark:text-[#C5D4C9]">Your enterprise credentials have been verified. You may now sign in using your work email and password to access the Contractor Portal.</p>
+                <div className="p-3 rounded-lg bg-[#E8F1EC] dark:bg-[#34D399]/12 border border-[#A8C9B8] dark:border-[#34D399]/35 text-xs text-[#185541] dark:text-[#34D399]">
+                  <p className="font-semibold text-[#111827] dark:text-[#F9FAFB] mb-1">Application Verified & Approved</p>
+                  <p className="mb-2 text-[#374151] dark:text-[#D1D5DB]">Your enterprise credentials have been verified. You may now sign in using your work email and password to access the Contractor Portal.</p>
                   <Button variant="primary" size="sm" onClick={() => navigate('/login')}>
                     Sign In Now
                   </Button>
@@ -835,26 +836,26 @@ export function RegisterPage() {
 
               {statusResult.status === 'UNDER_REVIEW' && (
                 <div className="p-3 rounded-lg bg-[#FEF6E9] dark:bg-amber-950/30 border border-[#F3B768] dark:border-amber-500/30 text-xs text-[#854F0B] dark:text-[#F3B768]">
-                  <p className="font-semibold text-[#202522] dark:text-[#F5F2EA] mb-1">Administrative Verification in Progress</p>
-                  <p className="text-[#54625A] dark:text-[#C5D4C9]">Municipal administrators are verifying your license class and corporate tax ID. Most applications are processed within 1-2 business days.</p>
+                  <p className="font-semibold text-[#111827] dark:text-[#F9FAFB] mb-1">Administrative Verification in Progress</p>
+                  <p className="text-[#6B7280] dark:text-[#D1D5DB]">Municipal administrators are verifying your license class and corporate tax ID. Most applications are processed within 1-2 business days.</p>
                 </div>
               )}
 
               {statusResult.status === 'REJECTED' && (
                 <div className="p-3 rounded-lg bg-[#FBEBE8] dark:bg-red-950/30 border border-[#F39182] dark:border-red-500/30 text-xs text-[#9C3B2D] dark:text-[#F39182]">
-                  <p className="font-semibold text-[#202522] dark:text-[#F5F2EA] mb-1">Application Not Approved</p>
-                  <p className="text-[#54625A] dark:text-[#C5D4C9]">{statusResult.reviewNotes || 'Credential verification could not be satisfied. Please contact the procurement registry.'}</p>
+                  <p className="font-semibold text-[#111827] dark:text-[#F9FAFB] mb-1">Application Not Approved</p>
+                  <p className="text-[#6B7280] dark:text-[#D1D5DB]">{statusResult.reviewNotes || 'Credential verification could not be satisfied. Please contact the procurement registry.'}</p>
                 </div>
               )}
             </div>
           )}
 
-          <div className="mt-6 pt-4 border-t border-[#DED8CB] dark:border-[#283931] text-center text-xs text-[#54625A] dark:text-[#C5D4C9]">
+          <div className="mt-6 pt-4 border-t border-[#E5E7EB] dark:border-[#374151] text-center text-xs text-[#6B7280] dark:text-[#D1D5DB]">
             Need to register a different organization?{' '}
             <button
               type="button"
               onClick={() => setActiveTab('contractor')}
-              className="text-emerald-400 hover:text-emerald-300 font-medium underline underline-offset-2 cursor-pointer"
+              className="civora-liquid-btn civora-liquid-btn--text px-2 py-0.5 rounded-md font-semibold text-xs"
             >
               Start New Application
             </button>

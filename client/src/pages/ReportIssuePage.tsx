@@ -518,15 +518,16 @@ export function ReportIssuePage() {
   // If not authenticated, prompt sign-in
   if (!authLoading && !isAuthenticated) {
     return (
-      <Container size="md" className="py-12 space-y-6">
+      <Container size="md" className="space-y-6">
         <PageHeading
+          eyebrow="Public Grievance Intake"
           title="Report a Civic Issue"
           description="Log damaged roads, broken streetlights, water leakages, or sanitation problems."
         />
 
         <Card>
           <CardHeader>
-            <div className="w-12 h-12 rounded-xl bg-[#173D32]/10 border border-[#173D32]/20 dark:bg-[#215748]/30 dark:border-[#4F9B8B]/30 flex items-center justify-center text-[#173D32] dark:text-[#7BC4B2] mb-3">
+            <div className="w-12 h-12 rounded-xl bg-[#0B3D2E]/10 border border-[#0B3D2E]/20 dark:bg-[#34D399]/15 dark:border-[#34D399]/30 flex items-center justify-center text-[#0B3D2E] dark:text-[#34D399] mb-3">
               <ShieldCheckIcon className="w-6 h-6" />
             </div>
             <CardTitle>Authentication Required</CardTitle>
@@ -535,7 +536,7 @@ export function ReportIssuePage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-sm text-[#3E4B44] dark:text-[#C5D4C9]">
+            <p className="text-sm text-[#374151] dark:text-[#D1D5DB]">
               Please sign in with your citizen credentials or register a free account. Once signed in, you will be able to lodge issues, receive live progress updates, and verify municipal resolution.
             </p>
             <div className="flex flex-wrap gap-3 pt-2">
@@ -556,28 +557,28 @@ export function ReportIssuePage() {
   if (submittedData) {
     return (
       <Container size="md" className="py-10 space-y-8">
-        <Card className="border-[#1E6B52]/30 bg-white dark:bg-[#16201C] shadow-sm">
+        <Card className="border-[#1E6B52]/30 bg-white dark:bg-[#1F2937] shadow-sm">
           <CardContent className="pt-8 text-center space-y-6">
-            <div className="w-16 h-16 mx-auto rounded-full bg-[#1E6B52]/10 border border-[#1E6B52]/25 flex items-center justify-center text-[#1E6B52] dark:text-[#78C7AE]">
+            <div className="w-16 h-16 mx-auto rounded-full bg-[#1E6B52]/10 border border-[#1E6B52]/25 flex items-center justify-center text-[#1E6B52] dark:text-[#34D399]">
               <CheckCircleIcon className="w-9 h-9" />
             </div>
 
             <div className="space-y-2">
-              <h2 className="text-2xl font-heading font-bold tracking-tight text-[#202522] dark:text-[#F5F2EA]">
+              <h2 className="text-2xl font-heading font-bold tracking-tight text-[#111827] dark:text-[#F9FAFB]">
                 Complaint Lodged Successfully!
               </h2>
-              <p className="text-sm text-[#3E4B44] dark:text-[#C5D4C9] max-w-lg mx-auto">
+              <p className="text-sm text-[#374151] dark:text-[#D1D5DB] max-w-lg mx-auto">
                 Your civic issue has been officially registered with the municipal grievance portal. A unique tracking identifier has been generated.
               </p>
             </div>
 
             {/* Tracking ID Callout */}
-            <div className="p-5 rounded-xl bg-[#FAF8F5] dark:bg-[#141C18] border border-[#DED8CB] dark:border-[#283931] max-w-md mx-auto space-y-3">
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#3E4B44] dark:text-[#C5D4C9] block">
+            <div className="p-5 rounded-xl bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151] max-w-md mx-auto space-y-3">
+              <span className="text-xs font-semibold uppercase tracking-wider text-[#374151] dark:text-[#D1D5DB] block">
                 Official Tracking Identifier
               </span>
               <div className="flex items-center justify-center gap-3">
-                <span className="text-2xl sm:text-3xl font-mono font-extrabold text-[#173D32] dark:text-[#7BC4B2] tracking-wider">
+                <span className="text-2xl sm:text-3xl font-mono font-extrabold text-[#0B3D2E] dark:text-[#34D399] tracking-wider">
                   {submittedData.trackingId}
                 </span>
                 <Button
@@ -589,19 +590,19 @@ export function ReportIssuePage() {
                   {copied ? 'Copied!' : 'Copy ID'}
                 </Button>
               </div>
-              <p className="text-xs text-[#54625A] dark:text-[#889B90]">
+              <p className="text-xs text-[#6B7280] dark:text-[#9CA3AF]">
                 Keep this ID handy. You can use it anytime on the tracking page to check review status and field inspection notes.
               </p>
             </div>
 
             <div className="flex items-center justify-center gap-2">
-              <span className="text-xs text-[#4A5750] dark:text-[#B0C0B6]">Initial Status:</span>
+              <span className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">Initial Status:</span>
               <Badge variant="info" size="sm" hasDot>
                 {submittedData.status}
               </Badge>
             </div>
 
-            <div className="pt-4 border-t border-[#EAE5D9] dark:border-[#283931] flex flex-col sm:flex-row items-center justify-center gap-3">
+            <div className="pt-4 border-t border-[#F3F4F6] dark:border-[#374151] flex flex-col sm:flex-row items-center justify-center gap-3">
               <Button
                 variant="primary"
                 onClick={() => navigate(`/track?id=${submittedData.trackingId}`)}
@@ -628,13 +629,13 @@ export function ReportIssuePage() {
       {draftRestoredBanner && (
         <div className="flex items-center justify-between p-3.5 bg-[#EDF5F7] dark:bg-[#122329] border border-[#B7D8DE] dark:border-[#224550] rounded-xl text-xs text-[#1D515E] dark:text-[#8FD0DE]">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#173D32] dark:bg-[#4F9B8B]" />
+            <span className="w-2 h-2 rounded-full bg-[#0B3D2E] dark:bg-[#34D399]" />
             <span>{t('complaints.draftRestored')}</span>
           </div>
           <button
             type="button"
             onClick={handleDiscardDraft}
-            className="text-xs text-[#173D32] dark:text-[#7BC4B2] hover:underline cursor-pointer p-1 font-semibold"
+            className="civora-liquid-btn civora-liquid-btn--secondary px-2.5 py-1 rounded-md text-xs font-semibold"
           >
             {t('complaints.discardDraft')}
           </button>
@@ -710,12 +711,12 @@ export function ReportIssuePage() {
                       disabled={loadingCategories}
                     />
                     {!loadingCategories && categories.length === 0 && (
-                      <div className="mt-2 flex items-center justify-between rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+                      <div className="mt-2 flex items-center justify-between rounded-md border border-amber-200 dark:border-amber-500/35 bg-amber-50 dark:bg-amber-500/10 px-3 py-2 text-xs text-amber-800 dark:text-[#FCD34D]">
                         <span>Municipal complaint categories are initializing...</span>
                         <button
                           type="button"
                           onClick={() => void loadCategories()}
-                          className="font-semibold text-emerald-700 underline hover:text-emerald-900"
+                          className="civora-liquid-btn civora-liquid-btn--outline px-2.5 py-1 rounded-md text-xs font-semibold"
                         >
                           Retry
                         </button>
@@ -820,13 +821,13 @@ export function ReportIssuePage() {
                 </FormField>
 
                 {/* Geolocation Section */}
-                <div className="p-4 rounded-xl bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 border border-[#DED8CB] dark:border-[#283931] space-y-3">
+                <div className="p-4 rounded-xl bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151] space-y-3">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
-                      <span className="text-xs font-semibold text-[#202522] dark:text-[#E8F0EC] block">
+                      <span className="text-xs font-semibold text-[#111827] dark:text-[#F9FAFB] block">
                         GPS Coordinates (Optional)
                       </span>
-                      <span className="text-[11px] text-[#54625A] dark:text-[#C5D4C9]">
+                      <span className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB]">
                         Pins exact location for field engineers
                       </span>
                     </div>
@@ -836,7 +837,7 @@ export function ReportIssuePage() {
                         variant="secondary"
                         size="sm"
                         onClick={() => setIsMapPickerOpen(true)}
-                        leftIcon={<MapPinIcon className="w-4 h-4 text-[#185541] dark:text-[#78C7AE]" />}
+                        leftIcon={<MapPinIcon className="w-4 h-4 text-[#185541] dark:text-[#34D399]" />}
                         className="cursor-pointer"
                       >
                         Pick on Map
@@ -846,7 +847,7 @@ export function ReportIssuePage() {
                         variant="outline"
                         size="sm"
                         onClick={handleGetLocation}
-                        leftIcon={<MapPinIcon className="w-4 h-4 text-[#173D32] dark:text-[#7BC4B2]" />}
+                        leftIcon={<MapPinIcon className="w-4 h-4 text-[#0B3D2E] dark:text-[#34D399]" />}
                         className="cursor-pointer"
                       >
                         Use GPS
@@ -855,7 +856,7 @@ export function ReportIssuePage() {
                   </div>
 
                   {locationStatus && (
-                    <p className="text-xs text-[#1D584D] dark:text-[#7BC4B2] font-mono font-semibold">{locationStatus}</p>
+                    <p className="text-xs text-[#1D584D] dark:text-[#34D399] font-mono font-semibold">{locationStatus}</p>
                   )}
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -873,13 +874,13 @@ export function ReportIssuePage() {
                     />
                   </div>
 
-                  <div className="flex items-center gap-2 pt-1 text-xs text-[#3E4B44] dark:text-[#C5D4C9]">
+                  <div className="flex items-center gap-2 pt-1 text-xs text-[#374151] dark:text-[#D1D5DB]">
                     <input
                       type="checkbox"
                       id="is-location-public"
                       checked={isLocationPublic}
                       onChange={(e) => setIsLocationPublic(e.target.checked)}
-                      className="rounded border-[#DED8CB] dark:border-[#283931] bg-[#ECE7DB] dark:bg-[#1D2A25] text-[#173D32] focus:ring-[#173D32]"
+                      className="rounded border-[#E5E7EB] dark:border-[#374151] bg-[#F3F4F6] dark:bg-[#273548] text-[#0B3D2E] accent-[#0B3D2E] dark:accent-[#34D399] focus:ring-[#0B3D2E] dark:focus:ring-[#34D399]"
                     />
                     <label htmlFor="is-location-public" className="cursor-pointer">
                       Display generalized location on public discovery map (uncheck to keep coordinates private)
@@ -888,15 +889,15 @@ export function ReportIssuePage() {
                 </div>
 
                 {/* Supporting Photographic Evidence (Mandatory & AI Verified) */}
-                <div className="p-4 rounded-xl bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 border border-[#DED8CB] dark:border-[#283931] space-y-3">
+                <div className="p-4 rounded-xl bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151] space-y-3">
                   <div className="flex items-center justify-between">
                     <div>
-                      <span className="text-xs font-semibold text-[#202522] dark:text-[#E8F0EC] flex items-center gap-1.5">
-                        <CameraIcon className="w-4 h-4 text-[#185541] dark:text-[#78C7AE]" />
+                      <span className="text-xs font-semibold text-[#111827] dark:text-[#F9FAFB] flex items-center gap-1.5">
+                        <CameraIcon className="w-4 h-4 text-[#185541] dark:text-[#34D399]" />
                         Photographic Evidence (Mandatory)
                         <span className="text-red-500 font-bold">*</span>
                       </span>
-                      <span className="text-[11px] text-[#54625A] dark:text-[#C5D4C9]">
+                      <span className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB]">
                         Real photographs required for AI verification, duplicate detection and official inspection (JPG, PNG, WebP • Max 10MB each)
                       </span>
                     </div>
@@ -913,7 +914,7 @@ export function ReportIssuePage() {
                       type="button"
                       onClick={() => cameraInputRef.current?.click()}
                       disabled={isAnalyzingPhoto}
-                      className="flex items-center justify-center gap-2 p-3 rounded-xl border border-[#173D32] dark:border-[#7BC4B2] bg-[#173D32]/10 dark:bg-[#7BC4B2]/10 hover:bg-[#173D32]/20 text-[#173D32] dark:text-[#7BC4B2] font-semibold text-xs cursor-pointer transition-colors"
+                      className="civora-liquid-btn civora-liquid-btn--outline gap-2 p-3 rounded-xl font-semibold text-xs"
                     >
                       <CameraIcon className="w-4 h-4" />
                       Take Live Photo (Camera)
@@ -924,7 +925,7 @@ export function ReportIssuePage() {
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
                       disabled={isAnalyzingPhoto}
-                      className="flex items-center justify-center gap-2 p-3 rounded-xl border border-[#DED8CB] dark:border-[#283931] bg-white dark:bg-[#16201C] hover:bg-[#ECE7DB]/50 text-[#202522] dark:text-[#F5F2EA] text-xs font-semibold cursor-pointer transition-colors"
+                      className="civora-liquid-btn civora-liquid-btn--secondary gap-2 p-3 rounded-xl text-xs font-semibold"
                     >
                       Browse Image Files
                     </button>
@@ -958,39 +959,39 @@ export function ReportIssuePage() {
                   {/* Analyzed Images Rich Preview Grid */}
                   {analyzedImages.length > 0 && (
                     <div className="space-y-2 pt-1">
-                      <span className="text-[11px] font-semibold text-[#202522] dark:text-[#F5F2EA] block">
+                      <span className="text-[11px] font-semibold text-[#111827] dark:text-[#F9FAFB] block">
                         Verified Evidence ({analyzedImages.length}/5):
                       </span>
                       <div className="grid grid-cols-1 gap-2.5">
                         {analyzedImages.map((img, idx) => (
                           <div
                             key={idx}
-                            className="flex items-center justify-between p-2.5 rounded-lg bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] gap-3"
+                            className="flex items-center justify-between p-2.5 rounded-lg bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] gap-3"
                           >
                             <img
                               src={img.previewUrl}
                               alt={`Evidence ${idx + 1}`}
-                              className="w-14 h-14 object-cover rounded-md border border-[#DED8CB] dark:border-[#283931] shrink-0"
+                              className="w-14 h-14 object-cover rounded-md border border-[#E5E7EB] dark:border-[#374151] shrink-0"
                             />
                             <div className="flex-1 min-w-0 text-left">
-                              <p className="text-xs font-semibold text-[#202522] dark:text-[#F5F2EA] truncate">
+                              <p className="text-xs font-semibold text-[#111827] dark:text-[#F9FAFB] truncate">
                                 {img.file.name}
                               </p>
                               <div className="flex flex-wrap items-center gap-1.5 mt-1">
-                                <span className="text-[10px] text-[#54625A] dark:text-[#C5D4C9] font-mono">
+                                <span className="text-[10px] text-[#6B7280] dark:text-[#D1D5DB] font-mono">
                                   {Math.round(img.file.size / 1024)} KB
                                 </span>
                                 {img.capturedAt ? (
-                                  <span className="px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 text-[10px] font-medium">
+                                  <span className="px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/40 text-[10px] font-medium">
                                     EXIF: {new Date(img.capturedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                   </span>
                                 ) : (
-                                  <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px]">
+                                  <span className="px-1.5 py-0.5 rounded bg-[#F3F4F6] dark:bg-[#273548] text-[#374151] dark:text-[#D1D5DB] border border-[#E5E7EB] dark:border-[#374151] text-[10px]">
                                     Captured: Now
                                   </span>
                                 )}
                                 {(img.exifLatitude !== null || img.browserLatitude) && (
-                                  <span className="px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 text-[10px] font-medium">
+                                  <span className="px-1.5 py-0.5 rounded bg-[#E5ECE8] dark:bg-[#273548] text-[#0B3D2E] dark:text-[#34D399] border border-[#0B3D2E]/20 dark:border-[#374151] text-[10px] font-medium">
                                     GPS: Verified
                                   </span>
                                 )}
@@ -1003,8 +1004,9 @@ export function ReportIssuePage() {
                             </div>
                             <button
                               type="button"
+                              aria-label="Remove photo"
                               onClick={() => handleRemoveFile(idx)}
-                              className="p-1 text-[#9C3B2D] hover:text-[#832E22] rounded hover:bg-red-50 dark:hover:bg-red-950/20"
+                              className="civora-liquid-btn civora-liquid-btn--danger p-1.5 rounded-lg"
                               title="Remove photo"
                             >
                               <CloseIcon className="w-4 h-4" />
@@ -1048,13 +1050,13 @@ export function ReportIssuePage() {
                   How Civora processes and routes civic grievances
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4 text-xs text-[#3E4B44] dark:text-[#C5D4C9]">
+              <CardContent className="space-y-4 text-xs text-[#374151] dark:text-[#D1D5DB]">
                 <div className="flex gap-3">
-                  <div className="w-6 h-6 rounded-full bg-[#173D32]/10 text-[#173D32] dark:bg-[#215748]/30 dark:text-[#E8F0EC] font-bold flex items-center justify-center shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-[#0B3D2E]/10 text-[#0B3D2E] dark:bg-[#34D399]/15 dark:text-[#F9FAFB] font-bold flex items-center justify-center shrink-0">
                     1
                   </div>
                   <div>
-                    <strong className="text-[#202522] dark:text-[#E8F0EC] block mb-0.5">Tracking ID Generation</strong>
+                    <strong className="text-[#111827] dark:text-[#F9FAFB] block mb-0.5">Tracking ID Generation</strong>
                     A cryptographic identifier is assigned immediately upon receipt.
                   </div>
                 </div>
@@ -1064,30 +1066,30 @@ export function ReportIssuePage() {
                     2
                   </div>
                   <div>
-                    <strong className="text-[#202522] dark:text-[#E8F0EC] block mb-0.5">Department Triage</strong>
+                    <strong className="text-[#111827] dark:text-[#F9FAFB] block mb-0.5">Department Triage</strong>
                     The nodal municipal officer inspects the filing and dispatches the ward crew.
                   </div>
                 </div>
 
                 <div className="flex gap-3">
-                  <div className="w-6 h-6 rounded-full bg-[#1E6B52]/15 text-[#185541] dark:bg-[#183B2E] dark:text-[#78C7AE] font-bold flex items-center justify-center shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-[#1E6B52]/15 text-[#185541] dark:bg-[#34D399]/15 dark:text-[#34D399] font-bold flex items-center justify-center shrink-0">
                     3
                   </div>
                   <div>
-                    <strong className="text-[#202522] dark:text-[#E8F0EC] block mb-0.5">Transparent Resolution</strong>
+                    <strong className="text-[#111827] dark:text-[#F9FAFB] block mb-0.5">Transparent Resolution</strong>
                     Work progress notes and timestamped audit logs are recorded permanently.
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-[#DED8CB] dark:border-[#283931]">
+            <Card className="border-[#E5E7EB] dark:border-[#374151]">
               <CardContent className="pt-6 space-y-2">
-                <div className="flex items-center gap-2 text-[#202522] dark:text-[#E8F0EC] text-xs font-semibold">
-                  <ShieldCheckIcon className="w-4 h-4 text-[#185541] dark:text-[#78C7AE]" />
+                <div className="flex items-center gap-2 text-[#111827] dark:text-[#F9FAFB] text-xs font-semibold">
+                  <ShieldCheckIcon className="w-4 h-4 text-[#185541] dark:text-[#34D399]" />
                   Public Accountability Standard
                 </div>
-                <p className="text-[11px] text-[#54625A] dark:text-[#C5D4C9] leading-relaxed">
+                <p className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB] leading-relaxed">
                   Complaints are distinct from capital civic work projects. All actions by officers are auditable and subject to citizen review.
                 </p>
               </CardContent>

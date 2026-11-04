@@ -1,0 +1,255 @@
+@property --gradient-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@property --gradient-angle-offset {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@property --gradient-percent {
+  syntax: "<percentage>";
+  initial-value: 5%;
+  inherits: false;
+}
+
+@property --gradient-shine {
+  syntax: "<color>";
+  initial-value: #ecfdf5;
+  inherits: false;
+}
+
+@layer components {
+  .shiny-cta {
+    /* Civora Light Theme — Deep Forest & Refined Emerald */
+    --shiny-cta-bg: #0b3d2e;
+    --shiny-cta-bg-hover: #072b20;
+    --shiny-cta-bg-subtle: rgba(255, 255, 255, 0.16);
+    --shiny-cta-fg: #ffffff;
+    --shiny-cta-highlight: #10b981;
+    --shiny-cta-highlight-subtle: #a7f3d0;
+    --gradient-shine: #ecfdf5;
+    --animation: shiny-gradient-angle linear infinite;
+    --duration: 3.4s;
+    --shadow-size: 2px;
+    --transition: 800ms cubic-bezier(0.25, 1, 0.5, 1);
+
+    isolation: isolate;
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+    outline-offset: 3px;
+    padding: 0.625rem 1.5rem;
+    font-family: var(--font-sans, "Times New Roman", Times, serif);
+    font-size: 0.9375rem;
+    line-height: 1.4;
+    font-weight: 500;
+    border: 1px solid transparent;
+    border-radius: 9999px;
+    color: var(--shiny-cta-fg);
+    background:
+      linear-gradient(var(--shiny-cta-bg), var(--shiny-cta-bg)) padding-box,
+      conic-gradient(
+        from calc(var(--gradient-angle) - var(--gradient-angle-offset)),
+        transparent,
+        var(--shiny-cta-highlight) var(--gradient-percent),
+        var(--gradient-shine) calc(var(--gradient-percent) * 2),
+        var(--shiny-cta-highlight) calc(var(--gradient-percent) * 3),
+        transparent calc(var(--gradient-percent) * 4)
+      ) border-box;
+    box-shadow:
+      inset 0 0 0 1px var(--shiny-cta-bg-subtle),
+      0 1px 2px rgba(11, 61, 46, 0.18);
+    transition:
+      --gradient-angle-offset var(--transition),
+      --gradient-percent var(--transition),
+      --gradient-shine var(--transition),
+      box-shadow 200ms ease,
+      translate 120ms ease;
+  }
+
+  /* Civora Dedicated Dark Theme Adaptation */
+  html[data-theme="dark"] .shiny-cta,
+  html.dark .shiny-cta {
+    --shiny-cta-bg: #0d7a58;
+    --shiny-cta-bg-hover: #0f8f68;
+    --shiny-cta-bg-subtle: rgba(110, 231, 183, 0.22);
+    --shiny-cta-fg: #f9fafb;
+    --shiny-cta-highlight: #34d399;
+    --shiny-cta-highlight-subtle: #d1fae5;
+    --gradient-shine: #ecfdf5;
+    box-shadow:
+      inset 0 0 0 1px var(--shiny-cta-bg-subtle),
+      0 2px 8px rgba(0, 0, 0, 0.28);
+  }
+
+  .shiny-cta::before,
+  .shiny-cta::after,
+  .shiny-cta > .shiny-cta__label::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset-inline-start: 50%;
+    inset-block-start: 50%;
+    translate: -50% -50%;
+    z-index: -1;
+  }
+
+  .shiny-cta:active:not(:disabled) {
+    translate: 0 1px;
+  }
+
+  .shiny-cta:focus-visible {
+    outline: 2px solid var(--color-focus, #0b3d2e);
+    outline-offset: 3px;
+  }
+
+  .shiny-cta:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    animation: none;
+  }
+
+  /* Subtle micro-dot pattern */
+  .shiny-cta::before {
+    --size: calc(100% - var(--shadow-size) * 3);
+    --position: 2px;
+    --space: calc(var(--position) * 2);
+    width: var(--size);
+    height: var(--size);
+    background: radial-gradient(
+      circle at var(--position) var(--position),
+      rgba(255, 255, 255, 0.85) calc(var(--position) / 4),
+      transparent 0
+    ) padding-box;
+    background-size: var(--space) var(--space);
+    background-repeat: space;
+    mask-image: conic-gradient(
+      from calc(var(--gradient-angle) + 45deg),
+      black,
+      transparent 10% 90%,
+      black
+    );
+    border-radius: inherit;
+    opacity: 0.28;
+    z-index: -1;
+  }
+
+  /* Inner shimmer sweep */
+  .shiny-cta::after {
+    --animation: shiny-shimmer linear infinite;
+    width: 100%;
+    aspect-ratio: 1;
+    background: linear-gradient(
+      -50deg,
+      transparent,
+      var(--shiny-cta-highlight),
+      transparent
+    );
+    mask-image: radial-gradient(circle at bottom, transparent 42%, black);
+    opacity: 0.42;
+  }
+
+  .shiny-cta > .shiny-cta__label {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .shiny-cta > .shiny-cta__label::before {
+    --size: calc(100% + 1rem);
+    width: var(--size);
+    height: var(--size);
+    box-shadow: inset 0 -1ex 1.75rem 3px var(--shiny-cta-highlight);
+    opacity: 0;
+    transition: opacity var(--transition);
+    animation: calc(var(--duration) * 1.5) shiny-breathe linear infinite;
+  }
+
+  /* Continuous & hover-composed motion */
+  .shiny-cta,
+  .shiny-cta::before,
+  .shiny-cta::after {
+    animation:
+      var(--animation) var(--duration),
+      var(--animation) calc(var(--duration) / 0.4) reverse paused;
+    animation-composition: add;
+  }
+
+  .shiny-cta:not(:disabled):is(:hover, :focus-visible) {
+    --shiny-cta-bg: var(--shiny-cta-bg-hover);
+    --gradient-percent: 20%;
+    --gradient-angle-offset: 95deg;
+    --gradient-shine: var(--shiny-cta-highlight-subtle);
+  }
+
+  .shiny-cta:not(:disabled):is(:hover, :focus-visible),
+  .shiny-cta:not(:disabled):is(:hover, :focus-visible)::before,
+  .shiny-cta:not(:disabled):is(:hover, :focus-visible)::after {
+    animation-play-state: running;
+  }
+
+  .shiny-cta:not(:disabled):is(:hover, :focus-visible) > .shiny-cta__label::before {
+    opacity: 0.65;
+  }
+}
+
+@keyframes shiny-gradient-angle {
+  to {
+    --gradient-angle: 360deg;
+  }
+}
+
+@keyframes shiny-shimmer {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@keyframes shiny-breathe {
+  from,
+  to {
+    scale: 1;
+  }
+  50% {
+    scale: 1.15;
+  }
+}
+
+/* Reduced Motion Accessibility (OS & Civora In-App Preference) */
+@media (prefers-reduced-motion: reduce) {
+  .shiny-cta,
+  .shiny-cta::before,
+  .shiny-cta::after,
+  .shiny-cta > .shiny-cta__label::before {
+    animation: none !important;
+    transition: background 150ms ease, box-shadow 150ms ease !important;
+  }
+
+  .shiny-cta::after {
+    opacity: 0.18;
+  }
+}
+
+html[data-reduced-motion="true"] .shiny-cta,
+html[data-reduced-motion="true"] .shiny-cta::before,
+html[data-reduced-motion="true"] .shiny-cta::after,
+html[data-reduced-motion="true"] .shiny-cta > .shiny-cta__label::before {
+  animation: none !important;
+  transition: background 150ms ease, box-shadow 150ms ease !important;
+}
+
+html[data-reduced-motion="true"] .shiny-cta::after {
+  opacity: 0.18;
+}
+

@@ -192,58 +192,55 @@ export const CivicMapPage: React.FC = () => {
 
   return (
     <Container size="xl" className="space-y-6">
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <PageHeading
-          title={t('civicMap.title')}
-          description={t('civicMap.subtitle')}
-          badge={
-            <Badge variant="info" size="md" hasDot>
-              {t('nav.civicMap')}
-            </Badge>
-          }
-        />
-
-        {/* View Mode Switcher */}
-        <div className="flex items-center space-x-2 bg-[#ECE7DB] dark:bg-[#1D2A25] border border-[#DED8CB] dark:border-[#283931] p-1 rounded-xl self-start sm:self-auto">
-          <button
-            type="button"
-            onClick={() => setViewMode('map')}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 ${
-              viewMode === 'map'
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'text-[#54625A] dark:text-[#C5D4C9] hover:text-[#202522] dark:hover:text-[#E8F0EC]'
-            }`}
-          >
-            <MapPinIcon className="w-3.5 h-3.5" />
-            {t('civicMap.mapViewToggle')}
-          </button>
-          <button
-            type="button"
-            onClick={() => setViewMode('list')}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 ${
-              viewMode === 'list'
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'text-[#54625A] dark:text-[#C5D4C9] hover:text-[#202522] dark:hover:text-[#E8F0EC]'
-            }`}
-          >
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-            </svg>
-            {t('civicMap.listViewToggle')} ({markers.length})
-          </button>
-        </div>
-      </div>
+      {/* Standardized Page Header */}
+      <PageHeading
+        title={t('civicMap.title')}
+        description={t('civicMap.subtitle')}
+        className="mb-0"
+        badge={
+          <Badge variant="info" size="md" hasDot>
+            {t('nav.civicMap')}
+          </Badge>
+        }
+        actions={
+          <div className="flex items-center gap-1.5 bg-[#F3F4F6]/80 dark:bg-[#273548]/80 border border-[#E5E7EB] dark:border-[#374151] p-1 rounded-xl">
+            <button
+              type="button"
+              data-active={viewMode === 'map'}
+              onClick={() => setViewMode('map')}
+              className={`civora-liquid-tab px-3 py-1.5 text-xs font-semibold rounded-lg flex items-center gap-1.5 ${
+                viewMode === 'map' ? '' : 'text-[#4B5563] dark:text-[#D1D5DB]'
+              }`}
+            >
+              <MapPinIcon className="w-3.5 h-3.5" />
+              {t('civicMap.mapViewToggle')}
+            </button>
+            <button
+              type="button"
+              data-active={viewMode === 'list'}
+              onClick={() => setViewMode('list')}
+              className={`civora-liquid-tab px-3 py-1.5 text-xs font-semibold rounded-lg flex items-center gap-1.5 ${
+                viewMode === 'list' ? '' : 'text-[#4B5563] dark:text-[#D1D5DB]'
+              }`}
+            >
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+              </svg>
+              {t('civicMap.listViewToggle')} ({markers.length})
+            </button>
+          </div>
+        }
+      />
 
       {/* Privacy Notice Banner */}
-      <div className="p-3.5 rounded-xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/40 flex items-start gap-3">
-        <div className="p-1.5 bg-blue-100 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 rounded-lg shrink-0 mt-0.5">
+      <div className="p-3.5 rounded-xl bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151] flex items-start gap-3">
+        <div className="p-1.5 bg-[#E5ECE8] dark:bg-[#34D399]/15 text-[#0B3D2E] dark:text-[#34D399] rounded-lg shrink-0 mt-0.5">
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
           </svg>
         </div>
-        <div className="text-xs text-[#3E4B44] dark:text-[#C5D4C9] leading-relaxed">
-          <span className="font-semibold text-[#202522] dark:text-[#F5F2EA]">Privacy Protection Guarantee: </span>
+        <div className="text-xs text-[#4B5563] dark:text-[#D1D5DB] leading-relaxed">
+          <span className="font-semibold text-[#111827] dark:text-[#F9FAFB]">Privacy Protection Guarantee: </span>
           All complaint coordinates on the public map are generalized to ~110m resolution. Complainant names, phone numbers, and private residential doorsteps are strictly protected and never publicly pinpointed.
         </div>
       </div>
@@ -318,7 +315,7 @@ export const CivicMapPage: React.FC = () => {
                   variant="outline"
                   size="md"
                   onClick={handleActivateNearby}
-                  leftIcon={<MapPinIcon className="w-4 h-4 text-blue-400" />}
+                  leftIcon={<MapPinIcon className="w-4 h-4 text-[#0B6640] dark:text-[#34D399]" />}
                   className="w-full cursor-pointer text-xs"
                 >
                   Near Me
@@ -338,10 +335,10 @@ export const CivicMapPage: React.FC = () => {
                   />
                   <Button
                     type="button"
-                    variant="ghost"
+                    variant="danger"
                     size="sm"
                     onClick={handleClearNearby}
-                    className="cursor-pointer text-xs text-red-400"
+                    className="text-xs px-2.5"
                     title="Clear nearby radius"
                   >
                     ✕
@@ -362,10 +359,10 @@ export const CivicMapPage: React.FC = () => {
           </div>
 
           {/* Active Filter Chips & Clear */}
-          <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[#DED8CB] dark:border-[#283931] text-xs">
+          <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[#E5E7EB] dark:border-[#374151] text-xs">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-[#54625A] dark:text-[#C5D4C9] font-medium">
-                Found <strong className="text-[#202522] dark:text-[#F5F2EA]">{markers.length}</strong> complaints
+              <span className="text-[#6B7280] dark:text-[#D1D5DB] font-medium">
+                Found <strong className="text-[#111827] dark:text-[#F9FAFB]">{markers.length}</strong> complaints
               </span>
               {nearbyStatus && (
                 <Badge variant="info" size="sm">
@@ -383,7 +380,7 @@ export const CivicMapPage: React.FC = () => {
               <button
                 type="button"
                 onClick={handleResetFilters}
-                className="text-xs text-[#235C52] dark:text-[#7BC4B2] hover:underline font-medium cursor-pointer"
+                className="civora-liquid-btn civora-liquid-btn--text px-2.5 py-1 rounded-md text-xs font-medium"
               >
                 Clear All Filters
               </button>
@@ -400,18 +397,18 @@ export const CivicMapPage: React.FC = () => {
 
       {/* Hotspots Quick Drawer / Bar */}
       {showHotspotsDrawer && (
-        <Card className="border-[#4F9B8B]/40 shadow-xs animate-fade-in">
+        <Card className="border-[#0B3D2E]/25 dark:border-[#34D399]/35 shadow-xs animate-fade-in">
           <CardHeader className="pb-3 flex flex-row items-center justify-between">
             <div>
               <CardTitle className="text-sm">Geographic Issue Hotspots (Ward-level Aggregation)</CardTitle>
-              <p className="text-xs text-[#54625A] dark:text-[#C5D4C9] mt-0.5">
+              <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] mt-0.5">
                 Identifies areas with the highest complaint concentration, recurring issues, and overdue rates.
               </p>
             </div>
             <button
               type="button"
               onClick={() => setShowHotspotsDrawer(false)}
-              className="text-[#54625A] hover:text-[#202522] dark:text-[#C5D4C9] dark:hover:text-[#E8F0EC] p-1 rounded-md text-xs cursor-pointer"
+              className="civora-liquid-btn civora-liquid-btn--ghost px-2.5 py-1 rounded-md text-xs font-medium"
             >
               ✕ Close
             </button>
@@ -422,15 +419,15 @@ export const CivicMapPage: React.FC = () => {
                 <div
                   key={h.name}
                   onClick={() => handleSelectHotspot(h)}
-                  className="p-3 rounded-xl bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 hover:bg-[#DED8CB]/60 dark:hover:bg-[#283931]/60 border border-[#DED8CB] dark:border-[#283931] cursor-pointer transition-all hover:border-[#173D32]/40 dark:hover:border-[#7BC4B2]/40"
+                  className="p-3 rounded-xl bg-[#F9FAFB] dark:bg-[#182230] hover:bg-[#E5E7EB]/60 dark:hover:bg-[#273548]/70 border border-[#E5E7EB] dark:border-[#374151] cursor-pointer transition-all hover:border-[#0B3D2E]/40 dark:hover:border-[#34D399]/50"
                 >
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-bold text-[#202522] dark:text-[#F5F2EA] truncate">{h.name}</span>
+                    <span className="text-xs font-bold text-[#111827] dark:text-[#F9FAFB] truncate">{h.name}</span>
                     <Badge variant={h.overdueComplaints > 0 ? 'warning' : 'info'} size="sm">
                       {h.totalComplaints} cases
                     </Badge>
                   </div>
-                  <div className="text-[11px] text-[#54625A] dark:text-[#C5D4C9] flex items-center justify-between">
+                  <div className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB] flex items-center justify-between">
                     <span>Top: {h.topCategory}</span>
                     <span>Res: {h.resolutionRate}%</span>
                   </div>
@@ -463,49 +460,49 @@ export const CivicMapPage: React.FC = () => {
           {/* Selected Complaint Inspector Sidebar */}
           <div className="lg:col-span-1 space-y-4">
             {selectedMarker ? (
-              <Card className="border-blue-500/30 sticky top-20 shadow-xl animate-fade-in">
+              <Card className="border-[#0B3D2E]/30 sticky top-20 shadow-lg animate-fade-in">
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-mono font-bold text-blue-400">
+                    <span className="text-xs font-mono font-bold text-[#0B3D2E] dark:text-[#34D399]">
                       {selectedMarker.trackingId}
                     </span>
                     <Badge variant="info" size="sm">
                       {selectedMarker.status}
                     </Badge>
                   </div>
-                  <CardTitle className="text-base text-[#202522] dark:text-[#F5F2EA] leading-snug">
+                  <CardTitle className="text-base text-[#111827] dark:text-[#F9FAFB] leading-snug">
                     {selectedMarker.title}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4 text-xs">
-                  <div className="p-3 rounded-xl bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 border border-[#DED8CB] dark:border-[#283931] space-y-2">
+                  <div className="p-3 rounded-xl bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151] space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-[#54625A] dark:text-[#C5D4C9]">Category:</span>
-                      <span className="font-semibold text-[#202522] dark:text-[#E8F0EC]">
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB]">Category:</span>
+                      <span className="font-semibold text-[#111827] dark:text-[#F9FAFB]">
                         {selectedMarker.category?.name || 'Grievance'}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[#54625A] dark:text-[#C5D4C9]">Locality:</span>
-                      <span className="font-semibold text-[#202522] dark:text-[#E8F0EC]">{selectedMarker.locality}</span>
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB]">Locality:</span>
+                      <span className="font-semibold text-[#111827] dark:text-[#F9FAFB]">{selectedMarker.locality}</span>
                     </div>
                     {selectedMarker.ward && (
                       <div className="flex justify-between">
-                        <span className="text-[#54625A] dark:text-[#C5D4C9]">Ward:</span>
-                        <span className="font-semibold text-[#202522] dark:text-[#E8F0EC]">{selectedMarker.ward}</span>
+                        <span className="text-[#6B7280] dark:text-[#D1D5DB]">Ward:</span>
+                        <span className="font-semibold text-[#111827] dark:text-[#F9FAFB]">{selectedMarker.ward}</span>
                       </div>
                     )}
                     {selectedMarker.distanceKm !== undefined && (
                       <div className="flex justify-between">
-                        <span className="text-[#54625A] dark:text-[#C5D4C9]">Distance from you:</span>
-                        <span className="font-bold text-blue-700 dark:text-blue-400">
+                        <span className="text-[#6B7280] dark:text-[#D1D5DB]">Distance from you:</span>
+                        <span className="font-bold text-[#0B6640] dark:text-[#34D399]">
                           {selectedMarker.distanceKm.toFixed(2)} km away
                         </span>
                       </div>
                     )}
                     <div className="flex justify-between">
-                      <span className="text-[#54625A] dark:text-[#C5D4C9]">Reported On:</span>
-                      <span className="text-[#3E4B44] dark:text-[#C5D4C9]">
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB]">Reported On:</span>
+                      <span className="text-[#374151] dark:text-[#D1D5DB]">
                         {new Date(selectedMarker.createdAt).toLocaleDateString()}
                       </span>
                     </div>
@@ -524,7 +521,7 @@ export const CivicMapPage: React.FC = () => {
                       variant="ghost"
                       size="sm"
                       onClick={() => setSelectedMarker(null)}
-                      className="w-full text-[#54625A] dark:text-[#C5D4C9] cursor-pointer"
+                      className="w-full text-[#6B7280] dark:text-[#D1D5DB] cursor-pointer"
                     >
                       Clear Selection
                     </Button>
@@ -532,23 +529,23 @@ export const CivicMapPage: React.FC = () => {
                 </CardContent>
               </Card>
             ) : (
-              <Card className="border-[#DED8CB] dark:border-[#283931] text-center p-6 space-y-3">
-                <div className="w-12 h-12 rounded-full bg-[#ECE7DB] dark:bg-[#1D2A25] flex items-center justify-center mx-auto text-[#54625A] dark:text-[#C5D4C9]">
+              <Card className="border-[#E5E7EB] dark:border-[#374151] text-center p-6 space-y-3">
+                <div className="w-12 h-12 rounded-full bg-[#F3F4F6] dark:bg-[#273548] flex items-center justify-center mx-auto text-[#0B3D2E] dark:text-[#D1D5DB]">
                   <MapPinIcon className="w-6 h-6" />
                 </div>
-                <h4 className="text-sm font-semibold text-[#202522] dark:text-[#F5F2EA]">Select a Marker on the Map</h4>
-                <p className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
+                <h4 className="text-sm font-semibold text-[#111827] dark:text-[#F9FAFB]">Select a Marker on the Map</h4>
+                <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
                   Click on any complaint pin to view details, distance from your location, and direct tracking link.
                 </p>
-                <div className="pt-3 border-t border-[#DED8CB] dark:border-[#283931] text-[11px] text-[#54625A] dark:text-[#C5D4C9] text-left space-y-1.5">
-                  <div className="font-semibold text-[#3E4B44] dark:text-[#C5D4C9] mb-1">Marker Legend:</div>
+                <div className="pt-3 border-t border-[#E5E7EB] dark:border-[#374151] text-[11px] text-[#6B7280] dark:text-[#D1D5DB] text-left space-y-1.5">
+                  <div className="font-semibold text-[#374151] dark:text-[#D1D5DB] mb-1">Marker Legend:</div>
                   <div className="flex items-center gap-2">
                     <span className="w-3 h-3 rounded-full bg-emerald-500 shrink-0"></span>
                     <span>Green: Resolved & Verified</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-indigo-500 shrink-0"></span>
-                    <span>Indigo: Work In Progress</span>
+                    <span className="w-3 h-3 rounded-full bg-[#0B3D2E] dark:bg-[#0D7A58] shrink-0"></span>
+                    <span>Forest Green: Work In Progress</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="w-3 h-3 rounded-full bg-amber-500 shrink-0"></span>
@@ -569,32 +566,32 @@ export const CivicMapPage: React.FC = () => {
           <CardHeader>
             <CardTitle className="text-base">Grievance Results ({markers.length})</CardTitle>
           </CardHeader>
-          <CardContent className="divide-y divide-[#DED8CB] dark:divide-[#283931] p-0">
+          <CardContent className="divide-y divide-[#E5E7EB] dark:divide-[#374151] p-0">
             {markers.length === 0 ? (
-              <div className="p-8 text-center text-[#54625A] dark:text-[#C5D4C9] text-xs">
+              <div className="p-8 text-center text-[#6B7280] dark:text-[#D1D5DB] text-xs">
                 No complaints found matching current filters. Try zooming out or clearing filters.
               </div>
             ) : (
               markers.map((m) => (
                 <div
                   key={m.id}
-                  className="p-4 hover:bg-[#ECE7DB]/40 dark:hover:bg-[#1D2A25]/40 transition-colors flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+                  className="p-4 hover:bg-[#F9FAFB] dark:hover:bg-[#273548]/60 transition-colors flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
                 >
                   <div className="space-y-1.5">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs font-mono font-bold text-blue-700 dark:text-blue-400">{m.trackingId}</span>
+                      <span className="text-xs font-mono font-bold text-[#0B3D2E] dark:text-[#34D399]">{m.trackingId}</span>
                       <Badge variant="info" size="sm">
                         {m.status}
                       </Badge>
-                      <span className="text-xs text-[#54625A] dark:text-[#C5D4C9] font-medium">
+                      <span className="text-xs text-[#6B7280] dark:text-[#D1D5DB] font-medium">
                         {m.category?.name || 'General'}
                       </span>
                     </div>
-                    <div className="text-sm font-semibold text-[#202522] dark:text-[#F5F2EA]">{m.title}</div>
-                    <div className="text-xs text-[#54625A] dark:text-[#C5D4C9] flex items-center gap-3">
+                    <div className="text-sm font-semibold text-[#111827] dark:text-[#F9FAFB]">{m.title}</div>
+                    <div className="text-xs text-[#6B7280] dark:text-[#D1D5DB] flex items-center gap-3">
                       <span>📍 {m.locality}{m.ward ? ` (${m.ward})` : ''}</span>
                       {m.distanceKm !== undefined && (
-                        <span className="text-blue-700 dark:text-blue-400 font-medium">
+                        <span className="text-[#0B6640] dark:text-[#34D399] font-medium">
                           {m.distanceKm.toFixed(2)} km away
                         </span>
                       )}

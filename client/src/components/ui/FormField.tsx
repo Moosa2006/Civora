@@ -24,11 +24,11 @@ export function FormField({
       <div className="flex items-center justify-between">
         <label
           htmlFor={id}
-          className="text-sm font-medium text-[#202522] dark:text-[#F5F2EA] select-none flex items-center gap-1 font-sans"
+          className="text-base font-medium text-[#111827] dark:text-[#F9FAFB] select-none flex items-center gap-1 font-sans"
         >
           <span>{label}</span>
           {required && (
-            <span className="text-[#9C3B2D] font-bold text-xs" title="Required field">
+            <span className="text-[#B91C1C] dark:text-[#FCA5A5] font-bold text-sm" title="Required field">
               *
             </span>
           )}
@@ -38,11 +38,11 @@ export function FormField({
       {children}
 
       {error ? (
-        <p id={`${id}-error`} role="alert" className="text-xs font-semibold text-[#9C3B2D] mt-1">
+        <p id={`${id}-error`} role="alert" className="text-sm font-medium text-[#B91C1C] dark:text-[#FCA5A5] mt-1.5">
           {error}
         </p>
       ) : helperText ? (
-        <p id={`${id}-helper`} className="text-xs text-[#3E4B44] dark:text-[#C5D4C9] mt-1">
+        <p id={`${id}-helper`} className="text-sm text-[#6B7280] dark:text-[#D1D5DB] mt-1.5">
           {helperText}
         </p>
       ) : null}

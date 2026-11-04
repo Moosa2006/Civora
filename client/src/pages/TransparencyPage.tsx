@@ -249,20 +249,20 @@ export function TransparencyPage() {
 
   // Prepare Donut Slices for Status Distribution (Editorial Civic Palette)
   const donutSlices: DonutSlice[] = [
-    { label: 'Submitted', value: metrics?.complaints.statusBreakdown.SUBMITTED || 0, color: '#35728A' },
-    { label: 'Under Review', value: metrics?.complaints.statusBreakdown.UNDER_REVIEW || 0, color: '#B26A15' },
-    { label: 'Assigned', value: metrics?.complaints.statusBreakdown.ASSIGNED || 0, color: '#6D597A' },
-    { label: 'In Progress', value: metrics?.complaints.statusBreakdown.IN_PROGRESS || 0, color: '#4F9B8B' },
-    { label: 'Resolved (Pending Verif.)', value: metrics?.complaints.statusBreakdown.RESOLVED || 0, color: '#1E6B52' },
-    { label: 'Verified', value: metrics?.complaints.statusBreakdown.VERIFIED || 0, color: '#173D32' },
-    { label: 'Reopened', value: metrics?.complaints.statusBreakdown.REOPENED || 0, color: '#B94B3B' },
-    { label: 'Rejected', value: metrics?.complaints.statusBreakdown.REJECTED || 0, color: '#8A2E20' },
-    { label: 'Closed', value: metrics?.complaints.statusBreakdown.CLOSED || 0, color: '#54625A' },
+    { label: 'Submitted', value: metrics?.complaints.statusBreakdown.SUBMITTED || 0, color: '#38BDF8' },
+    { label: 'Under Review', value: metrics?.complaints.statusBreakdown.UNDER_REVIEW || 0, color: '#F59E0B' },
+    { label: 'Assigned', value: metrics?.complaints.statusBreakdown.ASSIGNED || 0, color: '#A78BFA' },
+    { label: 'In Progress', value: metrics?.complaints.statusBreakdown.IN_PROGRESS || 0, color: '#14B8A6' },
+    { label: 'Resolved (Pending Verif.)', value: metrics?.complaints.statusBreakdown.RESOLVED || 0, color: '#10B981' },
+    { label: 'Verified', value: metrics?.complaints.statusBreakdown.VERIFIED || 0, color: 'var(--color-chart-brand)' },
+    { label: 'Reopened', value: metrics?.complaints.statusBreakdown.REOPENED || 0, color: '#F87171' },
+    { label: 'Rejected', value: metrics?.complaints.statusBreakdown.REJECTED || 0, color: '#DC2626' },
+    { label: 'Closed', value: metrics?.complaints.statusBreakdown.CLOSED || 0, color: '#9CA3AF' },
   ].filter((s) => s.value > 0);
 
   // Prepare Category Bar List (Editorial Civic Palette)
   const categoryBars: BarListItem[] = (distribution?.byCategory || []).map((cat, i) => {
-    const colors = ['#173D32', '#4F9B8B', '#B26A15', '#6D597A', '#1E6B52', '#B94B3B'];
+    const colors = ['var(--color-chart-brand)', '#14B8A6', '#F59E0B', '#A78BFA', '#10B981', '#F87171'];
     return {
       label: cat.name,
       value: cat.count,
@@ -314,39 +314,38 @@ export function TransparencyPage() {
   });
 
   return (
-    <Container size="lg" className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <PageHeading
-          title={t('transparency.title')}
-          description={t('transparency.subtitle')}
-          badge={
-            <Badge variant="success" size="md" hasDot>
-              {t('nav.transparency')}
-            </Badge>
-          }
-        />
-        <div className="flex items-center gap-2 self-start sm:self-center shrink-0">
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => navigate('/map')}
-            leftIcon={<MapPinIcon className="w-3.5 h-3.5 text-[#173D32] dark:text-[#7BC4B2]" />}
-            className="text-xs cursor-pointer"
-          >
-            {t('nav.civicMap')}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleRefresh}
-            leftIcon={<RefreshCwIcon className="w-3.5 h-3.5" />}
-            className="text-xs cursor-pointer"
-          >
-            {t('adminSystem.refreshBtn')}
-          </Button>
-        </div>
-      </div>
+    <Container size="xl" className="space-y-8">
+      {/* Standardized Page Header */}
+      <PageHeading
+        title={t('transparency.title')}
+        description={t('transparency.subtitle')}
+        className="mb-0"
+        badge={
+          <Badge variant="success" size="md" hasDot>
+            {t('nav.transparency')}
+          </Badge>
+        }
+        actions={
+          <>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => navigate('/map')}
+              leftIcon={<MapPinIcon className="w-3.5 h-3.5 text-[#0B3D2E] dark:text-[#34D399]" />}
+            >
+              {t('nav.civicMap')}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleRefresh}
+              leftIcon={<RefreshCwIcon className="w-3.5 h-3.5" />}
+            >
+              {t('adminSystem.refreshBtn')}
+            </Button>
+          </>
+        }
+      />
 
       {errorMsg && activeTab === 'OVERVIEW' && (
         <Alert variant="error" title="Data Retrieval Error">
@@ -363,7 +362,7 @@ export function TransparencyPage() {
       <div
         role="tablist"
         aria-label="Transparency Dashboard Sections"
-        className="flex items-center gap-2 border-b border-[#DED8CB] dark:border-[#283931] overflow-x-auto pb-1"
+        className="flex items-center gap-2 border-b border-[#E5E7EB] dark:border-[#374151] overflow-x-auto pb-2"
       >
         {[
           { id: 'OVERVIEW', label: 'Overview Analytics' },
@@ -379,10 +378,10 @@ export function TransparencyPage() {
             aria-controls={`panel-${tab.id.toLowerCase()}`}
             type="button"
             onClick={() => handleTabChange(tab.id as TransparencyTab)}
-            className={`px-4 py-2.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer font-sans ${
+            className={`civora-liquid-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap font-sans ${
               activeTab === tab.id
-                ? 'bg-[#173D32] text-[#F4F0E6] shadow-xs'
-                : 'text-[#4A5750] dark:text-[#B0C0B6] hover:text-[#202522] dark:hover:text-[#F5F2EA] hover:bg-[#ECE7DB] dark:hover:bg-[#1C2823]'
+                ? 'font-semibold'
+                : 'text-[#4B5563] dark:text-[#D1D5DB]'
             }`}
           >
             {tab.label}
@@ -398,7 +397,7 @@ export function TransparencyPage() {
           {loading ? (
             <div className="py-20 flex flex-col items-center justify-center">
               <LoadingIndicator size="lg" label="Computing transparency dataset" />
-              <span className="text-xs text-[#54625A] dark:text-[#C5D4C9] mt-3">
+              <span className="text-xs text-[#6B7280] dark:text-[#D1D5DB] mt-3">
                 Calculating real metrics from PostgreSQL records...
               </span>
             </div>
@@ -418,7 +417,7 @@ export function TransparencyPage() {
                   value={`${metrics?.complaints.resolutionRate ?? 0}%`}
                   subtext={`${metrics?.complaints.resolved ?? 0} resolved + ${metrics?.complaints.verified ?? 0} verified`}
                   accentColor="emerald"
-                  badge={<span className="text-xs font-semibold text-emerald-400">Verified</span>}
+                  badge={<span className="text-xs font-semibold text-[#0B6640] dark:text-emerald-400">Verified</span>}
                   icon={<CheckCircleIcon className="w-5 h-5" />}
                 />
                 <MetricCard
@@ -447,17 +446,17 @@ export function TransparencyPage() {
               </div>
 
               {/* Civic Projects Summary Ribbon */}
-              <Card className="border-[#173D32]/25 bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50">
+              <Card className="border-[#0B3D2E]/25 bg-[#F9FAFB] dark:bg-[#182230]">
                 <CardContent className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs">
                   <div className="flex items-center gap-3">
-                    <div className="p-2.5 rounded-xl bg-[#173D32]/10 dark:bg-[#215748]/30 text-[#173D32] dark:text-[#7BC4B2] border border-[#173D32]/20 dark:border-[#4F9B8B]/30">
+                    <div className="p-2.5 rounded-xl bg-[#0B3D2E]/10 dark:bg-[#34D399]/15 text-[#0B3D2E] dark:text-[#34D399] border border-[#0B3D2E]/20 dark:border-[#34D399]/30">
                       <BuildingIcon className="w-5 h-5" />
                     </div>
                     <div>
-                      <span className="font-semibold text-[#202522] dark:text-[#F5F2EA] block text-sm">
+                      <span className="font-semibold text-[#111827] dark:text-[#F9FAFB] block text-sm">
                         Formal Municipal Civic Works Projects
                       </span>
-                      <span className="text-[#3E4B44] dark:text-[#C5D4C9]">
+                      <span className="text-[#374151] dark:text-[#D1D5DB]">
                         {metrics?.civicProjects.total ?? 0} formally approved municipal projects •{' '}
                         {metrics?.civicProjects.active ?? 0} active in execution •{' '}
                         {metrics?.civicProjects.averagePhysicalProgress ?? 0}% average completion progress
@@ -481,7 +480,7 @@ export function TransparencyPage() {
                 <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                   <div>
                     <CardTitle className="text-base flex items-center gap-2">
-                      <ClockIcon className="w-4 h-4 text-[#173D32] dark:text-[#7BC4B2]" />
+                      <ClockIcon className="w-4 h-4 text-[#0B3D2E] dark:text-[#34D399]" />
                       Grievance Intake vs. Resolution Velocity
                     </CardTitle>
                     <CardDescription>
@@ -490,16 +489,17 @@ export function TransparencyPage() {
                   </div>
 
                   {/* Range Toggle */}
-                  <div className="flex items-center gap-1 bg-[#ECE7DB] dark:bg-[#1D2A25] p-1 rounded-lg border border-[#DED8CB] dark:border-[#283931] text-xs">
+                  <div className="flex items-center gap-1 bg-[#F3F4F6]/80 dark:bg-[#273548]/80 p-1 rounded-lg border border-[#E5E7EB] dark:border-[#374151] text-xs">
                     {[7, 30, 90].map((days) => (
                       <button
                         key={days}
                         type="button"
+                        data-active={trendsDays === days}
                         onClick={() => setTrendsDays(days)}
-                        className={`px-2.5 py-1 rounded text-xs font-medium transition-colors cursor-pointer ${
+                        className={`civora-liquid-tab px-2.5 py-1 rounded-md text-xs font-medium ${
                           trendsDays === days
-                            ? 'bg-[#173D32] text-[#F4F0E6] font-semibold shadow-xs'
-                            : 'text-[#54625A] dark:text-[#C5D4C9] hover:text-[#202522] dark:hover:text-[#F5F2EA]'
+                            ? 'font-semibold'
+                            : 'text-[#6B7280] dark:text-[#D1D5DB]'
                         }`}
                       >
                         {days} Days
@@ -512,7 +512,7 @@ export function TransparencyPage() {
                   {trends?.timeline ? (
                     <TrendAreaChart data={trends.timeline} />
                   ) : (
-                    <div className="h-48 flex items-center justify-center text-xs text-[#C5D4C9] dark:text-[#54625A]">
+                    <div className="h-48 flex items-center justify-center text-xs text-[#6B7280] dark:text-[#D1D5DB]">
                       No trend observations recorded.
                     </div>
                   )}
@@ -590,7 +590,7 @@ export function TransparencyPage() {
                   setComplaintSearch(e.target.value);
                   setComplaintPage(1);
                 }}
-                leftIcon={<SearchIcon className="w-4 h-4 text-[#54625A] dark:text-[#C5D4C9]" />}
+                leftIcon={<SearchIcon className="w-4 h-4 text-[#6B7280] dark:text-[#D1D5DB]" />}
               />
             </div>
 
@@ -651,37 +651,37 @@ export function TransparencyPage() {
               {complaints.map((c) => (
                 <Card
                   key={c.id}
-                  className="hover:border-[#173D32]/40 dark:hover:border-[#7BC4B2]/40 transition-colors shadow-xs"
+                  className="hover:border-[#0B3D2E]/40 dark:hover:border-[#34D399]/50 transition-colors shadow-xs"
                 >
                   <CardContent className="p-5">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                       <div className="space-y-1.5 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className="font-mono text-xs font-bold text-[#1D584D] dark:text-[#7BC4B2] bg-[#4F9B8B]/12 dark:bg-[#1D3E37] px-2 py-0.5 rounded border border-[#4F9B8B]/30">
+                          <span className="font-mono text-xs font-bold text-[#0B3D2E] dark:text-[#34D399] bg-[#E5ECE8] dark:bg-[#34D399]/15 px-2 py-0.5 rounded border border-[#0B3D2E]/20 dark:border-[#34D399]/30">
                             {c.trackingId}
                           </span>
                           <Badge variant={getStatusBadgeVariant(c.status)} size="sm" hasDot>
                             {c.status.replace('_', ' ')}
                           </Badge>
-                          <span className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
+                          <span className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
                             • {c.category?.name || 'General Issue'}
                           </span>
                         </div>
 
-                        <h3 className="text-base font-semibold text-[#202522] dark:text-[#F5F2EA]">{c.title}</h3>
-                        <p className="text-xs text-[#3E4B44] dark:text-[#C5D4C9] line-clamp-2">{c.description}</p>
+                        <h3 className="text-base font-semibold text-[#111827] dark:text-[#F9FAFB]">{c.title}</h3>
+                        <p className="text-xs text-[#374151] dark:text-[#D1D5DB] line-clamp-2">{c.description}</p>
 
-                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#54625A] dark:text-[#C5D4C9] pt-1">
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#6B7280] dark:text-[#D1D5DB] pt-1">
                           <div className="flex items-center gap-1">
-                            <MapPinIcon className="w-3.5 h-3.5 text-[#185541] dark:text-[#78C7AE]" />
+                            <MapPinIcon className="w-3.5 h-3.5 text-[#185541] dark:text-[#34D399]" />
                             <span>{c.locality} {c.ward ? `• ${c.ward}` : ''}</span>
                           </div>
                           <span>Lodged: {formatDate(c.createdAt)}</span>
                           {c.assignedDepartment && (
-                            <span>Department: <strong className="text-[#202522] dark:text-[#F5F2EA]">{c.assignedDepartment.name}</strong></span>
+                            <span>Department: <strong className="text-[#111827] dark:text-[#F9FAFB]">{c.assignedDepartment.name}</strong></span>
                           )}
                           {c.verifiedAt && (
-                            <span className="text-[#185541] dark:text-[#78C7AE] font-semibold">✓ Citizen Verified: {formatDate(c.verifiedAt)}</span>
+                            <span className="text-[#185541] dark:text-[#34D399] font-semibold">✓ Citizen Verified: {formatDate(c.verifiedAt)}</span>
                           )}
                         </div>
                       </div>
@@ -703,8 +703,8 @@ export function TransparencyPage() {
 
               {/* Pagination */}
               {complaintTotalPages > 1 && (
-                <div className="flex items-center justify-between pt-4 border-t border-[#DED8CB] dark:border-[#283931] text-xs">
-                  <span className="text-[#54625A] dark:text-[#C5D4C9]">
+                <div className="flex items-center justify-between pt-4 border-t border-[#E5E7EB] dark:border-[#374151] text-xs">
+                  <span className="text-[#6B7280] dark:text-[#D1D5DB]">
                     Page {complaintPage} of {complaintTotalPages} ({complaintTotalCount} grievances)
                   </span>
                   <div className="flex items-center gap-2">
@@ -750,11 +750,11 @@ export function TransparencyPage() {
                 placeholder="Search department name or code..."
                 value={departmentSearch}
                 onChange={(e) => setDepartmentSearch(e.target.value)}
-                leftIcon={<SearchIcon className="w-4 h-4 text-[#54625A] dark:text-[#C5D4C9]" />}
+                leftIcon={<SearchIcon className="w-4 h-4 text-[#6B7280] dark:text-[#D1D5DB]" />}
               />
             </div>
             {departments?.departments && (
-              <span className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
+              <span className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
                 Showing {filteredDepartments.length} of {departments.departments.length} departments
               </span>
             )}
@@ -790,16 +790,16 @@ export function TransparencyPage() {
               {filteredDepartments.map((dept) => (
                 <Card
                   key={dept.id}
-                  className="hover:border-[#173D32]/40 dark:hover:border-[#7BC4B2]/40 transition-colors shadow-xs"
+                  className="hover:border-[#0B3D2E]/40 dark:hover:border-[#34D399]/50 transition-colors shadow-xs"
                 >
                   <CardHeader>
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-950 text-blue-300 border border-blue-800/40">
+                          <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#E5ECE8] text-[#0B3D2E] dark:bg-[#273548] dark:text-[#34D399] border border-[#0B3D2E]/20 dark:border-[#374151]">
                             {dept.code}
                           </span>
-                          <span className="text-xs text-[#54625A] dark:text-[#C5D4C9] font-mono">
+                          <span className="text-xs text-[#6B7280] dark:text-[#D1D5DB] font-mono">
                             {dept.workloadShare}% city workload
                           </span>
                         </div>
@@ -815,10 +815,10 @@ export function TransparencyPage() {
                     {/* Resolution Rate Progress */}
                     <div className="space-y-1.5 text-xs">
                       <div className="flex items-center justify-between">
-                        <span className="text-[#3E4B44] dark:text-[#C5D4C9] font-medium">Departmental Resolution Rate</span>
-                        <span className="font-mono font-bold text-[#185541] dark:text-[#78C7AE]">{dept.resolutionRate}%</span>
+                        <span className="text-[#374151] dark:text-[#D1D5DB] font-medium">Departmental Resolution Rate</span>
+                        <span className="font-mono font-bold text-[#185541] dark:text-[#34D399]">{dept.resolutionRate}%</span>
                       </div>
-                      <div className="h-2 w-full bg-[#ECE7DB] dark:bg-[#1D2A25] rounded-full overflow-hidden border border-[#DED8CB] dark:border-[#283931]">
+                      <div className="h-2 w-full bg-[#F3F4F6] dark:bg-[#273548] rounded-full overflow-hidden border border-[#E5E7EB] dark:border-[#374151]">
                         <div
                           className="h-full bg-[#185541] rounded-full transition-all duration-500"
                           style={{ width: `${Math.min(100, dept.resolutionRate)}%` }}
@@ -827,25 +827,25 @@ export function TransparencyPage() {
                     </div>
 
                     {/* Operational breakdown grid */}
-                    <div className="grid grid-cols-3 gap-2 p-3 rounded-lg bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 border border-[#DED8CB] dark:border-[#283931] text-center">
+                    <div className="grid grid-cols-3 gap-2 p-3 rounded-lg bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151] text-center">
                       <div>
-                        <span className="text-[10px] uppercase text-[#54625A] dark:text-[#C5D4C9] font-medium block">Total Assigned</span>
-                        <span className="text-base font-bold text-[#202522] dark:text-[#F5F2EA] font-mono">{dept.totalAssigned}</span>
+                        <span className="text-[10px] uppercase text-[#6B7280] dark:text-[#D1D5DB] font-medium block">Total Assigned</span>
+                        <span className="text-base font-bold text-[#111827] dark:text-[#F9FAFB] font-mono">{dept.totalAssigned}</span>
                       </div>
                       <div>
                         <span className="text-[10px] uppercase text-[#854F0B] dark:text-[#F3BA6C] font-medium block">Active Backlog</span>
                         <span className="text-base font-bold text-[#854F0B] dark:text-[#F3BA6C] font-mono">{dept.activeCount}</span>
                       </div>
                       <div>
-                        <span className="text-[10px] uppercase text-[#185541] dark:text-[#78C7AE] font-medium block">Resolved</span>
-                        <span className="text-base font-bold text-[#185541] dark:text-[#78C7AE] font-mono">{dept.resolvedCount}</span>
+                        <span className="text-[10px] uppercase text-[#185541] dark:text-[#34D399] font-medium block">Resolved</span>
+                        <span className="text-base font-bold text-[#185541] dark:text-[#34D399] font-mono">{dept.resolvedCount}</span>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between text-xs text-[#54625A] dark:text-[#C5D4C9] pt-1 border-t border-[#DED8CB] dark:border-[#283931]">
+                    <div className="flex items-center justify-between text-xs text-[#6B7280] dark:text-[#D1D5DB] pt-1 border-t border-[#E5E7EB] dark:border-[#374151]">
                       <span>
                         Avg Turnaround:{' '}
-                        <strong className="text-[#202522] dark:text-[#E8F0EC]">
+                        <strong className="text-[#111827] dark:text-[#F9FAFB]">
                           {dept.avgResolutionHours !== null ? `${dept.avgResolutionHours} hrs` : 'N/A'}
                         </strong>
                       </span>
@@ -899,7 +899,7 @@ export function TransparencyPage() {
                   setProjectSearch(e.target.value);
                   setProjectPage(1);
                 }}
-                leftIcon={<SearchIcon className="w-4 h-4 text-[#54625A] dark:text-[#C5D4C9]" />}
+                leftIcon={<SearchIcon className="w-4 h-4 text-[#6B7280] dark:text-[#D1D5DB]" />}
               />
             </div>
 
@@ -958,13 +958,13 @@ export function TransparencyPage() {
               {projects.map((proj) => (
                 <Card
                   key={proj.id}
-                  className="hover:border-[#173D32]/40 dark:hover:border-[#7BC4B2]/40 transition-colors shadow-xs"
+                  className="hover:border-[#0B3D2E]/40 dark:hover:border-[#34D399]/50 transition-colors shadow-xs"
                 >
                   <CardContent className="p-5 space-y-4">
                     <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                       <div className="space-y-2 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className="font-mono text-xs font-bold text-purple-400 bg-purple-950/60 px-2.5 py-0.5 rounded border border-purple-800/40">
+                          <span className="font-mono text-xs font-bold text-[#0B3D2E] bg-[#E5ECE8] dark:text-[#34D399] dark:bg-[#273548] px-2.5 py-0.5 rounded border border-[#0B3D2E]/20 dark:border-[#374151]">
                             {proj.workOrderNumber}
                           </span>
                           <Badge
@@ -982,47 +982,47 @@ export function TransparencyPage() {
                           >
                             {proj.workStatus}
                           </Badge>
-                          <span className="text-xs text-[#54625A] dark:text-[#C5D4C9]">• {proj.workType.replace('_', ' ')}</span>
-                          <span className="text-xs text-[#54625A] dark:text-[#C5D4C9]">• {proj.department?.name}</span>
+                          <span className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">• {proj.workType.replace('_', ' ')}</span>
+                          <span className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">• {proj.department?.name}</span>
                         </div>
 
-                        <h3 className="text-base font-semibold text-[#202522] dark:text-[#F5F2EA]">{proj.title}</h3>
-                        <p className="text-xs text-[#3E4B44] dark:text-[#C5D4C9] leading-relaxed">{proj.description}</p>
+                        <h3 className="text-base font-semibold text-[#111827] dark:text-[#F9FAFB]">{proj.title}</h3>
+                        <p className="text-xs text-[#4B5563] dark:text-[#D1D5DB] leading-relaxed">{proj.description}</p>
 
                         {/* Progress Bar */}
                         <div className="space-y-1 max-w-md pt-1">
                           <div className="flex items-center justify-between text-xs">
-                            <span className="text-[#54625A] dark:text-[#C5D4C9]">Physical Progress:</span>
-                            <span className="font-mono font-bold text-[#1B5E8A] dark:text-[#78B4DD]">
+                            <span className="text-[#6B7280] dark:text-[#D1D5DB]">Physical Progress:</span>
+                            <span className="font-mono font-bold text-[#0B6640] dark:text-[#34D399]">
                               {proj.physicalProgressPercentage}%
                             </span>
                           </div>
-                          <div className="h-2 w-full bg-[#ECE7DB] dark:bg-[#1D2A25] rounded-full overflow-hidden border border-[#DED8CB] dark:border-[#283931]">
+                          <div className="h-2 w-full bg-[#F3F4F6] dark:bg-[#273548] rounded-full overflow-hidden border border-[#E5E7EB] dark:border-[#374151]">
                             <div
-                              className="h-full bg-blue-500 rounded-full transition-all duration-500"
+                              className="h-full bg-[#0B6640] rounded-full transition-all duration-500"
                               style={{ width: `${proj.physicalProgressPercentage}%` }}
                             />
                           </div>
                           {proj.latestMilestone && (
-                            <p className="text-[11px] text-[#54625A] dark:text-[#C5D4C9] pt-0.5 italic">
+                            <p className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB] pt-0.5 italic">
                               Latest Milestone: {proj.latestMilestone}
                             </p>
                           )}
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 text-xs text-[#54625A] dark:text-[#C5D4C9] pt-2 border-t border-[#DED8CB] dark:border-[#283931]">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 text-xs text-[#6B7280] dark:text-[#D1D5DB] pt-2 border-t border-[#E5E7EB] dark:border-[#374151]">
                           <div>
-                            Location: <strong className="text-[#202522] dark:text-[#F5F2EA]">{proj.location}</strong>
+                            Location: <strong className="text-[#111827] dark:text-[#F9FAFB]">{proj.location}</strong>
                           </div>
                           <div>
                             Sanctioned Budget:{' '}
-                            <strong className="text-[#202522] dark:text-[#F5F2EA]">
+                            <strong className="text-[#111827] dark:text-[#F9FAFB]">
                               {formatCurrency(proj.sanctionedAmount || proj.estimatedBudget)}
                             </strong>
                           </div>
                           <div>
                             Linked Grievances:{' '}
-                            <strong className="text-[#202522] dark:text-[#F5F2EA]">{proj.linkedComplaintsCount} issues</strong>
+                            <strong className="text-[#111827] dark:text-[#F9FAFB]">{proj.linkedComplaintsCount} issues</strong>
                           </div>
                         </div>
                       </div>
@@ -1032,7 +1032,7 @@ export function TransparencyPage() {
                           variant="primary"
                           size="sm"
                           onClick={() => fetchProjectDetail(proj.id)}
-                          className="text-xs cursor-pointer bg-purple-600 hover:bg-purple-500"
+                          className="text-xs cursor-pointer"
                         >
                           View Details & Progress
                         </Button>
@@ -1044,8 +1044,8 @@ export function TransparencyPage() {
 
               {/* Pagination */}
               {projectTotalPages > 1 && (
-                <div className="flex items-center justify-between pt-4 border-t border-[#DED8CB] dark:border-[#283931] text-xs">
-                  <span className="text-[#54625A] dark:text-[#C5D4C9]">
+                <div className="flex items-center justify-between pt-4 border-t border-[#E5E7EB] dark:border-[#374151] text-xs">
+                  <span className="text-[#6B7280] dark:text-[#D1D5DB]">
                     Page {projectPage} of {projectTotalPages} ({projectTotalCount} projects)
                   </span>
                   <div className="flex items-center gap-2">
@@ -1084,11 +1084,11 @@ export function TransparencyPage() {
           aria-modal="true"
           aria-labelledby="project-modal-title"
         >
-          <Card className="max-w-2xl w-full border-purple-500/40 shadow-2xl my-8">
-            <CardHeader className="flex flex-row items-center justify-between border-b border-[#DED8CB] dark:border-[#283931] pb-4">
+          <Card className="max-w-2xl w-full border-[#E5E7EB] dark:border-[#374151] shadow-2xl my-8">
+            <CardHeader className="flex flex-row items-center justify-between border-b border-[#E5E7EB] dark:border-[#374151] pb-4">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="font-mono text-xs font-bold text-purple-400 bg-purple-950 px-2 py-0.5 rounded border border-purple-800/40">
+                  <span className="font-mono text-xs font-bold text-[#0B3D2E] bg-[#E5ECE8] dark:text-[#34D399] dark:bg-[#273548] px-2 py-0.5 rounded border border-[#0B3D2E]/20 dark:border-[#374151]">
                     {selectedProject.workOrderNumber}
                   </span>
                   <Badge variant="info" size="sm">
@@ -1101,7 +1101,7 @@ export function TransparencyPage() {
                 type="button"
                 onClick={() => setSelectedProject(null)}
                 aria-label="Close dialog"
-                className="text-[#54625A] hover:text-[#202522] dark:text-[#C5D4C9] dark:hover:text-[#E8F0EC] p-1 rounded-lg cursor-pointer"
+                className="civora-liquid-btn civora-liquid-btn--ghost p-1.5 rounded-lg"
               >
                 <CloseIcon className="w-5 h-5" />
               </button>
@@ -1129,74 +1129,74 @@ export function TransparencyPage() {
               ) : (
                 <>
                   {/* Summary & Budget */}
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 p-3.5 rounded-xl bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 border border-[#DED8CB] dark:border-[#283931] text-xs">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 p-3.5 rounded-xl bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151] text-xs">
                     <div>
-                      <span className="text-[#54625A] dark:text-[#C5D4C9] block mb-0.5">Department:</span>
-                      <strong className="text-[#202522] dark:text-[#F5F2EA]">{selectedProject.department?.name}</strong>
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB] block mb-0.5">Department:</span>
+                      <strong className="text-[#111827] dark:text-[#F9FAFB]">{selectedProject.department?.name}</strong>
                     </div>
                     <div>
-                      <span className="text-[#54625A] dark:text-[#C5D4C9] block mb-0.5">Sanctioned Budget:</span>
-                      <strong className="text-[#185541] dark:text-[#78C7AE] font-mono">
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB] block mb-0.5">Sanctioned Budget:</span>
+                      <strong className="text-[#185541] dark:text-[#34D399] font-mono">
                         {formatCurrency(selectedProject.sanctionedAmount || selectedProject.estimatedBudget)}
                       </strong>
                     </div>
                     <div>
-                      <span className="text-[#54625A] dark:text-[#C5D4C9] block mb-0.5">Execution Progress:</span>
-                      <strong className="text-[#1D584D] dark:text-[#7BC4B2] font-mono">
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB] block mb-0.5">Execution Progress:</span>
+                      <strong className="text-[#1D584D] dark:text-[#34D399] font-mono">
                         {selectedProject.physicalProgressPercentage}%
                       </strong>
                     </div>
                     <div>
-                      <span className="text-[#54625A] dark:text-[#C5D4C9] block mb-0.5">Contractor:</span>
-                      <strong className="text-[#202522] dark:text-[#F5F2EA]">
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB] block mb-0.5">Contractor:</span>
+                      <strong className="text-[#111827] dark:text-[#F9FAFB]">
                         {selectedProject.contractor?.name || 'Municipal Department Direct'}
                       </strong>
                     </div>
                     <div>
-                      <span className="text-[#54625A] dark:text-[#C5D4C9] block mb-0.5">Start Date:</span>
-                      <strong className="text-[#202522] dark:text-[#F5F2EA]">{formatDate(selectedProject.actualStartDate || selectedProject.plannedStartDate)}</strong>
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB] block mb-0.5">Start Date:</span>
+                      <strong className="text-[#111827] dark:text-[#F9FAFB]">{formatDate(selectedProject.actualStartDate || selectedProject.plannedStartDate)}</strong>
                     </div>
                     <div>
-                      <span className="text-[#54625A] dark:text-[#C5D4C9] block mb-0.5">Target Completion:</span>
-                      <strong className="text-[#202522] dark:text-[#F5F2EA]">{formatDate(selectedProject.plannedEndDate)}</strong>
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB] block mb-0.5">Target Completion:</span>
+                      <strong className="text-[#111827] dark:text-[#F9FAFB]">{formatDate(selectedProject.plannedEndDate)}</strong>
                     </div>
                   </div>
 
                   {/* Description */}
                   <div className="space-y-1">
-                    <h4 className="text-xs font-semibold uppercase tracking-wider text-[#54625A] dark:text-[#C5D4C9]">
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-[#6B7280] dark:text-[#D1D5DB]">
                       Scope of Work
                     </h4>
-                    <p className="text-xs text-[#3E4B44] dark:text-[#C5D4C9] leading-relaxed bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 p-3 rounded-lg border border-[#DED8CB] dark:border-[#283931]">
+                    <p className="text-xs text-[#374151] dark:text-[#D1D5DB] leading-relaxed bg-[#F9FAFB] dark:bg-[#182230] p-3 rounded-lg border border-[#E5E7EB] dark:border-[#374151]">
                       {selectedProject.description}
                     </p>
                   </div>
 
                   {/* Progress Updates Timeline */}
                   <div className="space-y-2">
-                    <h4 className="text-xs font-semibold uppercase tracking-wider text-[#54625A] dark:text-[#C5D4C9] flex items-center gap-1.5">
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-[#6B7280] dark:text-[#D1D5DB] flex items-center gap-1.5">
                       <ClockIcon className="w-3.5 h-3.5 text-[#1B5E8A] dark:text-[#78B4DD]" />
                       Execution Progress Log ({(selectedProject.progressUpdates || []).length})
                     </h4>
 
                     {(selectedProject.progressUpdates || []).length === 0 ? (
-                      <p className="text-xs text-[#54625A] dark:text-[#C5D4C9] italic">Work order awarded; field progress log pending initial milestone.</p>
+                      <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] italic">Work order awarded; field progress log pending initial milestone.</p>
                     ) : (
                       <div className="space-y-2">
                         {(selectedProject.progressUpdates || []).map((u) => (
                           <div
                             key={u.id}
-                            className="p-3 rounded-lg bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 border border-[#DED8CB] dark:border-[#283931] text-xs space-y-1"
+                            className="p-3 rounded-lg bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151] text-xs space-y-1"
                           >
-                            <div className="flex items-center justify-between text-[#54625A] dark:text-[#C5D4C9] text-[11px]">
+                            <div className="flex items-center justify-between text-[#6B7280] dark:text-[#D1D5DB] text-[11px]">
                               <span>{formatDate(u.updateDate)}</span>
                               <span className="font-mono font-bold text-[#1B5E8A] dark:text-[#78B4DD]">
                                 {u.physicalProgressPercentage}% Completed
                               </span>
                             </div>
-                            <p className="text-[#202522] dark:text-[#F5F2EA]">{u.progressNotes}</p>
+                            <p className="text-[#111827] dark:text-[#F9FAFB]">{u.progressNotes}</p>
                             {u.milestoneReached && (
-                              <span className="inline-block text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800/40">
+                              <span className="inline-block text-[10px] px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/40">
                                 Milestone: {u.milestoneReached}
                               </span>
                             )}
@@ -1208,19 +1208,19 @@ export function TransparencyPage() {
 
                   {/* Linked Grievances */}
                   <div className="space-y-2">
-                    <h4 className="text-xs font-semibold uppercase tracking-wider text-[#54625A] dark:text-[#C5D4C9] flex items-center gap-1.5">
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-[#6B7280] dark:text-[#D1D5DB] flex items-center gap-1.5">
                       <FileTextIcon className="w-3.5 h-3.5 text-[#6A3D9A] dark:text-[#C59BEE]" />
                       Linked Citizen Grievances ({(selectedProject.linkedComplaints || []).length})
                     </h4>
 
                     {(selectedProject.linkedComplaints || []).length === 0 ? (
-                      <p className="text-xs text-[#54625A] dark:text-[#C5D4C9] italic">This capital project was planned through direct municipal infrastructure allocation.</p>
+                      <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] italic">This capital project was planned through direct municipal infrastructure allocation.</p>
                     ) : (
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {(selectedProject.linkedComplaints || []).map((link) => (
                           <div
                             key={link.id}
-                            className="p-2.5 rounded-lg bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 border border-[#DED8CB] dark:border-[#283931] text-xs space-y-1"
+                            className="p-2.5 rounded-lg bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151] text-xs space-y-1"
                           >
                             <div className="flex items-center justify-between">
                               <span className="font-mono text-[11px] font-bold text-[#1B5E8A] dark:text-[#78B4DD]">
@@ -1230,8 +1230,8 @@ export function TransparencyPage() {
                                 {link.status}
                               </Badge>
                             </div>
-                            <p className="text-[#202522] dark:text-[#F5F2EA] truncate">{link.title}</p>
-                            <span className="text-[10px] text-[#54625A] dark:text-[#C5D4C9] block">{link.locality}</span>
+                            <p className="text-[#111827] dark:text-[#F9FAFB] truncate">{link.title}</p>
+                            <span className="text-[10px] text-[#6B7280] dark:text-[#D1D5DB] block">{link.locality}</span>
                           </div>
                         ))}
                       </div>
@@ -1240,7 +1240,7 @@ export function TransparencyPage() {
                 </>
               )}
 
-              <div className="flex items-center justify-end pt-4 border-t border-[#DED8CB] dark:border-[#283931]">
+              <div className="flex items-center justify-end pt-4 border-t border-[#E5E7EB] dark:border-[#374151]">
                 <Button
                   type="button"
                   variant="outline"

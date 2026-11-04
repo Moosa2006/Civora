@@ -43,9 +43,18 @@ export type ComplaintStatus =
 
 export type BadgeVariant = 'default' | 'info' | 'success' | 'warning' | 'danger' | 'neutral';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+export type ButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'warning'
+  | 'outline'
+  | 'ghost'
+  | 'text'
+  | 'danger'
+  | 'destructive';
 
-export type ButtonSize = 'sm' | 'md' | 'lg';
+export type ButtonSize = 'sm' | 'md' | 'lg' | 'icon';
 
 export type AlertVariant = 'info' | 'success' | 'warning' | 'error';
 

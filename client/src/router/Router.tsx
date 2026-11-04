@@ -28,13 +28,24 @@ export function Router({ children }: RouterProps) {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    // Respect in-page hash anchor navigation (e.g., #main-content)
+    // Respect in-page hash anchor navigation (e.g., #main-content, #about)
     if (window.location.hash) {
-      const element = document.querySelector(window.location.hash);
-      if (element) {
-        element.scrollIntoView();
-        return;
-      }
+      const hashTarget = window.location.hash;
+      const scrollToHash = () => {
+        const element = document.querySelector(hashTarget);
+        if (element) {
+          const prefersReduced =
+            document.documentElement.dataset.reducedMotion === 'true' ||
+            window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+          element.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth' });
+          return true;
+        }
+        return false;
+      };
+
+      if (scrollToHash()) return;
+      const timer = window.setTimeout(scrollToHash, 80);
+      return () => window.clearTimeout(timer);
     }
 
     // Default: Reset window and document scroll to top on navigation
@@ -48,9 +59,22 @@ export function Router({ children }: RouterProps) {
   }, [currentPath]);
 
   const navigate = (to: string) => {
-    if (to !== currentPath) {
+    const hashIndex = to.indexOf('#');
+    const pathWithoutHash = hashIndex >= 0 ? to.slice(0, hashIndex) || '/' : to;
+    const hashPart = hashIndex >= 0 ? to.slice(hashIndex) : '';
+
+    if (pathWithoutHash !== currentPath) {
       window.history.pushState({}, '', to);
-      setCurrentPath(to);
+      setCurrentPath(pathWithoutHash);
+    } else if (hashPart) {
+      window.history.pushState({}, '', to);
+      const element = document.querySelector(hashPart);
+      if (element) {
+        const prefersReduced =
+          document.documentElement.dataset.reducedMotion === 'true' ||
+          window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+        element.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth' });
+      }
     } else {
       // Re-navigating to current path resets scroll unless an anchor is present
       if (!window.location.hash) {

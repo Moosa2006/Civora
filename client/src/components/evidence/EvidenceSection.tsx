@@ -359,43 +359,43 @@ export function EvidenceSection({
     switch (status) {
       case 'VERIFIED':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-950/80 text-emerald-300 border border-emerald-800/60">
-            <CheckCircleIcon className="w-3.5 h-3.5 text-emerald-400" />
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60">
+            <CheckCircleIcon className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
             Verified Proof
           </span>
         );
       case 'PENDING_REVIEW':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-950/80 text-amber-300 border border-amber-800/60">
-            <ClockIcon className="w-3.5 h-3.5 text-amber-400" />
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60">
+            <ClockIcon className="w-3.5 h-3.5 text-amber-700 dark:text-amber-400" />
             Pending Review
           </span>
         );
       case 'UNDER_REVIEW':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-950/80 text-blue-300 border border-blue-800/60">
-            <RefreshCwIcon className="w-3.5 h-3.5 text-blue-400" />
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#E5ECE8] dark:bg-blue-950/80 text-[#0B3D2E] dark:text-blue-300 border border-[#0B3D2E]/20 dark:border-blue-800/60">
+            <RefreshCwIcon className="w-3.5 h-3.5 text-[#0B6640] dark:text-blue-400" />
             Under Review
           </span>
         );
       case 'REJECTED':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-950/80 text-rose-300 border border-rose-800/60">
-            <XCircleIcon className="w-3.5 h-3.5 text-rose-400" />
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-50 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300 border border-rose-200 dark:border-rose-800/60">
+            <XCircleIcon className="w-3.5 h-3.5 text-rose-700 dark:text-rose-400" />
             Rejected
           </span>
         );
       case 'RESUBMISSION_REQUESTED':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-950/80 text-orange-300 border border-orange-800/60">
-            <AlertTriangleIcon className="w-3.5 h-3.5 text-orange-400" />
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-50 dark:bg-orange-950/80 text-orange-800 dark:text-orange-300 border border-orange-200 dark:border-orange-800/60">
+            <AlertTriangleIcon className="w-3.5 h-3.5 text-orange-700 dark:text-orange-400" />
             Resubmission Needed
           </span>
         );
       case 'QUARANTINED':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-white dark:bg-[#16201C] text-red-400 border border-red-900/60">
-            <ShieldCheckIcon className="w-3.5 h-3.5 text-red-500" />
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-50 dark:bg-[#1F2937] text-red-800 dark:text-red-400 border border-red-200 dark:border-red-900/60">
+            <ShieldCheckIcon className="w-3.5 h-3.5 text-red-700 dark:text-red-500" />
             Quarantined
           </span>
         );
@@ -425,12 +425,12 @@ export function EvidenceSection({
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <CameraIcon className="w-5 h-5 text-sky-400" />
+              <CameraIcon className="w-5 h-5 text-[#0B6640] dark:text-[#34D399]" />
               <CardTitle className="text-lg">
                 Evidence & Verification Records {fetchStatus === 'success' ? `(${evidenceList.length})` : ''}
               </CardTitle>
             </div>
-            <CardDescription className="text-xs text-[#54625A] dark:text-[#C5D4C9] mt-1">
+            <CardDescription className="text-xs text-[#6B7280] dark:text-[#D1D5DB] mt-1">
               Photographic and documentary evidence verified through official municipal audit • {trackingId}
             </CardDescription>
           </div>
@@ -468,17 +468,17 @@ export function EvidenceSection({
         </div>
 
         {/* Core Civic Verification Notice Banner */}
-        <div className="mt-3 p-3 rounded-lg bg-sky-950/30 border border-sky-800/40 text-xs text-sky-200/90 flex items-start gap-2.5">
-          <ShieldCheckIcon className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
+        <div className="mt-3 p-3 rounded-lg bg-[#F9FAFB] dark:bg-[#273548] border border-[#E5E7EB] dark:border-[#374151] text-xs text-[#374151] dark:text-[#D1D5DB] flex items-start gap-2.5">
+          <ShieldCheckIcon className="w-4 h-4 text-[#0B6640] dark:text-[#34D399] shrink-0 mt-0.5" />
           <p>
-            <strong>Evidence Accountability Standard: </strong>
+            <strong className="text-[#111827] dark:text-[#F9FAFB]">Evidence Accountability Standard: </strong>
             Uploading a photograph or document registers it for audit. A file is not considered verified, authentic, or proof of resolution until examined and approved by authorized municipal inspectors.
           </p>
         </div>
 
         {/* Filter Tabs - Shown when evidence exists */}
         {fetchStatus === 'success' && evidenceList.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 pt-3 border-t border-[#DED8CB] dark:border-[#283931]">
+          <div className="flex flex-wrap gap-1.5 pt-3 border-t border-[#E5E7EB] dark:border-[#374151]">
             {[
               { id: 'ALL', label: `All (${evidenceList.length})` },
               {
@@ -504,11 +504,13 @@ export function EvidenceSection({
             ].map((tab) => (
               <button
                 key={tab.id}
+                type="button"
+                data-active={purposeFilter === tab.id}
                 onClick={() => setPurposeFilter(tab.id)}
-                className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
+                className={`civora-liquid-tab px-3 py-1 rounded-md text-xs font-medium ${
                   purposeFilter === tab.id
-                    ? 'bg-blue-600 text-white shadow-sm'
-                    : 'bg-[#ECE7DB]/80 dark:bg-[#1D2A25]/80 text-[#3E4B44] dark:text-[#C5D4C9] hover:bg-[#DED8CB] dark:hover:bg-[#283931] hover:text-white'
+                    ? 'font-semibold'
+                    : 'text-[#374151] dark:text-[#D1D5DB]'
                 }`}
               >
                 {tab.label}
@@ -531,15 +533,15 @@ export function EvidenceSection({
         )}
 
         {loading || fetchStatus === 'loading' ? (
-          <div className="py-12 flex flex-col items-center justify-center text-[#54625A] dark:text-[#C5D4C9]">
-            <RefreshCwIcon className="w-6 h-6 animate-spin text-blue-500 mb-2" />
+          <div className="py-12 flex flex-col items-center justify-center text-[#6B7280] dark:text-[#D1D5DB]">
+            <RefreshCwIcon className="w-6 h-6 animate-spin text-[#0B3D2E] dark:text-[#34D399] mb-2" />
             <p className="text-xs">Loading secure evidence records...</p>
           </div>
         ) : fetchStatus === 'not_found' ? (
-          <div className="py-10 text-center rounded-xl border border-dashed border-rose-900/40 bg-rose-950/10 p-6 space-y-3">
-            <AlertTriangleIcon className="w-10 h-10 text-rose-400 mx-auto" />
-            <h4 className="text-sm font-semibold text-rose-300">Complaint Not Found</h4>
-            <p className="text-xs text-[#3E4B44] dark:text-[#C5D4C9] max-w-md mx-auto">
+          <div className="py-10 text-center rounded-xl border border-dashed border-rose-200 dark:border-rose-900/40 bg-rose-50/50 dark:bg-rose-950/10 p-6 space-y-3">
+            <AlertTriangleIcon className="w-10 h-10 text-rose-600 dark:text-rose-400 mx-auto" />
+            <h4 className="text-sm font-semibold text-rose-800 dark:text-rose-300">Complaint Not Found</h4>
+            <p className="text-xs text-[#4B5563] dark:text-[#D1D5DB] max-w-md mx-auto">
               {fetchErrorMessage || 'The complaint record associated with this identifier could not be located in the verification registry.'}
             </p>
             <div className="flex items-center justify-center gap-3 pt-2">
@@ -556,18 +558,18 @@ export function EvidenceSection({
             </div>
           </div>
         ) : fetchStatus === 'forbidden' ? (
-          <div className="py-10 text-center rounded-xl border border-dashed border-amber-900/40 bg-amber-950/10 p-6 space-y-2">
-            <ShieldCheckIcon className="w-10 h-10 text-amber-400 mx-auto" />
-            <h4 className="text-sm font-semibold text-amber-300">Access Restricted</h4>
-            <p className="text-xs text-[#3E4B44] dark:text-[#C5D4C9] max-w-md mx-auto">
+          <div className="py-10 text-center rounded-xl border border-dashed border-amber-200 dark:border-amber-900/40 bg-amber-50/50 dark:bg-amber-950/10 p-6 space-y-2">
+            <ShieldCheckIcon className="w-10 h-10 text-amber-600 dark:text-amber-400 mx-auto" />
+            <h4 className="text-sm font-semibold text-amber-800 dark:text-amber-300">Access Restricted</h4>
+            <p className="text-xs text-[#4B5563] dark:text-[#D1D5DB] max-w-md mx-auto">
               {fetchErrorMessage || 'You do not have authorization to view private or internal evidence for this complaint.'}
             </p>
           </div>
         ) : fetchStatus === 'error' ? (
-          <div className="py-8 text-center rounded-xl border border-dashed border-[#DED8CB] dark:border-[#283931] bg-[#ECE7DB]/40 dark:bg-[#1D2A25]/40 p-6 space-y-3">
-            <AlertTriangleIcon className="w-9 h-9 text-amber-500 mx-auto" />
-            <h4 className="text-sm font-semibold text-[#202522] dark:text-[#E8F0EC]">Unable to Load Evidence</h4>
-            <p className="text-xs text-[#54625A] dark:text-[#C5D4C9] max-w-md mx-auto">
+          <div className="py-8 text-center rounded-xl border border-dashed border-[#E5E7EB] dark:border-[#374151] bg-[#F9FAFB] dark:bg-[#182230] p-6 space-y-3">
+            <AlertTriangleIcon className="w-9 h-9 text-amber-600 dark:text-amber-500 mx-auto" />
+            <h4 className="text-sm font-semibold text-[#111827] dark:text-[#F9FAFB]">Unable to Load Evidence</h4>
+            <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] max-w-md mx-auto">
               {fetchErrorMessage || 'An unexpected error occurred while loading evidence records.'}
             </p>
             <div className="pt-1">
@@ -578,10 +580,10 @@ export function EvidenceSection({
             </div>
           </div>
         ) : filteredEvidence.length === 0 ? (
-          <div className="py-10 text-center rounded-xl border border-dashed border-[#DED8CB] dark:border-[#283931] bg-[#ECE7DB]/40 dark:bg-[#1D2A25]/40 p-6">
-            <CameraIcon className="w-10 h-10 text-[#C5D4C9] dark:text-[#54625A] mx-auto mb-2.5" />
-            <h4 className="text-sm font-semibold text-[#3E4B44] dark:text-[#C5D4C9]">No Evidence Found</h4>
-            <p className="text-xs text-[#54625A] dark:text-[#C5D4C9] mt-1 max-w-md mx-auto">
+          <div className="py-10 text-center rounded-xl border border-dashed border-[#E5E7EB] dark:border-[#374151] bg-[#F9FAFB] dark:bg-[#182230] p-6">
+            <CameraIcon className="w-10 h-10 text-[#9CA3AF] dark:text-[#9CA3AF] mx-auto mb-2.5" />
+            <h4 className="text-sm font-semibold text-[#111827] dark:text-[#D1D5DB]">No Evidence Found</h4>
+            <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] mt-1 max-w-md mx-auto">
               {purposeFilter === 'ALL'
                 ? 'No photographs or supporting documents have been registered for this complaint yet.'
                 : `No evidence categorized as ${purposeFilter.replace('_', ' ').toLowerCase()} has been uploaded.`}
@@ -614,33 +616,33 @@ export function EvidenceSection({
               return (
                 <div
                   key={doc.id}
-                  className="rounded-xl border border-[#DED8CB] dark:border-[#283931] bg-[#ECE7DB]/60 dark:bg-[#1D2A25]/60 overflow-hidden flex flex-col justify-between hover:border-[#173D32]/40 dark:hover:border-[#7BC4B2]/40 transition-all shadow-sm"
+                  className="rounded-xl border border-[#E5E7EB] dark:border-[#374151] bg-[#F9FAFB] dark:bg-[#182230] overflow-hidden flex flex-col justify-between hover:border-[#0B3D2E]/30 dark:hover:border-[#34D399]/50 transition-all shadow-xs"
                 >
                   <div className="p-4 space-y-3">
                     {/* Header info */}
                     <div className="flex items-start justify-between gap-2">
                       <div className="space-y-1">
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-[#ECE7DB] dark:bg-[#1D2A25] text-[#3E4B44] dark:text-[#C5D4C9] border border-[#DED8CB] dark:border-[#283931]">
+                          <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-white dark:bg-[#273548] text-[#374151] dark:text-[#D1D5DB] border border-[#E5E7EB] dark:border-[#374151]">
                             {getPurposeLabel(doc.evidencePurpose)}
                           </span>
                           {getStatusBadge(doc.reviewStatus)}
                         </div>
-                        <h4 className="text-sm font-semibold text-[#202522] dark:text-[#E8F0EC] truncate max-w-[240px]" title={doc.fileName}>
+                        <h4 className="text-sm font-semibold text-[#111827] dark:text-[#F9FAFB] truncate max-w-[240px]" title={doc.fileName}>
                           {doc.fileName}
                         </h4>
                       </div>
 
-                      <div className="text-right text-[11px] text-[#54625A] dark:text-[#C5D4C9] shrink-0">
+                      <div className="text-right text-[11px] text-[#6B7280] dark:text-[#D1D5DB] shrink-0">
                         <span>{formatBytes(doc.fileSize)}</span>
-                        <span className="block text-[10px] text-[#C5D4C9] dark:text-[#54625A]">
+                        <span className="block text-[10px] text-[#6B7280] dark:text-[#D1D5DB]">
                           {new Date(doc.createdAt).toLocaleDateString()}
                         </span>
                       </div>
                     </div>
 
                     {/* Media preview thumbnail / PDF card */}
-                    <div className="relative rounded-lg overflow-hidden border border-[#DED8CB] dark:border-[#283931] bg-[#ECE7DB]/60 dark:bg-[#1D2A25]/60 flex items-center justify-center min-h-[140px] max-h-[180px]">
+                    <div className="relative rounded-lg overflow-hidden border border-[#E5E7EB] dark:border-[#374151] bg-white dark:bg-[#182230] flex items-center justify-center min-h-[140px] max-h-[180px]">
                       {isImage ? (
                         <div
                           className="w-full h-full cursor-pointer relative group flex items-center justify-center"
@@ -652,19 +654,19 @@ export function EvidenceSection({
                             className="max-h-[180px] w-full object-cover transition-transform group-hover:scale-105 duration-200"
                             loading="lazy"
                           />
-                          <div className="absolute inset-0 bg-[#ECE7DB]/40 dark:bg-[#1D2A25]/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                            <span className="text-xs bg-white dark:bg-[#16201C] text-[#202522] dark:text-[#F5F2EA] px-3 py-1 rounded-full flex items-center gap-1 border border-[#DED8CB] dark:border-[#283931] shadow-xs">
+                          <div className="absolute inset-0 bg-black/25 dark:bg-[#182230] opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                            <span className="text-xs bg-white dark:bg-[#1F2937] text-[#111827] dark:text-[#F9FAFB] px-3 py-1 rounded-full flex items-center gap-1 border border-[#E5E7EB] dark:border-[#374151] shadow-xs">
                               <EyeIcon className="w-3.5 h-3.5" /> Enlarge Preview
                             </span>
                           </div>
                         </div>
                       ) : (
                         <div className="p-6 text-center space-y-2">
-                          <FileTextIcon className="w-12 h-12 text-rose-400 mx-auto" />
-                          <span className="text-xs font-mono font-medium text-[#3E4B44] dark:text-[#C5D4C9] block">
+                          <FileTextIcon className="w-12 h-12 text-rose-600 dark:text-rose-400 mx-auto" />
+                          <span className="text-xs font-mono font-medium text-[#374151] dark:text-[#D1D5DB] block">
                             PDF Document
                           </span>
-                          <span className="text-[10px] text-[#54625A] dark:text-[#C5D4C9] block">
+                          <span className="text-[10px] text-[#6B7280] dark:text-[#D1D5DB] block">
                             Protected format • Verified MIME type
                           </span>
                         </div>
@@ -673,15 +675,15 @@ export function EvidenceSection({
 
                     {/* Description if provided */}
                     {doc.description && (
-                      <p className="text-xs text-[#3E4B44] dark:text-[#C5D4C9] leading-relaxed bg-[#ECE7DB]/40 dark:bg-[#1D2A25]/40 p-2.5 rounded-lg border border-[#DED8CB] dark:border-[#283931]">
+                      <p className="text-xs text-[#374151] dark:text-[#D1D5DB] leading-relaxed bg-white dark:bg-[#182230] p-2.5 rounded-lg border border-[#E5E7EB] dark:border-[#374151]">
                         {doc.description}
                       </p>
                     )}
 
                     {/* Rejection / Resubmission alert */}
                     {doc.reviewStatus === 'REJECTED' && doc.rejectionReason && (
-                      <div className="p-3 rounded-lg bg-rose-950/40 border border-rose-800/60 text-xs text-rose-200 space-y-1">
-                        <strong className="flex items-center gap-1 text-rose-300">
+                      <div className="p-3 rounded-lg bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 text-xs text-rose-800 dark:text-rose-200 space-y-1">
+                        <strong className="flex items-center gap-1 text-rose-900 dark:text-rose-300">
                           <XCircleIcon className="w-3.5 h-3.5" /> Rejection Explanation:
                         </strong>
                         <p className="leading-relaxed">{doc.rejectionReason}</p>
@@ -689,9 +691,9 @@ export function EvidenceSection({
                     )}
 
                     {doc.reviewStatus === 'RESUBMISSION_REQUESTED' && (
-                      <div className="p-3 rounded-lg bg-orange-950/40 border border-orange-800/60 text-xs text-orange-200 space-y-2">
+                      <div className="p-3 rounded-lg bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-800/60 text-xs text-orange-800 dark:text-orange-200 space-y-2">
                         <div>
-                          <strong className="flex items-center gap-1 text-orange-300">
+                          <strong className="flex items-center gap-1 text-orange-900 dark:text-orange-300">
                             <AlertTriangleIcon className="w-3.5 h-3.5" /> Resubmission Required:
                           </strong>
                           <p className="mt-0.5 leading-relaxed">
@@ -714,8 +716,8 @@ export function EvidenceSection({
 
                     {/* Verified metadata */}
                     {doc.reviewStatus === 'VERIFIED' && doc.reviewedAt && (
-                      <div className="text-[11px] text-emerald-400/90 flex items-center gap-1.5">
-                        <CheckCircleIcon className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      <div className="text-[11px] text-[#0B6640] dark:text-emerald-400 flex items-center gap-1.5">
+                        <CheckCircleIcon className="w-3.5 h-3.5 text-[#0B6640] dark:text-emerald-400 shrink-0" />
                         <span>
                           Verified by {doc.reviewedBy?.name || 'Department Inspector'} on{' '}
                           {new Date(doc.reviewedAt).toLocaleDateString()}
@@ -725,7 +727,7 @@ export function EvidenceSection({
 
                     {/* Quarantined notice */}
                     {doc.isQuarantined && (
-                      <div className="p-2.5 rounded-lg bg-white dark:bg-[#16201C] border border-red-900 text-[11px] text-red-300">
+                      <div className="p-2.5 rounded-lg bg-red-50 dark:bg-[#1F2937] border border-red-200 dark:border-red-900 text-[11px] text-red-800 dark:text-red-300">
                         <strong>Quarantine Reason: </strong>
                         {doc.quarantineReason || 'Isolated by administrator pending investigation.'}
                       </div>
@@ -733,9 +735,9 @@ export function EvidenceSection({
 
                     {/* Cryptographic SHA-256 Checksum */}
                     {doc.sha256Checksum && (
-                      <div className="pt-2 border-t border-[#DED8CB] dark:border-[#283931] flex items-center justify-between text-[10px] text-[#C5D4C9] dark:text-[#54625A] font-mono">
+                      <div className="pt-2 border-t border-[#E5E7EB] dark:border-[#374151] flex items-center justify-between text-[10px] text-[#6B7280] dark:text-[#D1D5DB] font-mono">
                         <span className="flex items-center gap-1">
-                          <ShieldCheckIcon className="w-3 h-3 text-[#54625A] dark:text-[#C5D4C9]" />
+                          <ShieldCheckIcon className="w-3 h-3 text-[#6B7280] dark:text-[#D1D5DB]" />
                           SHA-256:
                         </span>
                         <span className="truncate max-w-[200px]" title={doc.sha256Checksum}>
@@ -746,16 +748,16 @@ export function EvidenceSection({
                   </div>
 
                   {/* Actions Footer */}
-                  <div className="p-3 bg-[#ECE7DB]/60 dark:bg-[#1D2A25]/60 border-t border-[#DED8CB] dark:border-[#283931] flex items-center justify-between gap-2 text-xs">
-                    <span className="text-[11px] text-[#54625A] dark:text-[#C5D4C9] truncate">
-                      By: <strong className="text-[#3E4B44] dark:text-[#C5D4C9]">{doc.uploader?.name || 'Citizen'}</strong>
+                  <div className="p-3 bg-white dark:bg-[#182230] border-t border-[#E5E7EB] dark:border-[#374151] flex items-center justify-between gap-2 text-xs">
+                    <span className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB] truncate">
+                      By: <strong className="text-[#374151] dark:text-[#D1D5DB]">{doc.uploader?.name || 'Citizen'}</strong>
                     </span>
 
                     <div className="flex items-center gap-2">
                       <a
                         href={doc.downloadUrl}
                         download={doc.fileName}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-[#ECE7DB] dark:bg-[#1D2A25] hover:bg-[#DED8CB] dark:hover:bg-[#283931] text-[#202522] dark:text-[#E8F0EC] text-xs font-medium transition-colors"
+                        className="civora-liquid-btn civora-liquid-btn--secondary px-2.5 py-1 rounded-md text-xs font-medium gap-1"
                       >
                         <DownloadIcon className="w-3.5 h-3.5" />
                         Download
@@ -805,17 +807,19 @@ export function EvidenceSection({
       {/* --- MODAL 1: Upload Evidence Modal --- */}
       {showUploadModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
-          <div className="relative w-full max-w-lg bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] rounded-2xl shadow-2xl p-6 space-y-5">
-            <div className="flex items-center justify-between border-b border-[#DED8CB] dark:border-[#283931] pb-3">
+          <div className="relative w-full max-w-lg bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-2xl shadow-2xl p-6 space-y-5">
+            <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
               <div className="flex items-center gap-2">
-                <CameraIcon className="w-5 h-5 text-blue-400" />
-                <h3 className="text-base font-semibold text-[#202522] dark:text-[#E8F0EC]">
+                <CameraIcon className="w-5 h-5 text-[#0B6640] dark:text-[#34D399]" />
+                <h3 className="text-base font-semibold text-[#111827] dark:text-[#F9FAFB]">
                   {replacedDocId ? 'Upload Replacement Evidence' : 'Attach Complaint Evidence'}
                 </h3>
               </div>
               <button
+                type="button"
+                aria-label="Close dialog"
                 onClick={() => setShowUploadModal(false)}
-                className="text-[#54625A] hover:text-[#202522] dark:text-[#C5D4C9] dark:hover:text-[#E8F0EC] p-1 rounded-lg"
+                className="civora-liquid-btn civora-liquid-btn--ghost p-1.5 rounded-lg"
               >
                 <CloseIcon className="w-5 h-5" />
               </button>
@@ -841,7 +845,7 @@ export function EvidenceSection({
                     </>
                   )}
                 </Select>
-                <p className="text-[11px] text-[#54625A] dark:text-[#C5D4C9] mt-1">
+                <p className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB] mt-1">
                   {uploadPurpose === 'RESOLUTION_PROOF'
                     ? 'Resolution proof demonstrates completed field repairs. Uploading does not automatically close the complaint.'
                     : uploadPurpose === 'OFFICIAL_PROGRESS'
@@ -852,16 +856,16 @@ export function EvidenceSection({
 
               {/* File Dropzone */}
               <div>
-                <label className="block text-xs font-medium text-[#3E4B44] dark:text-[#C5D4C9] mb-1.5">
+                <label className="block text-xs font-medium text-[#374151] dark:text-[#D1D5DB] mb-1.5">
                   Select Files (JPG, PNG, WebP, PDF • Max 10MB each)
                 </label>
                 <div
                   onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-[#DED8CB] dark:border-[#283931] hover:border-blue-500 rounded-xl p-5 text-center cursor-pointer transition-colors bg-[#ECE7DB]/40 dark:bg-[#1D2A25]/40"
+                  className="border-2 border-dashed border-[#D1D5DB] dark:border-[#374151] hover:border-[#0B3D2E] dark:hover:border-[#6EE7B7] rounded-xl p-5 text-center cursor-pointer transition-colors bg-[#F9FAFB] dark:bg-[#182230]"
                 >
-                  <CameraIcon className="w-8 h-8 text-[#C5D4C9] dark:text-[#54625A] mx-auto mb-2" />
-                  <p className="text-xs text-[#3E4B44] dark:text-[#C5D4C9] font-medium">Click to select photos or documents</p>
-                  <p className="text-[10px] text-[#C5D4C9] dark:text-[#54625A] mt-0.5">Up to 5 files per submission</p>
+                  <CameraIcon className="w-8 h-8 text-[#9CA3AF] dark:text-[#9CA3AF] mx-auto mb-2" />
+                  <p className="text-xs text-[#374151] dark:text-[#D1D5DB] font-medium">Click to select photos or documents</p>
+                  <p className="text-[10px] text-[#6B7280] dark:text-[#D1D5DB] mt-0.5">Up to 5 files per submission</p>
                   <input
                     ref={fileInputRef}
                     type="file"
@@ -875,22 +879,23 @@ export function EvidenceSection({
 
               {/* Selected Files List */}
               {uploadFiles.length > 0 && (
-                <div className="space-y-2 bg-[#ECE7DB]/60 dark:bg-[#1D2A25]/60 p-3 rounded-lg border border-[#DED8CB] dark:border-[#283931]">
-                  <span className="text-xs font-semibold text-[#3E4B44] dark:text-[#C5D4C9] block mb-1">
+                <div className="space-y-2 bg-[#F9FAFB] dark:bg-[#182230] p-3 rounded-lg border border-[#E5E7EB] dark:border-[#374151]">
+                  <span className="text-xs font-semibold text-[#374151] dark:text-[#D1D5DB] block mb-1">
                     Files to upload ({uploadFiles.length}):
                   </span>
                   {uploadFiles.map((f, idx) => (
                     <div
                       key={idx}
-                      className="flex items-center justify-between text-xs text-[#3E4B44] dark:text-[#C5D4C9] bg-[#ECE7DB]/80 dark:bg-[#1D2A25]/80 px-2.5 py-1.5 rounded border border-[#DED8CB] dark:border-[#283931]"
+                      className="flex items-center justify-between text-xs text-[#374151] dark:text-[#D1D5DB] bg-white dark:bg-[#273548]/90 px-2.5 py-1.5 rounded border border-[#E5E7EB] dark:border-[#374151]"
                     >
                       <span className="truncate max-w-[280px]">{f.name}</span>
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] text-[#54625A] dark:text-[#C5D4C9] font-mono">{formatBytes(f.size)}</span>
+                        <span className="text-[10px] text-[#6B7280] dark:text-[#D1D5DB] font-mono">{formatBytes(f.size)}</span>
                         <button
                           type="button"
+                          aria-label="Remove file"
                           onClick={() => handleRemoveFile(idx)}
-                          className="text-rose-400 hover:text-rose-300"
+                          className="civora-liquid-btn civora-liquid-btn--danger p-1 rounded-md"
                         >
                           <CloseIcon className="w-3.5 h-3.5" />
                         </button>
@@ -911,7 +916,7 @@ export function EvidenceSection({
                 />
               </FormField>
 
-              <div className="flex justify-end gap-3 pt-3 border-t border-[#DED8CB] dark:border-[#283931]">
+              <div className="flex justify-end gap-3 pt-3 border-t border-[#E5E7EB] dark:border-[#374151]">
                 <Button
                   type="button"
                   variant="outline"
@@ -939,17 +944,19 @@ export function EvidenceSection({
       {/* --- MODAL 2: Review & Verification Modal (Staff/Admin) --- */}
       {reviewingDoc && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
-          <div className="relative w-full max-w-lg bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] rounded-2xl shadow-2xl p-6 space-y-5">
-            <div className="flex items-center justify-between border-b border-[#DED8CB] dark:border-[#283931] pb-3">
+          <div className="relative w-full max-w-lg bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-2xl shadow-2xl p-6 space-y-5">
+            <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
               <div className="flex items-center gap-2">
-                <ShieldCheckIcon className="w-5 h-5 text-emerald-400" />
-                <h3 className="text-base font-semibold text-[#202522] dark:text-[#E8F0EC]">
+                <ShieldCheckIcon className="w-5 h-5 text-[#0B6640] dark:text-emerald-400" />
+                <h3 className="text-base font-semibold text-[#111827] dark:text-[#F9FAFB]">
                   Inspect & Verify Evidence
                 </h3>
               </div>
               <button
+                type="button"
+                aria-label="Close dialog"
                 onClick={() => setReviewingDoc(null)}
-                className="text-[#54625A] hover:text-[#202522] dark:text-[#C5D4C9] dark:hover:text-[#E8F0EC] p-1 rounded-lg"
+                className="civora-liquid-btn civora-liquid-btn--ghost p-1.5 rounded-lg"
               >
                 <CloseIcon className="w-5 h-5" />
               </button>
@@ -957,18 +964,18 @@ export function EvidenceSection({
 
             {reviewError && <Alert variant="error">{reviewError}</Alert>}
 
-            <div className="bg-[#ECE7DB]/60 dark:bg-[#1D2A25]/60 p-3 rounded-lg border border-[#DED8CB] dark:border-[#283931] text-xs space-y-1">
+            <div className="bg-[#F9FAFB] dark:bg-[#182230] p-3 rounded-lg border border-[#E5E7EB] dark:border-[#374151] text-xs space-y-1">
               <p>
-                <strong className="text-[#54625A] dark:text-[#C5D4C9]">File: </strong>
-                <span className="text-[#202522] dark:text-[#E8F0EC]">{reviewingDoc.fileName}</span>
+                <strong className="text-[#6B7280] dark:text-[#D1D5DB]">File: </strong>
+                <span className="text-[#111827] dark:text-[#F9FAFB]">{reviewingDoc.fileName}</span>
               </p>
               <p>
-                <strong className="text-[#54625A] dark:text-[#C5D4C9]">Purpose: </strong>
-                <span className="text-[#202522] dark:text-[#E8F0EC]">{getPurposeLabel(reviewingDoc.evidencePurpose)}</span>
+                <strong className="text-[#6B7280] dark:text-[#D1D5DB]">Purpose: </strong>
+                <span className="text-[#111827] dark:text-[#F9FAFB]">{getPurposeLabel(reviewingDoc.evidencePurpose)}</span>
               </p>
               <p>
-                <strong className="text-[#54625A] dark:text-[#C5D4C9]">Uploader: </strong>
-                <span className="text-[#202522] dark:text-[#E8F0EC]">{reviewingDoc.uploader?.name} ({reviewingDoc.uploader?.role})</span>
+                <strong className="text-[#6B7280] dark:text-[#D1D5DB]">Uploader: </strong>
+                <span className="text-[#111827] dark:text-[#F9FAFB]">{reviewingDoc.uploader?.name} ({reviewingDoc.uploader?.role})</span>
               </p>
             </div>
 
@@ -998,7 +1005,7 @@ export function EvidenceSection({
                     value={rejectionReason}
                     onChange={(e) => setRejectionReason(e.target.value)}
                   />
-                  <p className="text-[11px] text-rose-400 mt-1">
+                  <p className="text-[11px] text-rose-700 dark:text-rose-400 mt-1">
                     * Rejection reason will be visible to the uploader and logged in the immutable audit trail.
                   </p>
                 </FormField>
@@ -1013,7 +1020,7 @@ export function EvidenceSection({
                     value={resubmissionGuidance}
                     onChange={(e) => setResubmissionGuidance(e.target.value)}
                   />
-                  <p className="text-[11px] text-orange-400 mt-1">
+                  <p className="text-[11px] text-orange-700 dark:text-orange-400 mt-1">
                     * Instructions will prompt the citizen to attach a replacement file.
                   </p>
                 </FormField>
@@ -1029,7 +1036,7 @@ export function EvidenceSection({
                 />
               </FormField>
 
-              <div className="flex justify-end gap-3 pt-3 border-t border-[#DED8CB] dark:border-[#283931]">
+              <div className="flex justify-end gap-3 pt-3 border-t border-[#E5E7EB] dark:border-[#374151]">
                 <Button
                   type="button"
                   variant="outline"
@@ -1054,17 +1061,19 @@ export function EvidenceSection({
       {/* --- MODAL 3: Quarantine Modal (Admin Only) --- */}
       {quarantiningDoc && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
-          <div className="relative w-full max-w-md bg-white dark:bg-[#16201C] border border-rose-500/40 rounded-2xl shadow-2xl p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-[#DED8CB] dark:border-[#283931] pb-3">
+          <div className="relative w-full max-w-md bg-white dark:bg-[#1F2937] border border-rose-500/40 rounded-2xl shadow-2xl p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
               <div className="flex items-center gap-2">
-                <ShieldCheckIcon className="w-5 h-5 text-red-500" />
-                <h3 className="text-base font-semibold text-[#202522] dark:text-[#E8F0EC]">
+                <ShieldCheckIcon className="w-5 h-5 text-red-600 dark:text-red-500" />
+                <h3 className="text-base font-semibold text-[#111827] dark:text-[#F9FAFB]">
                   Quarantine Evidence File
                 </h3>
               </div>
               <button
+                type="button"
+                aria-label="Close dialog"
                 onClick={() => setQuarantiningDoc(null)}
-                className="text-[#54625A] hover:text-[#202522] dark:text-[#C5D4C9] dark:hover:text-[#E8F0EC] p-1 rounded-lg"
+                className="civora-liquid-btn civora-liquid-btn--ghost p-1.5 rounded-lg"
               >
                 <CloseIcon className="w-5 h-5" />
               </button>
@@ -1072,7 +1081,7 @@ export function EvidenceSection({
 
             {quarantineError && <Alert variant="error">{quarantineError}</Alert>}
 
-            <p className="text-xs text-[#3E4B44] dark:text-[#C5D4C9] leading-relaxed">
+            <p className="text-xs text-[#374151] dark:text-[#D1D5DB] leading-relaxed">
               Quarantining immediately restricts this file from ordinary citizen and official downloads. It will remain isolated for security investigation.
             </p>
 
@@ -1087,7 +1096,7 @@ export function EvidenceSection({
                 />
               </FormField>
 
-              <div className="flex justify-end gap-3 pt-3 border-t border-[#DED8CB] dark:border-[#283931]">
+              <div className="flex justify-end gap-3 pt-3 border-t border-[#E5E7EB] dark:border-[#374151]">
                 <Button
                   type="button"
                   variant="outline"
@@ -1112,15 +1121,15 @@ export function EvidenceSection({
           onClick={() => setPreviewDoc(null)}
         >
           <div
-            className="relative max-w-4xl max-h-[90vh] bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] rounded-2xl overflow-hidden shadow-2xl flex flex-col"
+            className="relative max-w-4xl max-h-[90vh] bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-2xl overflow-hidden shadow-2xl flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="p-3 bg-[#ECE7DB] dark:bg-[#1D2A25] border-b border-[#DED8CB] dark:border-[#283931] flex items-center justify-between">
+            <div className="p-3 bg-[#F9FAFB] dark:bg-[#273548] border-b border-[#E5E7EB] dark:border-[#374151] flex items-center justify-between">
               <div className="truncate">
-                <span className="text-xs font-semibold text-[#202522] dark:text-[#E8F0EC] block truncate">
+                <span className="text-xs font-semibold text-[#111827] dark:text-[#F9FAFB] block truncate">
                   {previewDoc.fileName}
                 </span>
-                <span className="text-[10px] text-[#54625A] dark:text-[#C5D4C9]">
+                <span className="text-[10px] text-[#6B7280] dark:text-[#D1D5DB]">
                   {getPurposeLabel(previewDoc.evidencePurpose)} • {formatBytes(previewDoc.fileSize)}
                 </span>
               </div>
@@ -1128,13 +1137,15 @@ export function EvidenceSection({
                 <a
                   href={previewDoc.downloadUrl}
                   download={previewDoc.fileName}
-                  className="px-2.5 py-1 rounded bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium inline-flex items-center gap-1"
+                  className="civora-liquid-btn civora-liquid-btn--primary px-2.5 py-1 rounded-md text-xs font-medium gap-1"
                 >
                   <DownloadIcon className="w-3.5 h-3.5" /> Download
                 </a>
                 <button
+                  type="button"
+                  aria-label="Close preview"
                   onClick={() => setPreviewDoc(null)}
-                  className="text-[#54625A] hover:text-[#202522] dark:text-[#C5D4C9] dark:hover:text-[#E8F0EC] p-1 rounded-lg"
+                  className="civora-liquid-btn civora-liquid-btn--ghost p-1.5 rounded-lg"
                 >
                   <CloseIcon className="w-5 h-5" />
                 </button>

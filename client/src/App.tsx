@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import { NotificationProvider } from './context/NotificationContext';
 import { I18nProvider } from './context/I18nContext';
 import { AccessibilityProvider } from './context/AccessibilityContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { AppShell } from './components/layout/AppShell';
 import { LoadingIndicator } from './components/ui/LoadingIndicator';
 
@@ -132,9 +133,11 @@ export default function App() {
       <AuthProvider>
         <NotificationProvider>
           <I18nProvider>
-            <AccessibilityProvider>
-              <AppContent />
-            </AccessibilityProvider>
+            <ThemeProvider>
+              <AccessibilityProvider>
+                <AppContent />
+              </AccessibilityProvider>
+            </ThemeProvider>
           </I18nProvider>
         </NotificationProvider>
       </AuthProvider>

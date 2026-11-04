@@ -5,7 +5,7 @@ import type { SupportedLocale } from '../../i18n/index.js';
 
 export function LanguageSelector({
   compact = false,
-  variant = 'default',
+  variant = 'forest-pill',
 }: {
   compact?: boolean;
   variant?: 'default' | 'forest-pill';
@@ -99,13 +99,13 @@ export function LanguageSelector({
         disabled={isChangingLocale}
         className={
           variant === 'forest-pill'
-            ? `inline-flex items-center justify-between gap-2 px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium text-white bg-[#0B3D2E] hover:bg-[#072B20] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0B3D2E] shadow-2xs`
-            : `inline-flex items-center justify-between gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold text-[#E4E0D5] bg-[#112F26] border border-[#A8BFAE]/30 hover:bg-[#0C241D] hover:text-white transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A8BFAE] ${compact ? 'text-[11px] px-2 py-1' : 'min-h-[36px]'}`
+            ? 'civora-liquid-btn civora-liquid-btn--primary justify-between gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium min-h-[36px]'
+            : `civora-liquid-btn civora-liquid-btn--secondary justify-between gap-2 px-3 py-1.5 rounded-lg text-xs font-medium ${compact ? 'text-[11px] px-2 py-1' : 'min-h-[36px]'}`
         }
       >
         <span className="flex items-center gap-1.5">
           <svg
-            className={`w-4 h-4 ${variant === 'forest-pill' ? 'text-white' : 'text-[#A8BFAE]'}`}
+            className="w-4 h-4 opacity-90"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -121,7 +121,7 @@ export function LanguageSelector({
           <span className="font-medium">{currentLocaleInfo.name}</span>
         </span>
         <svg
-          className={`w-3.5 h-3.5 ${variant === 'forest-pill' ? 'text-white' : 'text-[#A8BFAE]'} transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          className={`w-3.5 h-3.5 opacity-85 transition-transform ${isOpen ? 'rotate-180' : ''}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -137,7 +137,7 @@ export function LanguageSelector({
           role="listbox"
           aria-labelledby="language-selector-button"
           tabIndex={-1}
-          className="absolute right-0 mt-1.5 w-48 rounded-xl bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] shadow-xl py-1.5 z-50 focus:outline-none"
+          className="absolute right-0 mt-1.5 w-48 rounded-xl bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] shadow-xl py-1.5 z-50 focus:outline-none"
         >
           {availableLocales.map((loc, idx) => {
             const isSelected = loc.code === locale;
@@ -154,22 +154,22 @@ export function LanguageSelector({
                   onKeyDown={(e) => handleOptionKeyDown(e, idx)}
                   className={`
                     w-full text-left px-3.5 py-2 text-xs flex items-center justify-between
-                    hover:bg-[#ECE7DB] dark:hover:bg-[#1C2823] transition-colors cursor-pointer
-                    focus-visible:outline-none focus-visible:bg-[#ECE7DB] dark:focus-visible:bg-[#1C2823] focus-visible:ring-1 focus-visible:ring-[#173D32]
-                    ${isSelected ? 'bg-[#173D32]/10 text-[#173D32] dark:bg-[#215748]/30 dark:text-[#7BC4B2] font-semibold' : 'text-[#202522] dark:text-[#F5F2EA]'}
+                    hover:bg-[#F3F4F6] dark:hover:bg-[#273548] transition-colors cursor-pointer
+                    focus-visible:outline-none focus-visible:bg-[#F3F4F6] dark:focus-visible:bg-[#273548] focus-visible:ring-1 focus-visible:ring-[#0B3D2E] dark:focus-visible:ring-[#34D399]
+                    ${isSelected ? 'bg-[#E5ECE8] text-[#0B3D2E] dark:bg-[#34D399]/15 dark:text-[#6EE7B7] font-semibold' : 'text-[#111827] dark:text-[#F9FAFB]'}
                   `.trim()}
                 >
                   <div>
                     <span className="block font-medium text-sm leading-tight">
                       {loc.nativeName}
                     </span>
-                    <span className="block text-[11px] text-[#54625A] dark:text-[#C5D4C9]">
+                    <span className="block text-[11px] text-[#6B7280] dark:text-[#9CA3AF]">
                       {loc.name} ({loc.script})
                     </span>
                   </div>
                   {isSelected && (
                     <svg
-                      className="w-4 h-4 text-[#173D32] dark:text-[#7BC4B2] shrink-0"
+                      className="w-4 h-4 text-[#0B3D2E] dark:text-[#34D399] shrink-0"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"

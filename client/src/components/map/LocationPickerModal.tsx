@@ -98,24 +98,25 @@ export const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
-      <div className="relative w-full max-w-4xl bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="relative w-full max-w-4xl bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Modal Header */}
-        <div className="p-4 sm:p-5 border-b border-[#DED8CB] dark:border-[#283931] flex items-center justify-between">
+        <div className="p-4 sm:p-5 border-b border-[#E5E7EB] dark:border-[#374151] flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-blue-500/10 text-blue-700 dark:text-blue-400 rounded-xl border border-blue-500/20">
+            <div className="p-2 bg-[#E5ECE8] text-[#0B3D2E] dark:bg-[#273548] dark:text-[#34D399] rounded-xl border border-[#0B3D2E]/20 dark:border-[#374151]">
               <MapPinIcon className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-[#202522] dark:text-[#F5F2EA]">Pin Complaint Location</h3>
-              <p className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
+              <h3 className="text-base font-bold text-[#111827] dark:text-[#F9FAFB]">Pin Complaint Location</h3>
+              <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
                 Click anywhere on the map or use your device GPS to set precise incident coordinates.
               </p>
             </div>
           </div>
           <button
             type="button"
+            aria-label="Close location picker"
             onClick={onClose}
-            className="p-1.5 rounded-lg text-[#54625A] hover:text-[#202522] dark:text-[#C5D4C9] dark:hover:text-[#E8F0EC] hover:bg-[#ECE7DB] dark:bg-[#1D2A25] transition-colors cursor-pointer"
+            className="civora-liquid-btn civora-liquid-btn--ghost p-1.5 rounded-lg"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -132,20 +133,19 @@ export const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
               variant="outline"
               size="sm"
               onClick={handleDeviceLocation}
-              leftIcon={<MapPinIcon className="w-4 h-4 text-blue-700 dark:text-blue-400" />}
-              className="cursor-pointer"
+              leftIcon={<MapPinIcon className="w-4 h-4 text-[#0B3D2E] dark:text-[#34D399]" />}
             >
               Use My Device Location
             </Button>
 
             <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="text-[11px] text-[#54625A] dark:text-[#C5D4C9]">Quick Areas:</span>
+              <span className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB]">Quick Areas:</span>
               {QUICK_LANDMARKS.slice(0, 4).map((item) => (
                 <button
                   key={item.name}
                   type="button"
                   onClick={() => handleSelectQuickLandmark(item)}
-                  className="px-2 py-1 rounded-md text-[11px] bg-[#ECE7DB] dark:bg-[#1D2A25] hover:bg-[#DED8CB] dark:hover:bg-[#283931] text-[#3E4B44] dark:text-[#C5D4C9] border border-[#DED8CB] dark:border-[#283931] transition-colors cursor-pointer"
+                  className="civora-liquid-btn civora-liquid-btn--secondary px-2.5 py-1 rounded-md text-[11px]"
                 >
                   {item.name}
                 </button>
@@ -154,10 +154,10 @@ export const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
           </div>
 
           {geoStatus && (
-            <div className="p-2.5 rounded-lg bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/40 text-xs text-blue-800 dark:text-blue-300 font-mono flex items-center justify-between">
+            <div className="p-2.5 rounded-lg bg-[#E5ECE8]/60 dark:bg-[#273548] border border-[#0B3D2E]/20 dark:border-[#374151] text-xs text-[#0B3D2E] dark:text-[#D1D5DB] font-mono flex items-center justify-between">
               <span>{geoStatus}</span>
               {selectedCoords && (
-                <span className="font-bold text-blue-700 dark:text-blue-400">
+                <span className="font-bold text-[#0B3D2E] dark:text-[#34D399]">
                   {selectedCoords.lat}, {selectedCoords.lng}
                 </span>
               )}
@@ -173,13 +173,13 @@ export const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
             pickedCoords={selectedCoords}
           />
 
-          <p className="text-[11px] text-[#54625A] dark:text-[#C5D4C9] text-center">
+          <p className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB] text-center">
             Tip: Click anywhere on the map to drop or reposition the pin. Field engineers will use these coordinates during physical site inspection.
           </p>
         </div>
 
         {/* Modal Footer */}
-        <div className="p-4 border-t border-[#DED8CB] dark:border-[#283931] flex items-center justify-end gap-3 bg-[#ECE7DB]/60 dark:bg-[#1D2A25]/60">
+        <div className="p-4 border-t border-[#E5E7EB] dark:border-[#374151] flex items-center justify-end gap-3 bg-[#F9FAFB] dark:bg-[#182230]">
           <Button variant="ghost" onClick={onClose} size="sm">
             Cancel
           </Button>

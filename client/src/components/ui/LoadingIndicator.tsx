@@ -27,7 +27,7 @@ export function LoadingIndicator({
     >
       <div
         className={`
-          animate-spin rounded-full border-[#173D32]/20 border-t-[#173D32] dark:border-[#4F9B8B]/20 dark:border-t-[#4F9B8B]
+          animate-spin rounded-full border-[#0B3D2E]/20 border-t-[#0B3D2E] dark:border-[#34D399]/20 dark:border-t-[#34D399]
           ${sizeStyles[size]}
         `}
       />
@@ -43,7 +43,7 @@ export interface SkeletonProps extends HTMLAttributes<HTMLDivElement> {
 export function Skeleton({ className = '', ...props }: SkeletonProps) {
   return (
     <div
-      className={`animate-pulse rounded-md bg-[#ECE7DB] dark:bg-[#1C2823] ${className}`.trim()}
+      className={`animate-pulse rounded-md bg-[#F3F4F6] dark:bg-[#273548] ${className}`.trim()}
       aria-hidden="true"
       {...props}
     />

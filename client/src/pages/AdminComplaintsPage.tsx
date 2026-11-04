@@ -263,7 +263,7 @@ export function AdminComplaintsPage() {
   if (!authLoading && (!isAuthenticated || !isStaff)) {
     return (
       <Container size="md" className="py-12 space-y-6">
-        <Card className="border-[#DED8CB] dark:border-[#283931]">
+        <Card className="border-[#E5E7EB] dark:border-[#374151]">
           <CardHeader>
             <CardTitle className="text-[#B94B3B] font-heading">Access Denied</CardTitle>
             <CardDescription>
@@ -271,7 +271,7 @@ export function AdminComplaintsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-sm text-[#4A5750] dark:text-[#A8BFAE]">
+            <p className="text-sm text-[#6B7280] dark:text-[#D1D5DB]">
               Only authorized Municipal Reviewers and System Administrators may access complaint triage, status management, and departmental assignment workflows.
             </p>
             <Button variant="primary" onClick={() => navigate('/')}>
@@ -284,45 +284,50 @@ export function AdminComplaintsPage() {
   }
 
   return (
-    <Container size="lg" className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <PageHeading
-          title={t('nav.triageDashboard')}
-          description={`Logged as ${user?.name} (${user?.role}) • ${totalCount} grievances`}
-          badge={
-            <Badge variant="warning" size="md">
-              {t('roles.admin')}
-            </Badge>
-          }
-        />
-        <Button
-          variant="outline"
-          onClick={() => (mainTab === 'COMPLAINTS' ? fetchAdminComplaints() : undefined)}
-          className="shrink-0 text-xs cursor-pointer"
-        >
-          {t('adminSystem.refreshBtn')}
-        </Button>
-      </div>
+    <Container size="xl" className="space-y-8">
+      {/* Standardized Page Header */}
+      <PageHeading
+        title={t('nav.triageDashboard')}
+        description={`Logged as ${user?.name} (${user?.role}) • ${totalCount} grievances`}
+        className="mb-0"
+        badge={
+          <Badge variant="warning" size="md">
+            {t('roles.admin')}
+          </Badge>
+        }
+        actions={
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => (mainTab === 'COMPLAINTS' ? fetchAdminComplaints() : undefined)}
+          >
+            {t('adminSystem.refreshBtn')}
+          </Button>
+        }
+      />
 
       {/* View Switcher Tabs */}
-      <div className="flex border-b border-[#DED8CB] dark:border-[#283931] gap-2">
+      <div className="flex border-b border-[#E5E7EB] dark:border-[#374151] gap-2 pb-2">
         <button
+          type="button"
+          data-active={mainTab === 'COMPLAINTS'}
           onClick={() => setMainTab('COMPLAINTS')}
-          className={`pb-3 px-3 text-sm font-medium border-b-2 transition-colors cursor-pointer ${
+          className={`civora-liquid-tab py-2 px-4 rounded-lg text-sm font-medium ${
             mainTab === 'COMPLAINTS'
-              ? 'border-[#173D32] text-[#173D32] dark:border-[#7BC4B2] dark:text-[#7BC4B2] font-semibold'
-              : 'border-transparent text-[#54625A] dark:text-[#C5D4C9] hover:text-[#202522] dark:hover:text-[#E8F0EC]'
+              ? 'font-semibold'
+              : 'text-[#6B7280] dark:text-[#D1D5DB]'
           }`}
         >
           Complaints & Triage Queue
         </button>
         <button
+          type="button"
+          data-active={mainTab === 'EVIDENCE'}
           onClick={() => setMainTab('EVIDENCE')}
-          className={`pb-3 px-3 text-sm font-medium border-b-2 transition-colors cursor-pointer ${
+          className={`civora-liquid-tab py-2 px-4 rounded-lg text-sm font-medium ${
             mainTab === 'EVIDENCE'
-              ? 'border-[#173D32] text-[#173D32] dark:border-[#7BC4B2] dark:text-[#7BC4B2] font-semibold'
-              : 'border-transparent text-[#54625A] dark:text-[#C5D4C9] hover:text-[#202522] dark:hover:text-[#E8F0EC]'
+              ? 'font-semibold'
+              : 'text-[#6B7280] dark:text-[#D1D5DB]'
           }`}
         >
           Evidence & Resolution Review
@@ -353,7 +358,7 @@ export function AdminComplaintsPage() {
             placeholder="Search tracking ID, title, locality..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            leftIcon={<SearchIcon className="w-4 h-4 text-[#54625A] dark:text-[#C5D4C9]" />}
+            leftIcon={<SearchIcon className="w-4 h-4 text-[#6B7280] dark:text-[#D1D5DB]" />}
           />
         </div>
 
@@ -363,14 +368,15 @@ export function AdminComplaintsPage() {
               <button
                 key={status}
                 type="button"
+                data-active={statusFilter === status}
                 onClick={() => {
                   setStatusFilter(status);
                   setPage(1);
                 }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors cursor-pointer ${
+                className={`civora-liquid-tab px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap ${
                   statusFilter === status
-                    ? 'bg-[#173D32] text-[#F4F0E6] font-semibold shadow-xs'
-                    : 'text-[#4A5750] dark:text-[#A8BFAE] hover:text-[#202522] dark:hover:text-[#E8F0EC] hover:bg-[#ECE7DB] dark:hover:bg-[#1D2A25]'
+                    ? 'font-semibold'
+                    : 'text-[#6B7280] dark:text-[#D1D5DB]'
                 }`}
               >
                 {status.replace('_', ' ')}
@@ -384,7 +390,7 @@ export function AdminComplaintsPage() {
       {loading ? (
         <div className="py-16 flex flex-col items-center justify-center">
           <LoadingIndicator size="lg" label="Loading queue" />
-          <span className="text-xs text-[#54625A] dark:text-[#C5D4C9] mt-3">Loading grievances queue...</span>
+          <span className="text-xs text-[#6B7280] dark:text-[#D1D5DB] mt-3">Loading grievances queue...</span>
         </div>
       ) : errorMsg ? (
         <div className="py-8 space-y-4">
@@ -409,12 +415,12 @@ export function AdminComplaintsPage() {
       ) : (
         <div className="space-y-4">
           {complaints.map((c) => (
-            <Card key={c.id} className="border-[#DED8CB] dark:border-[#283931] hover:border-[#C2BAA8] dark:hover:border-[#3E564A] transition-colors">
+            <Card key={c.id} className="border-[#E5E7EB] dark:border-[#374151] hover:border-[#D1D5DB] dark:hover:border-[#3E564A] transition-colors">
               <CardContent className="p-5 space-y-4">
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                   <div className="space-y-2 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-mono text-xs font-semibold text-[#173D32] dark:text-[#7BC4B2] bg-[#ECE7DB] dark:bg-[#1D2A25] px-2.5 py-0.5 rounded border border-[#DED8CB] dark:border-[#283931]">
+                      <span className="font-mono text-xs font-semibold text-[#0B3D2E] dark:text-[#34D399] bg-[#F3F4F6] dark:bg-[#273548] px-2.5 py-0.5 rounded border border-[#E5E7EB] dark:border-[#374151]">
                         {c.trackingId}
                       </span>
                       <Badge variant={getStatusBadgeVariant(c.status)} size="sm" hasDot>
@@ -448,17 +454,17 @@ export function AdminComplaintsPage() {
                           AI Verified
                         </Badge>
                       )}
-                      <span className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
+                      <span className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
                         • {c.category?.name || 'Category'}
                       </span>
                     </div>
 
-                    <h3 className="text-base font-bold font-heading text-[#202522] dark:text-[#E8F0EC]">{c.title}</h3>
-                    <p className="text-xs text-[#4A5750] dark:text-[#A8BFAE] leading-relaxed">{c.description}</p>
+                    <h3 className="text-base font-bold font-heading text-[#111827] dark:text-[#F9FAFB]">{c.title}</h3>
+                    <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] leading-relaxed">{c.description}</p>
 
                     {c.aiFindings?.verificationSummary && (
-                      <div className="p-2.5 rounded-lg bg-[#ECE7DB]/60 dark:bg-[#1D2A25]/60 border border-[#DED8CB] dark:border-[#283931] text-xs space-y-1">
-                        <div className="flex items-center justify-between text-[#173D32] dark:text-[#7BC4B2] font-semibold text-[11px]">
+                      <div className="p-2.5 rounded-lg bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151] text-xs space-y-1">
+                        <div className="flex items-center justify-between text-[#0B3D2E] dark:text-[#34D399] font-semibold text-[11px]">
                           <span>AI Integrity Findings</span>
                           {c.aiFindings.fraudIndicators && c.aiFindings.fraudIndicators.length > 0 && (
                             <span className="text-amber-600 dark:text-amber-400 font-mono">
@@ -466,27 +472,27 @@ export function AdminComplaintsPage() {
                             </span>
                           )}
                         </div>
-                        <p className="text-[#3E4B44] dark:text-[#C5D4C9] text-[11px] leading-relaxed">
+                        <p className="text-[#374151] dark:text-[#D1D5DB] text-[11px] leading-relaxed">
                           {c.aiFindings.verificationSummary}
                         </p>
                       </div>
                     )}
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-[#54625A] dark:text-[#C5D4C9] pt-2 border-t border-[#DED8CB] dark:border-[#283931]">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-[#6B7280] dark:text-[#D1D5DB] pt-2 border-t border-[#E5E7EB] dark:border-[#374151]">
                       <div>
-                        <strong className="text-[#202522] dark:text-[#E8F0EC]">Location:</strong> {c.locationAddress} ({c.locality})
-                        {c.ward && <span className="block text-[11px] text-[#173D32] dark:text-[#7BC4B2] font-medium">Ward: {c.ward}</span>}
+                        <strong className="text-[#111827] dark:text-[#F9FAFB]">Location:</strong> {c.locationAddress} ({c.locality})
+                        {c.ward && <span className="block text-[11px] text-[#0B3D2E] dark:text-[#34D399] font-medium">Ward: {c.ward}</span>}
                       </div>
                       <div>
-                        <strong className="text-[#202522] dark:text-[#E8F0EC]">Citizen:</strong>{' '}
+                        <strong className="text-[#111827] dark:text-[#F9FAFB]">Citizen:</strong>{' '}
                         {c.citizen ? `${c.citizen.name} (${c.citizen.phone || c.citizen.email})` : 'Anonymous / Verified Citizen'}
                       </div>
                       <div>
-                        <strong className="text-[#202522] dark:text-[#E8F0EC]">Assigned Dept:</strong>{' '}
+                        <strong className="text-[#111827] dark:text-[#F9FAFB]">Assigned Dept:</strong>{' '}
                         {c.assignedDepartment?.name || 'Unassigned'}
                       </div>
                       <div>
-                        <strong className="text-[#202522] dark:text-[#E8F0EC]">Lodged:</strong>{' '}
+                        <strong className="text-[#111827] dark:text-[#F9FAFB]">Lodged:</strong>{' '}
                         {new Date(c.createdAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
                       </div>
                     </div>
@@ -538,10 +544,10 @@ export function AdminComplaintsPage() {
                     </Button>
                     {c.isDuplicate && (
                       <Button
-                        variant="outline"
+                        variant="warning"
                         size="sm"
                         onClick={() => handleSeparateReport(c.id, c.trackingId)}
-                        className="text-xs text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-700"
+                        className="text-xs"
                         disabled={actionLoading}
                       >
                         Separate Report
@@ -555,8 +561,8 @@ export function AdminComplaintsPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between pt-4 border-t border-[#DED8CB] dark:border-[#283931] text-xs">
-              <span className="text-[#54625A] dark:text-[#C5D4C9]">
+            <div className="flex items-center justify-between pt-4 border-t border-[#E5E7EB] dark:border-[#374151] text-xs">
+              <span className="text-[#6B7280] dark:text-[#D1D5DB]">
                 Page {page} of {totalPages}
               </span>
               <div className="flex items-center gap-2">
@@ -587,8 +593,8 @@ export function AdminComplaintsPage() {
       {/* Status Update Modal */}
       {activeModal === 'STATUS' && selectedComplaint && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <Card className="max-w-lg w-full border-[#DED8CB] dark:border-[#283931] shadow-2xl">
-            <CardHeader className="flex flex-row items-center justify-between border-b border-[#DED8CB] dark:border-[#283931] pb-3">
+          <Card className="max-w-lg w-full border-[#E5E7EB] dark:border-[#374151] shadow-2xl">
+            <CardHeader className="flex flex-row items-center justify-between border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
               <div>
                 <CardTitle className="font-heading">Update Complaint Status</CardTitle>
                 <CardDescription>
@@ -597,8 +603,9 @@ export function AdminComplaintsPage() {
               </div>
               <button
                 type="button"
+                aria-label="Close dialog"
                 onClick={() => setActiveModal(null)}
-                className="text-[#54625A] hover:text-[#202522] dark:text-[#C5D4C9] dark:hover:text-[#E8F0EC] p-1 rounded-lg"
+                className="civora-liquid-btn civora-liquid-btn--ghost p-1.5 rounded-lg"
               >
                 <CloseIcon className="w-5 h-5" />
               </button>
@@ -663,7 +670,7 @@ export function AdminComplaintsPage() {
                   </FormField>
                 )}
 
-                <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#DED8CB] dark:border-[#283931]">
+                <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#E5E7EB] dark:border-[#374151]">
                   <Button
                     type="button"
                     variant="ghost"
@@ -689,8 +696,8 @@ export function AdminComplaintsPage() {
       {/* Assign Department Modal */}
       {activeModal === 'ASSIGN' && selectedComplaint && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <Card className="max-w-lg w-full border-[#DED8CB] dark:border-[#283931] shadow-2xl">
-            <CardHeader className="flex flex-row items-center justify-between border-b border-[#DED8CB] dark:border-[#283931] pb-3">
+          <Card className="max-w-lg w-full border-[#E5E7EB] dark:border-[#374151] shadow-2xl">
+            <CardHeader className="flex flex-row items-center justify-between border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
               <div>
                 <CardTitle className="font-heading">Assign Municipal Department</CardTitle>
                 <CardDescription>
@@ -699,8 +706,9 @@ export function AdminComplaintsPage() {
               </div>
               <button
                 type="button"
+                aria-label="Close dialog"
                 onClick={() => setActiveModal(null)}
-                className="text-[#54625A] hover:text-[#202522] dark:text-[#C5D4C9] dark:hover:text-[#E8F0EC] p-1 rounded-lg"
+                className="civora-liquid-btn civora-liquid-btn--ghost p-1.5 rounded-lg"
               >
                 <CloseIcon className="w-5 h-5" />
               </button>
@@ -728,7 +736,7 @@ export function AdminComplaintsPage() {
                   />
                 </FormField>
 
-                <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#DED8CB] dark:border-[#283931]">
+                <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#E5E7EB] dark:border-[#374151]">
                   <Button
                     type="button"
                     variant="ghost"

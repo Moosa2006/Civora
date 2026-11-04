@@ -19,7 +19,7 @@ export function TrendAreaChart({ data, height = 240 }: TrendAreaChartProps) {
 
   if (!data || data.length === 0) {
     return (
-      <div className="h-48 flex items-center justify-center text-xs text-[#54625A] dark:text-[#C5D4C9]">
+      <div className="h-48 flex items-center justify-center text-xs text-[#6B7280] dark:text-[#D1D5DB]">
         No trend records available for this period.
       </div>
     );
@@ -86,20 +86,20 @@ export function TrendAreaChart({ data, height = 240 }: TrendAreaChartProps) {
   return (
     <div className="w-full space-y-3 font-sans">
       {/* Chart Legend */}
-      <div className="flex flex-wrap items-center justify-between text-xs text-[#54625A] dark:text-[#C5D4C9] pb-1 border-b border-[#EAE5D9] dark:border-[#283931]">
+      <div className="flex flex-wrap items-center justify-between text-xs text-[#6B7280] dark:text-[#D1D5DB] pb-1 border-b border-[#E5E7EB] dark:border-[#374151]">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-[#173D32] dark:bg-[#4F9B8B] shadow-xs" />
-            <span className="text-[#202522] dark:text-[#F5F2EA] font-medium">Grievances Lodged</span>
+            <span className="w-3 h-3 rounded-full bg-[#0B3D2E] dark:bg-[#34D399] shadow-xs" />
+            <span className="text-[#111827] dark:text-[#F9FAFB] font-medium">Grievances Lodged</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-[#1E6B52] dark:bg-[#78C7AE] shadow-xs" />
-            <span className="text-[#202522] dark:text-[#F5F2EA] font-medium">Official Resolutions</span>
+            <span className="w-3 h-3 rounded-full bg-[#0B6640] dark:bg-[#6EE7B7] shadow-xs" />
+            <span className="text-[#111827] dark:text-[#F9FAFB] font-medium">Official Resolutions</span>
           </div>
         </div>
 
         {hoverIndex !== null && data[hoverIndex] && (
-          <div className="text-[11px] font-mono text-[#202522] dark:text-[#F5F2EA] bg-[#FAF8F5] dark:bg-[#16201C] px-2 py-0.5 rounded border border-[#DED8CB] dark:border-[#283931]">
+          <div className="text-[11px] font-mono text-[#111827] dark:text-[#F9FAFB] bg-[#F9FAFB] dark:bg-[#273548] px-2 py-0.5 rounded border border-[#E5E7EB] dark:border-[#374151]">
             {formatDateLabel(data[hoverIndex].date)}: {data[hoverIndex].submitted} lodged • {data[hoverIndex].resolved} resolved
           </div>
         )}
@@ -114,12 +114,12 @@ export function TrendAreaChart({ data, height = 240 }: TrendAreaChartProps) {
         >
           <defs>
             <linearGradient id="submittedGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#173D32" stopOpacity="0.22" />
-              <stop offset="100%" stopColor="#173D32" stopOpacity="0.0" />
+              <stop offset="0%" style={{ stopColor: 'var(--color-chart-brand)' }} stopOpacity="0.2" />
+              <stop offset="100%" style={{ stopColor: 'var(--color-chart-brand)' }} stopOpacity="0.0" />
             </linearGradient>
             <linearGradient id="resolvedGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#1E6B52" stopOpacity="0.22" />
-              <stop offset="100%" stopColor="#1E6B52" stopOpacity="0.0" />
+              <stop offset="0%" style={{ stopColor: 'var(--color-chart-secondary)' }} stopOpacity="0.2" />
+              <stop offset="100%" style={{ stopColor: 'var(--color-chart-secondary)' }} stopOpacity="0.0" />
             </linearGradient>
           </defs>
 
@@ -134,8 +134,8 @@ export function TrendAreaChart({ data, height = 240 }: TrendAreaChartProps) {
                   y1={y}
                   x2={svgWidth - paddingX}
                   y2={y}
-                  stroke="#DED8CB"
-                  className="stroke-[#DED8CB] dark:stroke-[#283931]"
+                  stroke="#E5E7EB"
+                  className="stroke-[#E5E7EB] dark:stroke-[#374151]"
                   strokeDasharray="3 3"
                   strokeWidth="0.8"
                 />
@@ -143,7 +143,7 @@ export function TrendAreaChart({ data, height = 240 }: TrendAreaChartProps) {
                   x={paddingX - 8}
                   y={y + 3}
                   textAnchor="end"
-                  className="fill-[#54625A] dark:fill-[#C5D4C9] text-[10px] font-mono"
+                  className="fill-[#6B7280] dark:fill-[#9CA3AF] text-[10px] font-mono"
                 >
                   {val}
                 </text>
@@ -159,8 +159,8 @@ export function TrendAreaChart({ data, height = 240 }: TrendAreaChartProps) {
           <polyline
             points={submittedPoints}
             fill="none"
-            stroke="#173D32"
-            className="stroke-[#173D32] dark:stroke-[#4F9B8B]"
+            stroke="#0B3D2E"
+            className="stroke-[#0B3D2E] dark:stroke-[#34D399]"
             strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -168,8 +168,8 @@ export function TrendAreaChart({ data, height = 240 }: TrendAreaChartProps) {
           <polyline
             points={resolvedPoints}
             fill="none"
-            stroke="#1E6B52"
-            className="stroke-[#1E6B52] dark:stroke-[#78C7AE]"
+            stroke="#0B6640"
+            className="stroke-[#0B6640] dark:stroke-[#6EE7B7]"
             strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -187,18 +187,18 @@ export function TrendAreaChart({ data, height = 240 }: TrendAreaChartProps) {
                 cx={getX(i)}
                 cy={getY(d.submitted)}
                 r={hoverIndex === i ? 5 : 3}
-                fill="#173D32"
+                fill="#0B3D2E"
                 stroke="#FFFFFF"
-                className="fill-[#173D32] dark:fill-[#4F9B8B] stroke-white dark:stroke-[#16201C]"
+                className="fill-[#0B3D2E] dark:fill-[#34D399] stroke-white dark:stroke-[#1F2937]"
                 strokeWidth="2"
               />
               <circle
                 cx={getX(i)}
                 cy={getY(d.resolved)}
                 r={hoverIndex === i ? 5 : 3}
-                fill="#1E6B52"
+                fill="#0B6640"
                 stroke="#FFFFFF"
-                className="fill-[#1E6B52] dark:fill-[#78C7AE] stroke-white dark:stroke-[#16201C]"
+                className="fill-[#0B6640] dark:fill-[#6EE7B7] stroke-white dark:stroke-[#1F2937]"
                 strokeWidth="2"
               />
             </g>
@@ -214,7 +214,7 @@ export function TrendAreaChart({ data, height = 240 }: TrendAreaChartProps) {
                 x={getX(idx)}
                 y={svgHeight - 12}
                 textAnchor="middle"
-                className="fill-[#54625A] dark:fill-[#C5D4C9] text-[10px] font-medium"
+                className="fill-[#6B7280] dark:fill-[#9CA3AF] text-[10px] font-medium"
               >
                 {formatDateLabel(d.date)}
               </text>
@@ -248,7 +248,7 @@ export function DonutChart({ slices, centerLabel = 'Total' }: DonutChartProps) {
 
   if (total === 0) {
     return (
-      <div className="h-48 flex items-center justify-center text-xs text-[#54625A] dark:text-[#C5D4C9]">
+      <div className="h-48 flex items-center justify-center text-xs text-[#6B7280] dark:text-[#D1D5DB]">
         No distribution records logged.
       </div>
     );
@@ -312,10 +312,10 @@ export function DonutChart({ slices, centerLabel = 'Total' }: DonutChartProps) {
 
         {/* Center label */}
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center">
-          <span className="text-2xl font-bold font-mono text-[#202522] dark:text-[#F5F2EA] leading-none">
+          <span className="text-2xl font-bold font-mono text-[#111827] dark:text-[#F9FAFB] leading-none">
             {hoverIndex !== null ? slices[hoverIndex].value : total}
           </span>
-          <span className="text-[11px] font-medium text-[#54625A] dark:text-[#C5D4C9] mt-0.5 truncate max-w-[90px]">
+          <span className="text-[11px] font-medium text-[#6B7280] dark:text-[#D1D5DB] mt-0.5 truncate max-w-[90px]">
             {hoverIndex !== null ? slices[hoverIndex].label : centerLabel}
           </span>
         </div>
@@ -331,7 +331,7 @@ export function DonutChart({ slices, centerLabel = 'Total' }: DonutChartProps) {
             <div
               key={i}
               className={`flex items-center justify-between p-1.5 rounded-lg transition-colors cursor-pointer ${
-                isHovered ? 'bg-[#ECE7DB] dark:bg-[#1C2823]' : 'hover:bg-[#FAF8F5] dark:hover:bg-[#141C18]'
+                isHovered ? 'bg-[#F3F4F6] dark:bg-[#273548]' : 'hover:bg-[#F9FAFB] dark:hover:bg-[#273548]/60'
               }`}
               onMouseEnter={() => setHoverIndex(i)}
               onMouseLeave={() => setHoverIndex(null)}
@@ -341,11 +341,11 @@ export function DonutChart({ slices, centerLabel = 'Total' }: DonutChartProps) {
                   className="w-3 h-3 rounded-full shrink-0"
                   style={{ backgroundColor: slice.color }}
                 />
-                <span className="text-[#202522] dark:text-[#F5F2EA] font-medium truncate">{slice.label}</span>
+                <span className="text-[#111827] dark:text-[#F9FAFB] font-medium truncate">{slice.label}</span>
               </div>
               <div className="flex items-center gap-2 shrink-0 font-mono text-[11px]">
-                <span className="text-[#202522] dark:text-[#F5F2EA] font-semibold">{slice.value}</span>
-                <span className="text-[#54625A] dark:text-[#C5D4C9] w-10 text-right">{percent}%</span>
+                <span className="text-[#111827] dark:text-[#F9FAFB] font-semibold">{slice.value}</span>
+                <span className="text-[#6B7280] dark:text-[#9CA3AF] w-10 text-right">{percent}%</span>
               </div>
             </div>
           );
@@ -375,7 +375,7 @@ export function HorizontalBarChart({ items, valueSuffix = '' }: HorizontalBarCha
 
   if (!items || items.length === 0) {
     return (
-      <div className="h-32 flex items-center justify-center text-xs text-[#54625A] dark:text-[#C5D4C9]">
+      <div className="h-32 flex items-center justify-center text-xs text-[#6B7280] dark:text-[#D1D5DB]">
         No comparative breakdown logged.
       </div>
     );
@@ -388,23 +388,23 @@ export function HorizontalBarChart({ items, valueSuffix = '' }: HorizontalBarCha
         return (
           <div key={idx} className="space-y-1 text-xs">
             <div className="flex items-center justify-between">
-              <span className="font-medium text-[#202522] dark:text-[#F5F2EA] truncate pr-2">{item.label}</span>
-              <span className="font-mono font-semibold text-[#202522] dark:text-[#F5F2EA] shrink-0">
+              <span className="font-medium text-[#111827] dark:text-[#F9FAFB] truncate pr-2">{item.label}</span>
+              <span className="font-mono font-semibold text-[#111827] dark:text-[#F9FAFB] shrink-0">
                 {item.value} {valueSuffix}
               </span>
             </div>
 
-            <div className="h-2 w-full bg-[#ECE7DB] dark:bg-[#1C2823] rounded-full overflow-hidden border border-[#DED8CB] dark:border-[#283931]">
+            <div className="h-2 w-full bg-[#F3F4F6] dark:bg-[#273548] rounded-full overflow-hidden border border-[#E5E7EB] dark:border-[#374151]">
               <div
                 className="h-full rounded-full transition-all duration-500"
                 style={{
                   width: `${percent}%`,
-                  backgroundColor: item.colorHex || '#173D32',
+                  backgroundColor: item.colorHex || 'var(--color-chart-brand)',
                 }}
               />
             </div>
 
-            {item.subLabel && <p className="text-[11px] text-[#54625A] dark:text-[#C5D4C9]">{item.subLabel}</p>}
+            {item.subLabel && <p className="text-[11px] text-[#6B7280] dark:text-[#9CA3AF]">{item.subLabel}</p>}
           </div>
         );
       })}

@@ -265,13 +265,13 @@ export function OfficialWorkspacePage() {
   if (!authLoading && (!isAuthenticated || !isOfficial)) {
     return (
       <Container size="md" className="py-12 space-y-6">
-        <Card className="border-[#DED8CB] dark:border-[#283931]">
+        <Card className="border-[#E5E7EB] dark:border-[#374151]">
           <CardHeader>
             <CardTitle className="text-[#9C6D19] dark:text-[#E8C07D]">Official Access Restricted</CardTitle>
             <CardDescription>Government Official credentials required.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-sm text-[#4A5750] dark:text-[#A8BFAE]">
+            <p className="text-sm text-[#6B7280] dark:text-[#D1D5DB]">
               Only authorized government officials and municipal administrators can access field progress tracking, inspection records, and resolution management.
             </p>
             <Button variant="primary" onClick={() => navigate('/login')}>
@@ -286,26 +286,23 @@ export function OfficialWorkspacePage() {
   const deptLabel = user?.department?.name || 'Assigned Municipal Department';
 
   return (
-    <Container size="lg" className="space-y-8">
-      {/* Page Heading */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <PageHeading
-          title={t('nav.fieldOps')}
-          description={`Logged as ${user?.name} • ${deptLabel} • ${totalCount} grievances`}
-          badge={
-            <Badge variant="warning" size="md">
-              {t('roles.official')}
-            </Badge>
-          }
-        />
-        <Button
-          variant="outline"
-          onClick={() => fetchOfficialComplaints()}
-          className="shrink-0 text-xs"
-        >
-          {t('adminSystem.refreshBtn')}
-        </Button>
-      </div>
+    <Container size="xl" className="space-y-8">
+      {/* Standardized Page Header */}
+      <PageHeading
+        title={t('nav.fieldOps')}
+        description={`Logged as ${user?.name} • ${deptLabel} • ${totalCount} grievances`}
+        className="mb-0"
+        badge={
+          <Badge variant="warning" size="md">
+            {t('roles.official')}
+          </Badge>
+        }
+        actions={
+          <Button variant="outline" size="sm" onClick={() => fetchOfficialComplaints()}>
+            {t('adminSystem.refreshBtn')}
+          </Button>
+        }
+      />
 
       {successMsg && (
         <Alert variant="success" title="Action Completed">
@@ -320,19 +317,20 @@ export function OfficialWorkspacePage() {
       )}
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-[#DED8CB] dark:border-[#283931]">
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-[#E5E7EB] dark:border-[#374151]">
         {['ALL', 'ASSIGNED', 'IN_PROGRESS', 'RESOLVED', 'REOPENED', 'VERIFIED'].map((status) => (
           <button
             key={status}
             type="button"
+            data-active={statusFilter === status}
             onClick={() => {
               setStatusFilter(status);
               setPage(1);
             }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors cursor-pointer ${
+            className={`civora-liquid-tab px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap ${
               statusFilter === status
-                ? 'bg-[#173D32] text-[#F4F0E6] font-semibold shadow-xs'
-                : 'text-[#4A5750] dark:text-[#A8BFAE] hover:text-[#202522] dark:hover:text-[#E8F0EC] hover:bg-[#ECE7DB] dark:hover:bg-[#1D2A25]'
+                ? 'font-semibold'
+                : 'text-[#6B7280] dark:text-[#D1D5DB]'
             }`}
           >
             {status.replace('_', ' ')}
@@ -344,7 +342,7 @@ export function OfficialWorkspacePage() {
       {loading ? (
         <div className="py-16 flex flex-col items-center justify-center">
           <LoadingIndicator size="lg" label="Loading department queue" />
-          <span className="text-xs text-[#54625A] dark:text-[#C5D4C9] mt-3">Retrieving assigned departmental complaints...</span>
+          <span className="text-xs text-[#6B7280] dark:text-[#D1D5DB] mt-3">Retrieving assigned departmental complaints...</span>
         </div>
       ) : errorMsg ? (
         <div className="py-8 space-y-4">
@@ -371,7 +369,7 @@ export function OfficialWorkspacePage() {
           {complaints.map((c) => (
             <Card
               key={c.id}
-              className={`border-[#DED8CB] dark:border-[#283931] hover:border-[#C2BAA8] dark:hover:border-[#3E564A] transition-colors ${
+              className={`border-[#E5E7EB] dark:border-[#374151] hover:border-[#D1D5DB] dark:hover:border-[#3E564A] transition-colors ${
                 c.status === 'REOPENED' ? 'border-[#9C6D19]/50' : ''
               }`}
             >
@@ -379,7 +377,7 @@ export function OfficialWorkspacePage() {
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                   <div className="space-y-2 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-mono text-xs font-semibold text-[#173D32] dark:text-[#7BC4B2] bg-[#ECE7DB] dark:bg-[#1D2A25] px-2.5 py-0.5 rounded border border-[#DED8CB] dark:border-[#283931]">
+                      <span className="font-mono text-xs font-semibold text-[#0B3D2E] dark:text-[#34D399] bg-[#F3F4F6] dark:bg-[#273548] px-2.5 py-0.5 rounded border border-[#E5E7EB] dark:border-[#374151]">
                         {c.trackingId}
                       </span>
                       <Badge variant={getStatusBadgeVariant(c.status)} size="sm" hasDot>
@@ -420,7 +418,7 @@ export function OfficialWorkspacePage() {
                               ? 'bg-[#B94B3B]/10 text-[#9C3B2D] dark:text-[#F39182] border-[#9C3B2D]/30'
                               : (c as any).sla.slaStatus === 'APPROACHING_DEADLINE'
                                 ? 'bg-[#FEF6E9] text-[#854F0B] dark:text-[#F3B768] border-[#854F0B]/30'
-                                : 'bg-[#173D32]/10 text-[#173D32] dark:text-[#7BC4B2] border-[#173D32]/30'
+                                : 'bg-[#0B3D2E]/10 text-[#0B3D2E] dark:text-[#34D399] border-[#0B3D2E]/30'
                           }`}
                         >
                           Target:{' '}
@@ -430,15 +428,15 @@ export function OfficialWorkspacePage() {
                           })}
                         </span>
                       )}
-                      <span className="text-xs text-[#54625A] dark:text-[#C5D4C9]">• {c.category?.name || 'Category'}</span>
+                      <span className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">• {c.category?.name || 'Category'}</span>
                     </div>
 
-                    <h3 className="text-base font-bold font-heading text-[#202522] dark:text-[#F5F2EA]">{c.title}</h3>
-                    <p className="text-xs text-[#3E4B44] dark:text-[#C5D4C9] leading-relaxed">{c.description}</p>
+                    <h3 className="text-base font-bold font-heading text-[#111827] dark:text-[#F9FAFB]">{c.title}</h3>
+                    <p className="text-xs text-[#374151] dark:text-[#D1D5DB] leading-relaxed">{c.description}</p>
 
                     {c.aiFindings?.verificationSummary && (
-                      <div className="p-2.5 rounded-lg bg-[#ECE7DB]/60 dark:bg-[#1D2A25]/60 border border-[#DED8CB] dark:border-[#283931] text-xs space-y-1">
-                        <div className="flex items-center justify-between text-[#173D32] dark:text-[#7BC4B2] font-semibold text-[11px]">
+                      <div className="p-2.5 rounded-lg bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151] text-xs space-y-1">
+                        <div className="flex items-center justify-between text-[#0B3D2E] dark:text-[#34D399] font-semibold text-[11px]">
                           <span>AI Integrity Findings</span>
                           {c.aiFindings.fraudIndicators && c.aiFindings.fraudIndicators.length > 0 && (
                             <span className="text-amber-600 dark:text-amber-400 font-mono">
@@ -446,30 +444,30 @@ export function OfficialWorkspacePage() {
                             </span>
                           )}
                         </div>
-                        <p className="text-[#3E4B44] dark:text-[#C5D4C9] text-[11px] leading-relaxed">
+                        <p className="text-[#374151] dark:text-[#D1D5DB] text-[11px] leading-relaxed">
                           {c.aiFindings.verificationSummary}
                         </p>
                       </div>
                     )}
 
                     {c.status === 'REOPENED' && (
-                      <div className="p-2.5 rounded-lg bg-[#FEF6E9] dark:bg-[#1D2A25] border border-[#854F0B]/40 text-xs text-[#854F0B] dark:text-[#F3B768]">
+                      <div className="p-2.5 rounded-lg bg-[#FEF6E9] dark:bg-[#273548] border border-[#854F0B]/40 text-xs text-[#854F0B] dark:text-[#F3B768]">
                         ⚠️ Reopened by citizen — requires re-inspection or additional remediation.
                       </div>
                     )}
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-[#54625A] dark:text-[#C5D4C9] pt-2 border-t border-[#DED8CB] dark:border-[#283931]">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-[#6B7280] dark:text-[#D1D5DB] pt-2 border-t border-[#E5E7EB] dark:border-[#374151]">
                       <div className="flex items-center gap-1.5">
-                        <MapPinIcon className="w-3.5 h-3.5 text-[#173D32] dark:text-[#7BC4B2] shrink-0" />
+                        <MapPinIcon className="w-3.5 h-3.5 text-[#0B3D2E] dark:text-[#34D399] shrink-0" />
                         <span>
-                          <strong className="text-[#202522] dark:text-[#F5F2EA]">Location:</strong> {c.locationAddress} ({c.locality})
-                          {c.ward && <span className="block text-[11px] text-[#173D32] dark:text-[#7BC4B2] font-medium">Ward: {c.ward}</span>}
+                          <strong className="text-[#111827] dark:text-[#F9FAFB]">Location:</strong> {c.locationAddress} ({c.locality})
+                          {c.ward && <span className="block text-[11px] text-[#0B3D2E] dark:text-[#34D399] font-medium">Ward: {c.ward}</span>}
                         </span>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <BuildingIcon className="w-3.5 h-3.5 text-[#854F0B] dark:text-[#F3B768] shrink-0" />
                         <span>
-                          <strong className="text-[#202522] dark:text-[#F5F2EA]">Department:</strong> {c.assignedDepartment?.name || deptLabel}
+                          <strong className="text-[#111827] dark:text-[#F9FAFB]">Department:</strong> {c.assignedDepartment?.name || deptLabel}
                         </span>
                       </div>
                     </div>
@@ -569,8 +567,8 @@ export function OfficialWorkspacePage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between pt-4 border-t border-[#DED8CB] dark:border-[#283931] text-xs">
-              <span className="text-[#54625A] dark:text-[#C5D4C9]">
+            <div className="flex items-center justify-between pt-4 border-t border-[#E5E7EB] dark:border-[#374151] text-xs">
+              <span className="text-[#6B7280] dark:text-[#D1D5DB]">
                 Page {page} of {totalPages}
               </span>
               <div className="flex items-center gap-2">
@@ -599,13 +597,13 @@ export function OfficialWorkspacePage() {
       {/* Modal: Log Progress Update */}
       {activeModal === 'PROGRESS' && selectedComplaint && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <Card className="max-w-lg w-full border-[#DED8CB] dark:border-[#283931] shadow-2xl">
-            <CardHeader className="flex flex-row items-center justify-between border-b border-[#DED8CB] dark:border-[#283931] pb-3">
+          <Card className="max-w-lg w-full border-[#E5E7EB] dark:border-[#374151] shadow-2xl">
+            <CardHeader className="flex flex-row items-center justify-between border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
               <div>
                 <CardTitle className="font-heading">Log Official Progress Update</CardTitle>
                 <CardDescription>Tracking ID: {selectedComplaint.trackingId}</CardDescription>
               </div>
-              <button type="button" onClick={resetForms} className="text-[#54625A] hover:text-[#202522] dark:text-[#C5D4C9] dark:hover:text-[#E8F0EC] p-1">
+              <button type="button" aria-label="Close dialog" onClick={resetForms} className="civora-liquid-btn civora-liquid-btn--ghost p-1.5 rounded-lg">
                 <CloseIcon className="w-5 h-5" />
               </button>
             </CardHeader>
@@ -654,7 +652,7 @@ export function OfficialWorkspacePage() {
                     id="prog-target-date"
                     value={progressActionDate}
                     onChange={(e) => setProgressActionDate(e.target.value)}
-                    className="w-full rounded-lg bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] text-xs text-[#202522] dark:text-[#E8F0EC] p-2.5 focus:border-[#173D32] focus:outline-none"
+                    className="w-full rounded-lg bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] text-xs text-[#111827] dark:text-[#F9FAFB] p-2.5 focus:border-[#0B3D2E] focus:outline-none"
                   />
                 </FormField>
 
@@ -664,14 +662,14 @@ export function OfficialWorkspacePage() {
                     id="prog-internal"
                     checked={progressIsInternal}
                     onChange={(e) => setProgressIsInternal(e.target.checked)}
-                    className="rounded border-[#DED8CB] dark:border-[#283931] bg-white dark:bg-[#16201C] text-[#173D32] focus:ring-[#173D32]"
+                    className="rounded border-[#E5E7EB] dark:border-[#374151] bg-white dark:bg-[#1F2937] text-[#0B3D2E] accent-[#0B3D2E] dark:accent-[#34D399] focus:ring-[#0B3D2E] dark:focus:ring-[#34D399]"
                   />
-                  <label htmlFor="prog-internal" className="text-xs text-[#4A5750] dark:text-[#A8BFAE]">
+                  <label htmlFor="prog-internal" className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
                     Mark as Internal Department Memo (hidden from citizen public view)
                   </label>
                 </div>
 
-                <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#DED8CB] dark:border-[#283931]">
+                <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#E5E7EB] dark:border-[#374151]">
                   <Button type="button" variant="ghost" onClick={resetForms} disabled={actionLoading}>
                     Cancel
                   </Button>
@@ -688,13 +686,13 @@ export function OfficialWorkspacePage() {
       {/* Modal: Log Site Inspection */}
       {activeModal === 'INSPECTION' && selectedComplaint && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <Card className="max-w-lg w-full border-[#DED8CB] dark:border-[#283931] shadow-2xl">
-            <CardHeader className="flex flex-row items-center justify-between border-b border-[#DED8CB] dark:border-[#283931] pb-3">
+          <Card className="max-w-lg w-full border-[#E5E7EB] dark:border-[#374151] shadow-2xl">
+            <CardHeader className="flex flex-row items-center justify-between border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
               <div>
                 <CardTitle className="font-heading">Log Site Inspection Findings</CardTitle>
                 <CardDescription>Tracking ID: {selectedComplaint.trackingId}</CardDescription>
               </div>
-              <button type="button" onClick={resetForms} className="text-[#54625A] hover:text-[#202522] dark:text-[#C5D4C9] dark:hover:text-[#E8F0EC] p-1">
+              <button type="button" aria-label="Close dialog" onClick={resetForms} className="civora-liquid-btn civora-liquid-btn--ghost p-1.5 rounded-lg">
                 <CloseIcon className="w-5 h-5" />
               </button>
             </CardHeader>
@@ -743,7 +741,7 @@ export function OfficialWorkspacePage() {
                   />
                 </FormField>
 
-                <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#DED8CB] dark:border-[#283931]">
+                <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#E5E7EB] dark:border-[#374151]">
                   <Button type="button" variant="ghost" onClick={resetForms} disabled={actionLoading}>
                     Cancel
                   </Button>
@@ -760,19 +758,22 @@ export function OfficialWorkspacePage() {
       {/* Modal: Register & Manage Evidence */}
       {activeModal === 'EVIDENCE' && selectedComplaint && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="max-w-4xl w-full max-h-[92vh] overflow-y-auto bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] rounded-2xl shadow-2xl p-6 relative">
-            <button
-              type="button"
-              onClick={resetForms}
-              className="absolute top-4 right-4 text-[#54625A] hover:text-[#202522] dark:text-[#C5D4C9] dark:hover:text-[#E8F0EC] p-1 rounded-lg"
-            >
-              <CloseIcon className="w-5 h-5" />
-            </button>
+          <div className="max-w-4xl w-full max-h-[92vh] overflow-y-auto bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-2xl shadow-2xl p-6 relative">
+            <div className="absolute top-4 right-4">
+              <button
+                type="button"
+                aria-label="Close dialog"
+                onClick={resetForms}
+                className="civora-liquid-btn civora-liquid-btn--ghost p-1.5 rounded-lg"
+              >
+                <CloseIcon className="w-5 h-5" />
+              </button>
+            </div>
             <div className="mb-4">
-              <span className="text-xs font-mono font-bold text-[#173D32] dark:text-[#7BC4B2] bg-[#ECE7DB] dark:bg-[#1D2A25] px-2.5 py-0.5 rounded border border-[#DED8CB] dark:border-[#283931]">
+              <span className="text-xs font-mono font-bold text-[#0B3D2E] dark:text-[#34D399] bg-[#F3F4F6] dark:bg-[#273548] px-2.5 py-0.5 rounded border border-[#E5E7EB] dark:border-[#374151]">
                 {selectedComplaint.trackingId}
               </span>
-              <h3 className="text-base font-bold font-heading text-[#202522] dark:text-[#E8F0EC] mt-1">{selectedComplaint.title}</h3>
+              <h3 className="text-base font-bold font-heading text-[#111827] dark:text-[#F9FAFB] mt-1">{selectedComplaint.title}</h3>
             </div>
             <EvidenceSection
               complaintId={selectedComplaint.id}
@@ -788,13 +789,13 @@ export function OfficialWorkspacePage() {
       {/* Modal: Submit Official Resolution */}
       {activeModal === 'RESOLUTION' && selectedComplaint && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <Card className="max-w-lg w-full border-[#DED8CB] dark:border-[#283931] shadow-2xl">
-            <CardHeader className="flex flex-row items-center justify-between border-b border-[#DED8CB] dark:border-[#283931] pb-3">
+          <Card className="max-w-lg w-full border-[#E5E7EB] dark:border-[#374151] shadow-2xl">
+            <CardHeader className="flex flex-row items-center justify-between border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
               <div>
-                <CardTitle className="text-[#1E6B52] dark:text-[#52B79A] font-heading">Submit Official Resolution</CardTitle>
+                <CardTitle className="text-[#1E6B52] dark:text-[#34D399] font-heading">Submit Official Resolution</CardTitle>
                 <CardDescription>Tracking ID: {selectedComplaint.trackingId}</CardDescription>
               </div>
-              <button type="button" onClick={resetForms} className="text-[#54625A] hover:text-[#202522] dark:text-[#C5D4C9] dark:hover:text-[#E8F0EC] p-1">
+              <button type="button" aria-label="Close dialog" onClick={resetForms} className="civora-liquid-btn civora-liquid-btn--ghost p-1.5 rounded-lg">
                 <CloseIcon className="w-5 h-5" />
               </button>
             </CardHeader>
@@ -820,15 +821,14 @@ export function OfficialWorkspacePage() {
                   />
                 </FormField>
 
-                <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#DED8CB] dark:border-[#283931]">
+                <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#E5E7EB] dark:border-[#374151]">
                   <Button type="button" variant="ghost" onClick={resetForms} disabled={actionLoading}>
                     Cancel
                   </Button>
                   <Button
                     type="submit"
-                    variant="primary"
+                    variant="success"
                     disabled={actionLoading || !resolutionSummary.trim()}
-                    className="bg-[#1E6B52] hover:bg-[#17523F]"
                   >
                     {actionLoading ? 'Submitting...' : 'Submit Resolution'}
                   </Button>

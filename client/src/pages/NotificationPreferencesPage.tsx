@@ -113,13 +113,12 @@ export function NotificationPreferencesPage() {
   }
 
   return (
-    <Container size="md" className="py-8">
-      <div className="mb-6">
-        <PageHeading
-          title="Notification Settings"
-          description="Control which events trigger in-app alerts and manage external delivery preferences."
-        />
-      </div>
+    <Container size="md" className="space-y-6">
+      <PageHeading
+        title="Notification Settings"
+        description="Control which events trigger in-app alerts and manage external delivery preferences."
+        className="mb-0"
+      />
 
       {successMsg && (
         <div className="mb-6">
@@ -138,27 +137,27 @@ export function NotificationPreferencesPage() {
       )}
 
       {isLoading ? (
-        <Card className="p-8 text-center text-[#54625A] dark:text-[#C5D4C9]">Loading your preferences...</Card>
+        <Card className="p-8 text-center text-[#6B7280] dark:text-[#D1D5DB]">Loading your preferences...</Card>
       ) : (
         <form onSubmit={handleSave} className="space-y-6">
           {/* In-App Alerts Category */}
           <Card className="p-6">
-            <h2 className="text-base font-semibold text-[#202522] dark:text-[#F5F2EA] mb-1 flex items-center gap-2">
+            <h2 className="text-base font-semibold text-[#111827] dark:text-[#F9FAFB] mb-1 flex items-center gap-2">
               <BellIcon className="w-5 h-5 text-civic-400" />
               <span>Grievance Lifecycle Alerts</span>
             </h2>
-            <p className="text-xs text-[#54625A] dark:text-[#C5D4C9] mb-6">
+            <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] mb-6">
               Configure real-time in-app alerts for complaints you have lodged or are managing.
             </p>
 
-            <div className="space-y-5 divide-y divide-[#DED8CB] dark:divide-[#283931]">
+            <div className="space-y-5 divide-y divide-[#E5E7EB] dark:divide-[#374151]">
               {/* Status Changes */}
               <div className="pt-4 first:pt-0 flex items-start justify-between gap-4">
                 <div className="flex-1">
-                  <label htmlFor="statusChangeAlerts" className="text-sm font-medium text-[#202522] dark:text-[#F5F2EA] block cursor-pointer">
+                  <label htmlFor="statusChangeAlerts" className="text-sm font-medium text-[#111827] dark:text-[#F9FAFB] block cursor-pointer">
                     Status Transition Alerts
                   </label>
-                  <p className="text-xs text-[#54625A] dark:text-[#C5D4C9] mt-0.5">
+                  <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] mt-0.5">
                     Receive alerts when complaints move through Under Review, Assigned, In Progress, or Closed states.
                   </p>
                 </div>
@@ -167,17 +166,17 @@ export function NotificationPreferencesPage() {
                   type="checkbox"
                   checked={prefs.statusChangeAlerts}
                   onChange={() => handleToggle('statusChangeAlerts')}
-                  className="w-5 h-5 mt-1 rounded bg-[#ECE7DB] dark:bg-[#1D2A25] border-[#DED8CB] dark:border-[#283931] text-[#173D32] focus:ring-[#173D32] cursor-pointer"
+                  className="w-5 h-5 mt-1 rounded bg-[#F3F4F6] dark:bg-[#273548] border-[#E5E7EB] dark:border-[#374151] text-[#0B3D2E] accent-[#0B3D2E] dark:accent-[#34D399] focus:ring-[#0B3D2E] dark:focus:ring-[#34D399] cursor-pointer"
                 />
               </div>
 
               {/* Official Progress Updates */}
               <div className="pt-4 flex items-start justify-between gap-4">
                 <div className="flex-1">
-                  <label htmlFor="progressUpdateAlerts" className="text-sm font-medium text-[#202522] dark:text-[#F5F2EA] block cursor-pointer">
+                  <label htmlFor="progressUpdateAlerts" className="text-sm font-medium text-[#111827] dark:text-[#F9FAFB] block cursor-pointer">
                     Field Progress Updates
                   </label>
-                  <p className="text-xs text-[#54625A] dark:text-[#C5D4C9] mt-0.5">
+                  <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] mt-0.5">
                     Receive alerts when field officers log official milestone reports, photos, or technical notes.
                   </p>
                 </div>
@@ -186,17 +185,17 @@ export function NotificationPreferencesPage() {
                   type="checkbox"
                   checked={prefs.progressUpdateAlerts}
                   onChange={() => handleToggle('progressUpdateAlerts')}
-                  className="w-5 h-5 mt-1 rounded bg-[#ECE7DB] dark:bg-[#1D2A25] border-[#DED8CB] dark:border-[#283931] text-[#173D32] focus:ring-[#173D32] cursor-pointer"
+                  className="w-5 h-5 mt-1 rounded bg-[#F3F4F6] dark:bg-[#273548] border-[#E5E7EB] dark:border-[#374151] text-[#0B3D2E] accent-[#0B3D2E] dark:accent-[#34D399] focus:ring-[#0B3D2E] dark:focus:ring-[#34D399] cursor-pointer"
                 />
               </div>
 
               {/* Department Assignments */}
               <div className="pt-4 flex items-start justify-between gap-4">
                 <div className="flex-1">
-                  <label htmlFor="assignmentAlerts" className="text-sm font-medium text-[#202522] dark:text-[#F5F2EA] block cursor-pointer">
+                  <label htmlFor="assignmentAlerts" className="text-sm font-medium text-[#111827] dark:text-[#F9FAFB] block cursor-pointer">
                     Department Assignment & Reassignment
                   </label>
-                  <p className="text-xs text-[#54625A] dark:text-[#C5D4C9] mt-0.5">
+                  <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] mt-0.5">
                     Notifies citizens when complaints are assigned to municipal bodies and alerts officers of new assignments.
                   </p>
                 </div>
@@ -205,17 +204,17 @@ export function NotificationPreferencesPage() {
                   type="checkbox"
                   checked={prefs.assignmentAlerts}
                   onChange={() => handleToggle('assignmentAlerts')}
-                  className="w-5 h-5 mt-1 rounded bg-[#ECE7DB] dark:bg-[#1D2A25] border-[#DED8CB] dark:border-[#283931] text-[#173D32] focus:ring-[#173D32] cursor-pointer"
+                  className="w-5 h-5 mt-1 rounded bg-[#F3F4F6] dark:bg-[#273548] border-[#E5E7EB] dark:border-[#374151] text-[#0B3D2E] accent-[#0B3D2E] dark:accent-[#34D399] focus:ring-[#0B3D2E] dark:focus:ring-[#34D399] cursor-pointer"
                 />
               </div>
 
               {/* Citizen-Official Messages */}
               <div className="pt-4 flex items-start justify-between gap-4">
                 <div className="flex-1">
-                  <label htmlFor="messageAlerts" className="text-sm font-medium text-[#202522] dark:text-[#F5F2EA] block cursor-pointer">
+                  <label htmlFor="messageAlerts" className="text-sm font-medium text-[#111827] dark:text-[#F9FAFB] block cursor-pointer">
                     Direct Grievance Inquiries & Messages
                   </label>
-                  <p className="text-xs text-[#54625A] dark:text-[#C5D4C9] mt-0.5">
+                  <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] mt-0.5">
                     Instant alerts when citizens or department officials send messages regarding active issues.
                   </p>
                 </div>
@@ -224,17 +223,17 @@ export function NotificationPreferencesPage() {
                   type="checkbox"
                   checked={prefs.messageAlerts}
                   onChange={() => handleToggle('messageAlerts')}
-                  className="w-5 h-5 mt-1 rounded bg-[#ECE7DB] dark:bg-[#1D2A25] border-[#DED8CB] dark:border-[#283931] text-[#173D32] focus:ring-[#173D32] cursor-pointer"
+                  className="w-5 h-5 mt-1 rounded bg-[#F3F4F6] dark:bg-[#273548] border-[#E5E7EB] dark:border-[#374151] text-[#0B3D2E] accent-[#0B3D2E] dark:accent-[#34D399] focus:ring-[#0B3D2E] dark:focus:ring-[#34D399] cursor-pointer"
                 />
               </div>
 
               {/* Resolution Verification */}
               <div className="pt-4 flex items-start justify-between gap-4">
                 <div className="flex-1">
-                  <label htmlFor="resolutionAlerts" className="text-sm font-medium text-[#202522] dark:text-[#F5F2EA] block cursor-pointer">
+                  <label htmlFor="resolutionAlerts" className="text-sm font-medium text-[#111827] dark:text-[#F9FAFB] block cursor-pointer">
                     Resolution Verification & Dispute Alerts
                   </label>
-                  <p className="text-xs text-[#54625A] dark:text-[#C5D4C9] mt-0.5">
+                  <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] mt-0.5">
                     Alerts when a complaint is marked resolved awaiting citizen confirmation, or reopened for rework.
                   </p>
                 </div>
@@ -243,7 +242,7 @@ export function NotificationPreferencesPage() {
                   type="checkbox"
                   checked={prefs.resolutionAlerts}
                   onChange={() => handleToggle('resolutionAlerts')}
-                  className="w-5 h-5 mt-1 rounded bg-[#ECE7DB] dark:bg-[#1D2A25] border-[#DED8CB] dark:border-[#283931] text-[#173D32] focus:ring-[#173D32] cursor-pointer"
+                  className="w-5 h-5 mt-1 rounded bg-[#F3F4F6] dark:bg-[#273548] border-[#E5E7EB] dark:border-[#374151] text-[#0B3D2E] accent-[#0B3D2E] dark:accent-[#34D399] focus:ring-[#0B3D2E] dark:focus:ring-[#34D399] cursor-pointer"
                 />
               </div>
             </div>
@@ -251,17 +250,17 @@ export function NotificationPreferencesPage() {
 
           {/* External Channel Delivery */}
           <Card className="p-6">
-            <h2 className="text-base font-semibold text-[#202522] dark:text-[#F5F2EA] mb-1">External Channels</h2>
-            <p className="text-xs text-[#54625A] dark:text-[#C5D4C9] mb-6">
+            <h2 className="text-base font-semibold text-[#111827] dark:text-[#F9FAFB] mb-1">External Channels</h2>
+            <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] mb-6">
               Configure secondary notification channels outside the Civora web app.
             </p>
 
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1">
-                <label htmlFor="emailNotifications" className="text-sm font-medium text-[#202522] dark:text-[#F5F2EA] block cursor-pointer">
+                <label htmlFor="emailNotifications" className="text-sm font-medium text-[#111827] dark:text-[#F9FAFB] block cursor-pointer">
                   Email Notifications
                 </label>
-                <p className="text-xs text-[#54625A] dark:text-[#C5D4C9] mt-0.5">
+                <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] mt-0.5">
                   Receive summary emails for critical lifecycle events when email delivery service is configured.
                 </p>
               </div>
@@ -270,16 +269,16 @@ export function NotificationPreferencesPage() {
                 type="checkbox"
                 checked={prefs.emailNotifications}
                 onChange={() => handleToggle('emailNotifications')}
-                className="w-5 h-5 mt-1 rounded bg-[#ECE7DB] dark:bg-[#1D2A25] border-[#DED8CB] dark:border-[#283931] text-[#173D32] focus:ring-[#173D32] cursor-pointer"
+                className="w-5 h-5 mt-1 rounded bg-[#F3F4F6] dark:bg-[#273548] border-[#E5E7EB] dark:border-[#374151] text-[#0B3D2E] accent-[#0B3D2E] dark:accent-[#34D399] focus:ring-[#0B3D2E] dark:focus:ring-[#34D399] cursor-pointer"
               />
             </div>
           </Card>
 
           {/* Mandatory Integrity Policy Alert */}
-          <div className="flex items-start gap-3 p-4 rounded-xl bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 border border-[#DED8CB] dark:border-[#283931] text-xs text-[#54625A] dark:text-[#C5D4C9]">
+          <div className="flex items-start gap-3 p-4 rounded-xl bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151] text-xs text-[#6B7280] dark:text-[#D1D5DB]">
             <InfoIcon className="w-5 h-5 text-civic-400 shrink-0 mt-0.5" />
             <p>
-              <strong className="text-[#3E4B44] dark:text-[#C5D4C9]">Public Accountability Guarantee:</strong> Critical audit events,
+              <strong className="text-[#374151] dark:text-[#D1D5DB]">Public Accountability Guarantee:</strong> Critical audit events,
               including official complaint tracking ID issuance and final resolution confirmations, will always be
               recorded in your in-app notification center to ensure full transparency.
             </p>

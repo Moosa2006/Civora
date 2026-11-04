@@ -238,14 +238,13 @@ export const NAVIGATION_CATALOG: NavItem[] = [
  */
 export function getRolePrimaryNav(role?: UserRole | null, isAuthenticated?: boolean): NavItem[] {
   if (!isAuthenticated || !role) {
-    // Visitor / Public navigation
+    // Visitor / Public navigation aligned with Homepage standard
     return [
       { id: 'home', label: 'Home', path: '/', translationKey: 'nav.home' },
       { id: 'transparency', label: 'Transparency', path: '/transparency', translationKey: 'nav.transparency' },
       { id: 'public-tenders', label: 'Tenders', path: '/tenders', translationKey: 'nav.publicTenders' },
-      { id: 'civic-map', label: 'Civic Map', path: '/map', translationKey: 'nav.civicMap' },
-      { id: 'track-complaint', label: 'Track Complaint', path: '/track', translationKey: 'nav.trackComplaint' },
-      { id: 'engagement', label: 'Engagement', path: '/engagement', translationKey: 'nav.engagement' },
+      { id: 'engagement', label: 'Civic Engagement', path: '/engagement', translationKey: 'nav.civicEngagement' },
+      { id: 'about-civora', label: 'About Civora', path: '/#about', translationKey: 'nav.aboutCivora' },
     ];
   }
 
@@ -285,10 +284,8 @@ export function getRolePrimaryNav(role?: UserRole | null, isAuthenticated?: bool
         { id: 'home', label: 'Home', path: '/', translationKey: 'nav.home' },
         { id: 'report-issue', label: 'Report Issue', path: '/report', translationKey: 'nav.reportIssue' },
         { id: 'my-complaints', label: 'My Complaints', path: '/my-complaints', translationKey: 'nav.myComplaints' },
-        { id: 'track-complaint', label: 'Track', path: '/track', translationKey: 'nav.trackComplaint' },
         { id: 'transparency', label: 'Transparency', path: '/transparency', translationKey: 'nav.transparency' },
-        { id: 'civic-map', label: 'Civic Map', path: '/map', translationKey: 'nav.civicMap' },
-        { id: 'engagement', label: 'Engagement', path: '/engagement', translationKey: 'nav.engagement' },
+        { id: 'engagement', label: 'Civic Engagement', path: '/engagement', translationKey: 'nav.civicEngagement' },
       ];
   }
 }
@@ -297,7 +294,12 @@ export function getRolePrimaryNav(role?: UserRole | null, isAuthenticated?: bool
  * Get dropdown / secondary items for roles that have grouped menus.
  */
 export function getRoleSecondaryNav(role?: UserRole | null, isAuthenticated?: boolean): NavItem[] {
-  if (!isAuthenticated || !role) return [];
+  if (!isAuthenticated || !role) {
+    return [
+      { id: 'civic-map', label: 'Civic Map', path: '/map', translationKey: 'nav.civicMap' },
+      { id: 'track-complaint', label: 'Track Complaint', path: '/track', translationKey: 'nav.trackComplaint' },
+    ];
+  }
 
   switch (role) {
     case 'CONTRACTOR':
@@ -325,6 +327,8 @@ export function getRoleSecondaryNav(role?: UserRole | null, isAuthenticated?: bo
     case 'CITIZEN':
       return [
         { id: 'public-tenders-view', label: 'Public Tenders', path: '/tenders', translationKey: 'nav.publicTenders' },
+        { id: 'civic-map', label: 'Civic Map', path: '/map', translationKey: 'nav.civicMap' },
+        { id: 'track-complaint', label: 'Track Complaint', path: '/track', translationKey: 'nav.trackComplaint' },
       ];
 
     default:

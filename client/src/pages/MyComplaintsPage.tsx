@@ -74,7 +74,7 @@ export function MyComplaintsPage() {
           description="View and manage issues you have reported across your neighborhood."
         />
 
-        <Card className="border-[#4F9B8B]/30">
+        <Card className="border-[#E5E7EB] dark:border-[#374151]">
           <CardHeader>
             <CardTitle>Sign In Required</CardTitle>
             <CardDescription>
@@ -82,7 +82,7 @@ export function MyComplaintsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-sm text-[#3E4B44] dark:text-[#C5D4C9]">
+            <p className="text-sm text-[#374151] dark:text-[#D1D5DB]">
               Please log in to your verified citizen profile to see your submitted complaints, inspection updates, and resolution statuses.
             </p>
             <div className="flex gap-3 pt-2">
@@ -114,39 +114,40 @@ export function MyComplaintsPage() {
   return (
     <Container size="lg" className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <PageHeading
-          title={t('myComplaints.title')}
-          description={`${user?.name || t('roles.citizen')} • ${totalCount} ${totalCount === 1 ? 'grievance' : 'grievances'}`}
-          badge={
-            <Badge variant="default" size="md">
-              {t('roles.citizen')}
-            </Badge>
-          }
-        />
-        <Button
-          variant="primary"
-          onClick={() => navigate('/report')}
-          className="shrink-0 cursor-pointer"
-        >
-          {t('myComplaints.fileComplaintBtn')}
-        </Button>
-      </div>
+      <PageHeading
+        title={t('myComplaints.title')}
+        description={`${user?.name || t('roles.citizen')} • ${totalCount} ${totalCount === 1 ? 'grievance' : 'grievances'}`}
+        badge={
+          <Badge variant="default" size="md">
+            {t('roles.citizen')}
+          </Badge>
+        }
+        actions={
+          <Button
+            variant="primary"
+            onClick={() => navigate('/report')}
+            className="shrink-0 cursor-pointer"
+          >
+            {t('myComplaints.fileComplaintBtn')}
+          </Button>
+        }
+      />
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-[#DED8CB] dark:border-[#283931]">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-[#E5E7EB] dark:border-[#374151]">
         {filterTabs.map((tab) => (
           <button
             key={tab.value}
             type="button"
+            data-active={statusFilter === tab.value}
             onClick={() => {
               setStatusFilter(tab.value);
               setPage(1);
             }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors cursor-pointer ${
+            className={`civora-liquid-tab px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap ${
               statusFilter === tab.value
-                ? 'bg-[#173D32] text-[#F4F0E6] font-semibold shadow-xs'
-                : 'text-[#54625A] dark:text-[#C5D4C9] hover:text-[#202522] dark:hover:text-[#F5F2EA] hover:bg-[#ECE7DB] dark:hover:bg-[#1D2A25]'
+                ? 'font-semibold'
+                : 'text-[#6B7280] dark:text-[#D1D5DB]'
             }`}
           >
             {tab.label}
@@ -169,7 +170,7 @@ export function MyComplaintsPage() {
       {loading ? (
         <div className="py-16 flex flex-col items-center justify-center">
           <LoadingIndicator size="lg" label="Loading complaints" />
-          <span className="text-xs text-[#54625A] dark:text-[#C5D4C9] mt-3">Loading your filed complaints...</span>
+          <span className="text-xs text-[#6B7280] dark:text-[#D1D5DB] mt-3">Loading your filed complaints...</span>
         </div>
       ) : complaints.length === 0 ? (
         /* Empty State */
@@ -195,48 +196,48 @@ export function MyComplaintsPage() {
               className={`transition-colors ${
                 c.status === 'RESOLVED'
                   ? 'border-[#1E6B52]/40 hover:border-[#1E6B52]/60'
-                  : 'hover:border-[#173D32]/40 dark:hover:border-[#7BC4B2]/40'
+                  : 'hover:border-[#0B3D2E]/40 dark:hover:border-[#34D399]/50'
               }`}
             >
               <CardContent className="p-5">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="space-y-1.5 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-mono text-xs font-bold text-[#1D584D] dark:text-[#7BC4B2] bg-[#4F9B8B]/12 dark:bg-[#1D3E37] px-2 py-0.5 rounded border border-[#4F9B8B]/30">
+                      <span className="font-mono text-xs font-bold text-[#0B3D2E] dark:text-[#34D399] bg-[#E5ECE8] dark:bg-[#34D399]/15 px-2 py-0.5 rounded border border-[#0B3D2E]/20 dark:border-[#34D399]/30">
                         {c.trackingId}
                       </span>
                       <Badge variant={getStatusBadgeVariant(c.status)} size="sm" hasDot>
                         {t(`status.${c.status}`) || c.status.replace('_', ' ')}
                       </Badge>
-                      <span className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
+                      <span className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
                         • {c.category?.name || 'General Civic Issue'}
                       </span>
                     </div>
 
-                    <h3 className="text-base font-semibold text-[#202522] dark:text-[#F5F2EA] hover:text-[#173D32] dark:hover:text-[#7BC4B2] transition-colors">
+                    <h3 className="text-base font-semibold text-[#111827] dark:text-[#F9FAFB] hover:text-[#0B3D2E] dark:hover:text-[#6EE7B7] transition-colors">
                       {c.title}
                     </h3>
 
-                    <p className="text-xs text-[#3E4B44] dark:text-[#C5D4C9] line-clamp-2">
+                    <p className="text-xs text-[#374151] dark:text-[#D1D5DB] line-clamp-2">
                       {c.description}
                     </p>
 
                     {c.status === 'RESOLVED' && (
-                      <div className="p-2 rounded bg-[#EDF5F1] dark:bg-[#11241C] border border-[#B6DBC7] dark:border-[#1E4936] text-xs text-[#18553F] dark:text-[#78C9A8]">
+                      <div className="p-2 rounded bg-[#EDF5F1] dark:bg-[#34D399]/12 border border-[#B6DBC7] dark:border-[#34D399]/35 text-xs text-[#18553F] dark:text-[#6EE7B7]">
                         ✓ Municipal work completed — awaiting your citizen verification.
                       </div>
                     )}
 
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#54625A] dark:text-[#C5D4C9] pt-1">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#6B7280] dark:text-[#D1D5DB] pt-1">
                       <span>
-                        <strong className="text-[#202522] dark:text-[#F5F2EA]">Location:</strong> {c.locality}
+                        <strong className="text-[#111827] dark:text-[#F9FAFB]">Location:</strong> {c.locality}
                       </span>
                       <span>
-                        <strong className="text-[#202522] dark:text-[#F5F2EA]">Lodged:</strong> {formatDate(c.createdAt)}
+                        <strong className="text-[#111827] dark:text-[#F9FAFB]">Lodged:</strong> {formatDate(c.createdAt)}
                       </span>
                       {c.assignedDepartment && (
                         <span>
-                          <strong className="text-[#202522] dark:text-[#F5F2EA]">Department:</strong>{' '}
+                          <strong className="text-[#111827] dark:text-[#F9FAFB]">Department:</strong>{' '}
                           {c.assignedDepartment.name}
                         </span>
                       )}
@@ -246,10 +247,10 @@ export function MyComplaintsPage() {
                   <div className="flex items-center gap-2 shrink-0 self-start md:self-center">
                     {c.status === 'RESOLVED' ? (
                       <Button
-                        variant="primary"
+                        variant="success"
                         size="sm"
                         onClick={() => navigate(`/track?id=${c.trackingId}`)}
-                        className="cursor-pointer text-xs bg-emerald-600 hover:bg-emerald-500"
+                        className="text-xs"
                       >
                         Verify Resolution
                       </Button>
@@ -258,7 +259,7 @@ export function MyComplaintsPage() {
                         variant="outline"
                         size="sm"
                         onClick={() => navigate(`/track?id=${c.trackingId}`)}
-                        className="cursor-pointer text-xs"
+                        className="text-xs"
                       >
                         Track Live
                       </Button>
@@ -271,8 +272,8 @@ export function MyComplaintsPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between pt-4 border-t border-[#DED8CB] dark:border-[#283931] text-xs">
-              <span className="text-[#54625A] dark:text-[#C5D4C9]">
+            <div className="flex items-center justify-between pt-4 border-t border-[#E5E7EB] dark:border-[#374151] text-xs">
+              <span className="text-[#6B7280] dark:text-[#D1D5DB]">
                 Page {page} of {totalPages}
               </span>
               <div className="flex items-center gap-2">

@@ -1,77 +1,87 @@
 /**
- * Civora Editorial Civic Identity Tokens
+ * Civora Unified Design System Tokens
  *
- * Visual System:
- * - Forest green (#173D32): Primary civic authority, trust, mature presence.
- * - Deep ink (#202522): Editorial typography, high contrast, clean legibility.
- * - Warm paper (#F4F0E6): Warm cream ground, anti-glare, civic documentation aesthetic.
- * - Sage (#A8BFAE): Restrained borders, secondary tags, subtle indicators.
- * - Brick accent (#B94B3B): Critical notifications, escalations, urgent SLA signals.
- * - Muted teal (#4F9B8B): Data clarity, verified milestones, positive civic progress.
- * - White & pure neutral surfaces: Highly readable forms, tables, and operational views.
+ * Light Mode (Homepage Reference):
+ * - Primary Background (#FFFFFF): Clean, modern white canvas across all pages.
+ * - Neutral Surfaces (#F9FAFB / #F3F4F6): Subtle neutral surfaces for cards, inputs, and grouped content.
+ * - Civora Brand Green (#0B3D2E / #0B6640): Primary actions, active indicators, and civic brand accents.
+ * - Neutral Ink (#111827 / #4B5563 / #6B7280): High-contrast headings and readable muted secondary copy.
+ * - Neutral Borders (#E5E7EB / #D1D5DB): Crisp, subtle structural dividers and card borders.
+ *
+ * Dark Mode (Dedicated Slate-Charcoal & Civora Emerald Palette):
+ * - Main Background (#111827) & Secondary Background (#182230): Calm slate canvas, never harsh pure black.
+ * - Card & Input Background (#1F2937) & Elevated Surfaces (#273548): Layered depth without green tinting.
+ * - Typography (#F9FAFB / #D1D5DB / #9CA3AF): Balanced off-white & cool neutral hierarchy (WCAG 2.2 AA).
+ * - Borders (#374151 / #4B5563): Subtle structural slate borders.
+ * - Civora Emerald Accents (#34D399 / #6EE7B7 / #0D7A58): Intentional civic green highlights & actions.
  */
 
 :root {
   /* Brand Tokens */
-  --color-brand: #173d32;
-  --color-brand-hover: #112f26;
-  --color-brand-active: #0c241d;
-  --color-brand-subtle: rgba(23, 61, 50, 0.08);
-  --color-brand-surface: #173d32;
-  --color-brand-text: #f4f0e6;
+  --color-brand: #0b3d2e;
+  --color-brand-hover: #072b20;
+  --color-brand-active: #051f17;
+  --color-brand-subtle: #e5ece8;
+  --color-brand-surface: #0b3d2e;
+  --color-brand-text: #ffffff;
 
   /* Typography / Ink Tokens */
-  --color-text-primary: #202522;
-  --color-text-secondary: #3e4b44;
-  --color-text-muted: #54625a;
-  --color-text-placeholder: #586860;
-  --color-text-link: #235c52;
-  --color-text-link-hover: #173d32;
+  --color-text-primary: #111827;
+  --color-text-secondary: #4b5563;
+  --color-text-muted: #6b7280;
+  --color-text-placeholder: #9ca3af;
+  --color-text-link: #0b6640;
+  --color-text-link-hover: #0b3d2e;
   --color-text-inverse: #ffffff;
 
   /* Surfaces & Canvas */
-  --color-background: #f4f0e6;
+  --color-background: #ffffff;
+  --color-background-secondary: #f9fafb;
   --color-surface: #ffffff;
-  --color-surface-card: #fdfbf7;
-  --color-surface-muted: #ece7db;
+  --color-surface-card: #ffffff;
+  --color-surface-muted: #f3f4f6;
   --color-surface-raised: #ffffff;
   --color-surface-overlay: #ffffff;
-  --color-surface-subtle: #f6f3eb;
+  --color-surface-subtle: #f9fafb;
+  --color-surface-input: #ffffff;
 
   /* Borders & Dividers */
-  --color-border: #ded8cb;
-  --color-border-subtle: #eae5d9;
-  --color-border-strong: #c2baa8;
-  --color-focus: #173d32;
+  --color-border: #e5e7eb;
+  --color-border-subtle: #f3f4f6;
+  --color-border-strong: #d1d5db;
+  --color-focus: #0b3d2e;
 
-  /* Restrained Accents */
-  --color-accent: #4f9b8b;
-  --color-accent-hover: #235c52;
-  --color-accent-text: #235c52;
-  --color-accent-subtle: rgba(79, 155, 139, 0.12);
-  --color-sage: #a8bfae;
-  --color-sage-subtle: rgba(168, 191, 174, 0.25);
-  --color-brick: #b94b3b;
-  --color-brick-hover: #9c3b2d;
-  --color-brick-text: #9c3b2d;
-  --color-brick-subtle: rgba(185, 75, 59, 0.12);
+  /* Restrained Accents & Charts */
+  --color-accent: #0b6640;
+  --color-accent-hover: #0b3d2e;
+  --color-accent-text: #0b6640;
+  --color-accent-subtle: rgba(11, 102, 64, 0.08);
+  --color-chart-brand: #0b3d2e;
+  --color-chart-secondary: #0b6640;
+  --color-chart-muted: #6b7280;
+  --color-sage: #9ca3af;
+  --color-sage-subtle: rgba(156, 163, 175, 0.16);
+  --color-brick: #b91c1c;
+  --color-brick-hover: #991b1b;
+  --color-brick-text: #b91c1c;
+  --color-brick-subtle: rgba(185, 28, 28, 0.08);
 
-  /* Status Tokens (WCAG 2.2 AA Verified on light ground) */
-  --color-success: #185541;
-  --color-success-bg: rgba(24, 85, 65, 0.09);
-  --color-success-border: rgba(24, 85, 65, 0.32);
+  /* Status Tokens (WCAG 2.2 AA Verified on white ground) */
+  --color-success: #065f46;
+  --color-success-bg: #ecfdf5;
+  --color-success-border: #a7f3d0;
 
-  --color-warning: #854f0b;
-  --color-warning-bg: rgba(133, 79, 11, 0.09);
-  --color-warning-border: rgba(133, 79, 11, 0.32);
+  --color-warning: #92400e;
+  --color-warning-bg: #fffbeb;
+  --color-warning-border: #fde68a;
 
-  --color-danger: #9c3b2d;
-  --color-danger-bg: rgba(156, 59, 45, 0.09);
-  --color-danger-border: rgba(156, 59, 45, 0.32);
+  --color-danger: #991b1b;
+  --color-danger-bg: #fef2f2;
+  --color-danger-border: #fecaca;
 
-  --color-info: #1d584d;
-  --color-info-bg: rgba(29, 88, 77, 0.09);
-  --color-info-border: rgba(29, 88, 77, 0.32);
+  --color-info: #0b3d2e;
+  --color-info-bg: #f0fdf4;
+  --color-info-border: #bbf7d0;
 
   /* Backward Compatibility Aliases */
   --civic-primary: var(--color-brand);
@@ -113,54 +123,83 @@
   --status-danger-text: var(--color-danger);
   --status-danger-border: var(--color-danger-border);
 
-  --status-neutral-bg: rgba(84, 98, 90, 0.09);
+  --status-neutral-bg: #f3f4f6;
   --status-neutral-text: var(--color-text-secondary);
   --status-neutral-border: var(--color-border);
 
-  --container-max-w: 76rem;
+  --container-max-w: 80rem;
 }
 
-/* Dark Theme Support (Compatible semantic overrides) */
-html[data-theme="dark"] {
-  --color-brand: #215748;
-  --color-brand-hover: #2b6d5b;
-  --color-brand-active: #35836d;
-  --color-brand-subtle: rgba(79, 155, 139, 0.16);
-  --color-brand-surface: #142a23;
-  --color-brand-text: #f4f0e6;
+/* Dedicated Dark Theme Palette */
+html[data-theme="dark"],
+html.dark {
+  /* Brand Tokens */
+  --color-brand: #0d7a58;
+  --color-brand-hover: #0f8f68;
+  --color-brand-active: #0a6347;
+  --color-brand-subtle: rgba(52, 211, 153, 0.14);
+  --color-brand-surface: #182230;
+  --color-brand-text: #f9fafb;
 
-  --color-text-primary: #f5f2ea;
-  --color-text-secondary: #c5d4c9;
-  --color-text-muted: #94a79d;
-  --color-text-placeholder: #8fa196;
-  --color-text-link: #7bc4b2;
-  --color-text-link-hover: #ffffff;
-  --color-text-inverse: #101915;
+  /* Typography / Ink Tokens */
+  --color-text-primary: #f9fafb;
+  --color-text-secondary: #d1d5db;
+  --color-text-muted: #9ca3af;
+  --color-text-placeholder: #9ca3af;
+  --color-text-link: #34d399;
+  --color-text-link-hover: #6ee7b7;
+  --color-text-inverse: #111827;
 
-  --color-background: #0f1613;
-  --color-surface: #16201c;
-  --color-surface-card: #141c18;
-  --color-surface-muted: #1c2823;
-  --color-surface-raised: #1b2621;
-  --color-surface-overlay: #202e28;
-  --color-surface-subtle: #18231e;
+  /* Surfaces & Canvas */
+  --color-background: #111827;
+  --color-background-secondary: #182230;
+  --color-surface: #1f2937;
+  --color-surface-card: #1f2937;
+  --color-surface-muted: #273548;
+  --color-surface-raised: #273548;
+  --color-surface-overlay: #1f2937;
+  --color-surface-subtle: #182230;
+  --color-surface-input: #1f2937;
 
-  --color-border: #283931;
-  --color-border-subtle: #1f2c26;
-  --color-border-strong: #3d5449;
-  --color-focus: #4f9b8b;
+  /* Borders & Dividers */
+  --color-border: #374151;
+  --color-border-subtle: #273548;
+  --color-border-strong: #4b5563;
+  --color-focus: #34d399;
 
-  --color-accent: #7bc4b2;
-  --color-accent-hover: #a1d7cb;
-  --color-accent-text: #7bc4b2;
-  --color-accent-subtle: rgba(79, 155, 139, 0.22);
-  --color-sage: #a8bfae;
-  --color-brick: #f39182;
-  --color-brick-hover: #f7aba0;
-  --color-brick-text: #f39182;
+  /* Restrained Accents & Charts */
+  --color-accent: #34d399;
+  --color-accent-hover: #6ee7b7;
+  --color-accent-text: #34d399;
+  --color-accent-subtle: rgba(52, 211, 153, 0.15);
+  --color-chart-brand: #34d399;
+  --color-chart-secondary: #6ee7b7;
+  --color-chart-muted: #9ca3af;
+  --color-sage: #9ca3af;
+  --color-sage-subtle: rgba(156, 163, 175, 0.16);
+  --color-brick: #f87171;
+  --color-brick-hover: #fca5a5;
+  --color-brick-text: #fca5a5;
+  --color-brick-subtle: rgba(248, 113, 113, 0.14);
 
-  --color-success: #78c7ae;
-  --color-warning: #f3b768;
-  --color-danger: #f39182;
-  --color-info: #88d4c5;
+  /* Status Tokens (Balanced Dark Surfaces) */
+  --color-success: #6ee7b7;
+  --color-success-bg: rgba(16, 185, 129, 0.14);
+  --color-success-border: rgba(52, 211, 153, 0.32);
+
+  --color-warning: #fcd34d;
+  --color-warning-bg: rgba(245, 158, 11, 0.14);
+  --color-warning-border: rgba(251, 191, 36, 0.32);
+
+  --color-danger: #fca5a5;
+  --color-danger-bg: rgba(239, 68, 68, 0.14);
+  --color-danger-border: rgba(248, 113, 113, 0.32);
+
+  --color-info: #6ee7b7;
+  --color-info-bg: rgba(52, 211, 153, 0.12);
+  --color-info-border: rgba(52, 211, 153, 0.28);
+
+  --status-neutral-bg: #273548;
+  --status-neutral-text: #d1d5db;
+  --status-neutral-border: #374151;
 }

@@ -39,17 +39,17 @@ export class ErrorBoundary extends Component<Props, State> {
 
       return (
         <div className="min-h-[50vh] flex items-center justify-center p-6">
-          <Card className="max-w-lg w-full p-8 text-center space-y-5 shadow-2xl">
-            <div className="w-12 h-12 mx-auto rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center text-xl font-bold">
+          <Card className="max-w-lg w-full p-8 text-center space-y-5 shadow-lg">
+            <div className="w-12 h-12 mx-auto rounded-full bg-rose-50 dark:bg-rose-500/20 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-500/30 flex items-center justify-center text-xl font-bold">
               !
             </div>
             <div className="space-y-2">
-              <h2 className="text-xl font-bold text-[#202522] dark:text-[#F5F2EA]">Something went wrong</h2>
-              <p className="text-sm text-[#54625A] dark:text-[#C5D4C9]">
+              <h2 className="text-xl font-bold text-[#111827] dark:text-[#F9FAFB]">Something went wrong</h2>
+              <p className="text-sm text-[#4B5563] dark:text-[#D1D5DB]">
                 An unexpected interface error occurred while rendering this section. Our team has been notified.
               </p>
               {this.state.error && (
-                <div className="mt-3 p-3 bg-black/60 rounded-lg text-left text-xs font-mono text-rose-300 border border-rose-900/40 overflow-x-auto">
+                <div className="mt-3 p-3 bg-rose-50 dark:bg-[#182230] rounded-lg text-left text-xs font-mono text-rose-800 dark:text-[#FCA5A5] border border-rose-200 dark:border-rose-500/35 overflow-x-auto">
                   {this.state.error.message}
                 </div>
               )}

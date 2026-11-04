@@ -13,23 +13,23 @@ export interface AlertProps {
 const variantStyles: Record<AlertVariant, { container: string; icon: ReactNode }> = {
   info: {
     container:
-      'bg-[#EDF5F7] dark:bg-[#122329] border-[#B7D8DE] dark:border-[#224550] text-[#1D515E] dark:text-[#8FD0DE]',
-    icon: <InfoIcon className="w-5 h-5 text-[#2D6E62] dark:text-[#7BC4B2] shrink-0" />,
+      'bg-[#F9FAFB] dark:bg-[#1F2937] border-[#E5E7EB] dark:border-[#374151] text-[#374151] dark:text-[#D1D5DB]',
+    icon: <InfoIcon className="w-5 h-5 text-[#0B6640] dark:text-[#34D399] shrink-0" />,
   },
   success: {
     container:
-      'bg-[#EDF5F1] dark:bg-[#11241C] border-[#B6DBC7] dark:border-[#1E4936] text-[#18553F] dark:text-[#78C9A8]',
-    icon: <CheckCircleIcon className="w-5 h-5 text-[#1E6B52] dark:text-[#78C7AE] shrink-0" />,
+      'bg-emerald-50/70 dark:bg-[#34D399]/10 border-emerald-200 dark:border-[#34D399]/35 text-[#065F46] dark:text-[#6EE7B7]',
+    icon: <CheckCircleIcon className="w-5 h-5 text-[#0B6640] dark:text-[#34D399] shrink-0" />,
   },
   warning: {
     container:
-      'bg-[#FDF6ED] dark:bg-[#281D0E] border-[#F2D7A5] dark:border-[#533916] text-[#86510B] dark:text-[#F3BA6C]',
-    icon: <AlertTriangleIcon className="w-5 h-5 text-[#B26A15] dark:text-[#F3B768] shrink-0" />,
+      'bg-amber-50/80 dark:bg-amber-500/10 border-amber-200 dark:border-amber-500/35 text-[#92400E] dark:text-[#FCD34D]',
+    icon: <AlertTriangleIcon className="w-5 h-5 text-amber-700 dark:text-[#FBBF24] shrink-0" />,
   },
   error: {
     container:
-      'bg-[#FDF1EF] dark:bg-[#2A1310] border-[#EBB6AF] dark:border-[#5D221A] text-[#9A3526] dark:text-[#F39182]',
-    icon: <XCircleIcon className="w-5 h-5 text-[#B94B3B] dark:text-[#F39182] shrink-0" />,
+      'bg-red-50/80 dark:bg-rose-500/10 border-red-200 dark:border-rose-500/35 text-[#991B1B] dark:text-[#FCA5A5]',
+    icon: <XCircleIcon className="w-5 h-5 text-[#B91C1C] dark:text-[#F87171] shrink-0" />,
   },
 };
 
@@ -53,16 +53,16 @@ export function Alert({
     >
       <div className="mt-0.5">{icon}</div>
 
-      <div className="flex-1 text-sm leading-relaxed font-sans">
-        {title && <h4 className="font-semibold text-[#202522] dark:text-[#F5F2EA] mb-0.5 font-heading">{title}</h4>}
-        <div>{children}</div>
+      <div className="flex-1 text-base leading-relaxed font-sans">
+        {title && <h4 className="font-semibold text-[#111827] dark:text-[#F9FAFB] mb-1 font-sans text-base sm:text-lg">{title}</h4>}
+        <div className="text-sm sm:text-base">{children}</div>
       </div>
 
       {onDismiss && (
         <button
           type="button"
           onClick={onDismiss}
-          className="p-1 rounded-md text-[#54625A] hover:text-[#202522] dark:text-[#94A79D] dark:hover:text-[#F5F2EA] hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer"
+          className="civora-liquid-btn civora-liquid-btn--ghost p-1 rounded-md min-h-[28px] min-w-[28px]"
           aria-label="Dismiss alert"
         >
           <CloseIcon className="w-4 h-4" />

@@ -30,17 +30,17 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
           hasError && id ? `${id}-error` : id ? `${id}-helper` : undefined
         }
         className={`
-          w-full bg-white dark:bg-[#141C18] border rounded-lg px-3.5 py-2 text-sm text-[#202522] dark:text-[#F5F2EA] font-sans
+          w-full min-h-[44px] bg-white dark:bg-[#1F2937] border rounded-lg px-4 py-2.5 text-base text-[#111827] dark:text-[#F9FAFB] font-sans
           transition-colors duration-150 appearance-none cursor-pointer pr-10
-          focus:outline-none focus:ring-2 focus:ring-[#173D32] dark:focus:ring-[#4F9B8B] focus:border-transparent
-          disabled:bg-[#ECE7DB] dark:disabled:bg-[#0F1613] disabled:border-[#DED8CB] dark:disabled:border-[#283931] disabled:text-[#54625A] disabled:cursor-not-allowed
-          ${hasError ? 'border-[#9C3B2D] focus:ring-[#9C3B2D]' : 'border-[#C2BAA8] dark:border-[#3D5449] hover:border-[#173D32] dark:hover:border-[#7BC4B2]'}
+          focus:outline-none focus:ring-2 focus:ring-[#0B3D2E]/20 dark:focus:ring-[#34D399]/30 focus:border-[#0B3D2E] dark:focus:border-[#34D399]
+          disabled:bg-[#F9FAFB] dark:disabled:bg-[#182230] disabled:border-[#E5E7EB] dark:disabled:border-[#374151] disabled:text-[#6B7280] dark:disabled:text-[#9CA3AF] disabled:cursor-not-allowed
+          ${hasError ? 'border-[#B91C1C] dark:border-[#F87171] focus:ring-[#B91C1C]/20 dark:focus:ring-[#F87171]/30 focus:border-[#B91C1C] dark:focus:border-[#F87171]' : 'border-[#D1D5DB] dark:border-[#4B5563] hover:border-[#9CA3AF] dark:hover:border-[#6EE7B7]'}
           ${className}
         `.trim()}
         {...props}
       >
         {placeholder && (
-          <option value="" disabled className="text-[#586860] dark:text-[#94A79D] bg-white dark:bg-[#141C18]">
+          <option value="" disabled className="text-[#9CA3AF] dark:text-[#9CA3AF] bg-white dark:bg-[#1F2937]">
             {placeholder}
           </option>
         )}
@@ -50,7 +50,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
                 key={opt.value}
                 value={opt.value}
                 disabled={opt.disabled}
-                className="bg-white text-[#202522] dark:bg-[#141C18] dark:text-[#F5F2EA]"
+                className="bg-white text-[#111827] dark:bg-[#1F2937] dark:text-[#F9FAFB]"
               >
                 {opt.label}
               </option>
@@ -59,7 +59,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
       </select>
 
       {/* Custom dropdown arrow */}
-      <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-[#54625A] dark:text-[#94A79D]">
+      <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-[#6B7280] dark:text-[#9CA3AF]">
         <svg
           className="w-4 h-4"
           fill="none"

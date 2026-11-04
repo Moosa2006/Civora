@@ -405,8 +405,8 @@ export function SlaManagementPage() {
       <Container size="md" className="py-16">
         <Card className="text-center p-8 border-rose-500/30">
           <AlertTriangleIcon className="w-12 h-12 text-[#9C3B2D] dark:text-[#F39182] mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-[#202522] dark:text-[#F5F2EA] mb-2">Restricted Access</h2>
-          <p className="text-[#54625A] dark:text-[#C5D4C9] mb-6">
+          <h2 className="text-2xl font-bold text-[#111827] dark:text-[#F9FAFB] mb-2">Restricted Access</h2>
+          <p className="text-[#6B7280] dark:text-[#D1D5DB] mb-6">
             The Service-Level Agreement and Escalation Management workspace is strictly reserved for
             authorized municipal department staff and administrators.
           </p>
@@ -419,44 +419,41 @@ export function SlaManagementPage() {
   }
 
   return (
-    <Container size="lg" className="py-8 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-[#DED8CB] dark:border-[#283931] pb-6">
-        <div>
-          <PageHeading
-            title="Service-Level Agreements & Accountability"
-            description="Monitor complaint commitments, enforce overdue case resolution, and oversee department escalations."
-          />
-        </div>
-        <div className="flex items-center gap-3">
-          {isAdmin && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleTriggerEvaluation}
-              isLoading={evaluating}
-              className="flex items-center gap-2 border-[#DED8CB] dark:border-[#283931] hover:border-blue-500"
-            >
-              <RefreshCwIcon className="w-4 h-4" />
-              Evaluate Deadlines Now
-            </Button>
-          )}
-          {isAdmin && activeTab === 'POLICIES' && (
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => {
-                setModalError(null);
-                setShowCreatePolicyModal(true);
-              }}
-              className="flex items-center gap-2"
-            >
-              <PlusIcon className="w-4 h-4" />
-              Create SLA Policy
-            </Button>
-          )}
-        </div>
-      </div>
+    <Container size="xl" className="space-y-6">
+      {/* Standardized Page Header */}
+      <PageHeading
+        title="Service-Level Agreements & Accountability"
+        description="Monitor complaint commitments, enforce overdue case resolution, and oversee department escalations."
+        className="mb-0"
+        actions={
+          <>
+            {isAdmin && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleTriggerEvaluation}
+                isLoading={evaluating}
+                leftIcon={<RefreshCwIcon className="w-4 h-4" />}
+              >
+                Evaluate Deadlines Now
+              </Button>
+            )}
+            {isAdmin && activeTab === 'POLICIES' && (
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => {
+                  setModalError(null);
+                  setShowCreatePolicyModal(true);
+                }}
+                leftIcon={<PlusIcon className="w-4 h-4" />}
+              >
+                Create SLA Policy
+              </Button>
+            )}
+          </>
+        }
+      />
 
       {/* Global Notifications */}
       {successMsg && (
@@ -471,13 +468,13 @@ export function SlaManagementPage() {
       )}
 
       {/* Navigation Tabs */}
-      <div className="flex border-b border-[#DED8CB] dark:border-[#283931] gap-2 overflow-x-auto">
+      <div className="flex border-b border-[#E5E7EB] dark:border-[#374151] gap-2 overflow-x-auto pb-2">
         <button
+          type="button"
+          data-active={activeTab === 'ESCALATIONS'}
           onClick={() => setActiveTab('ESCALATIONS')}
-          className={`px-4 py-2.5 font-medium text-sm rounded-t-lg transition-colors border-b-2 flex items-center gap-2 whitespace-nowrap ${
-            activeTab === 'ESCALATIONS'
-              ? 'border-[#173D32] dark:border-[#7BC4B2] text-[#173D32] dark:text-[#7BC4B2] font-semibold bg-[#ECE7DB] dark:bg-[#1D2A25]'
-              : 'border-transparent text-[#54625A] dark:text-[#C5D4C9] hover:text-[#202522] dark:hover:text-[#E8F0EC] hover:bg-[#ECE7DB]/50 dark:hover:bg-[#1D2A25]/50'
+          className={`civora-liquid-tab px-4 py-2 font-medium text-xs sm:text-sm rounded-lg flex items-center gap-2 whitespace-nowrap ${
+            activeTab === 'ESCALATIONS' ? 'font-semibold' : 'text-[#6B7280] dark:text-[#D1D5DB]'
           }`}
         >
           <AlertTriangleIcon className="w-4 h-4" />
@@ -485,11 +482,11 @@ export function SlaManagementPage() {
         </button>
 
         <button
+          type="button"
+          data-active={activeTab === 'POLICIES'}
           onClick={() => setActiveTab('POLICIES')}
-          className={`px-4 py-2.5 font-medium text-sm rounded-t-lg transition-colors border-b-2 flex items-center gap-2 whitespace-nowrap ${
-            activeTab === 'POLICIES'
-              ? 'border-[#173D32] dark:border-[#7BC4B2] text-[#173D32] dark:text-[#7BC4B2] font-semibold bg-[#ECE7DB] dark:bg-[#1D2A25]'
-              : 'border-transparent text-[#54625A] dark:text-[#C5D4C9] hover:text-[#202522] dark:hover:text-[#E8F0EC] hover:bg-[#ECE7DB]/50 dark:hover:bg-[#1D2A25]/50'
+          className={`civora-liquid-tab px-4 py-2 font-medium text-xs sm:text-sm rounded-lg flex items-center gap-2 whitespace-nowrap ${
+            activeTab === 'POLICIES' ? 'font-semibold' : 'text-[#6B7280] dark:text-[#D1D5DB]'
           }`}
         >
           <ShieldCheckIcon className="w-4 h-4" />
@@ -497,11 +494,11 @@ export function SlaManagementPage() {
         </button>
 
         <button
+          type="button"
+          data-active={activeTab === 'EXTENSIONS'}
           onClick={() => setActiveTab('EXTENSIONS')}
-          className={`px-4 py-2.5 font-medium text-sm rounded-t-lg transition-colors border-b-2 flex items-center gap-2 whitespace-nowrap ${
-            activeTab === 'EXTENSIONS'
-              ? 'border-[#173D32] dark:border-[#7BC4B2] text-[#173D32] dark:text-[#7BC4B2] font-semibold bg-[#ECE7DB] dark:bg-[#1D2A25]'
-              : 'border-transparent text-[#54625A] dark:text-[#C5D4C9] hover:text-[#202522] dark:hover:text-[#E8F0EC] hover:bg-[#ECE7DB]/50 dark:hover:bg-[#1D2A25]/50'
+          className={`civora-liquid-tab px-4 py-2 font-medium text-xs sm:text-sm rounded-lg flex items-center gap-2 whitespace-nowrap ${
+            activeTab === 'EXTENSIONS' ? 'font-semibold' : 'text-[#6B7280] dark:text-[#D1D5DB]'
           }`}
         >
           <ClockIcon className="w-4 h-4" />
@@ -509,11 +506,11 @@ export function SlaManagementPage() {
         </button>
 
         <button
+          type="button"
+          data-active={activeTab === 'SCORECARD'}
           onClick={() => setActiveTab('SCORECARD')}
-          className={`px-4 py-2.5 font-medium text-sm rounded-t-lg transition-colors border-b-2 flex items-center gap-2 whitespace-nowrap ${
-            activeTab === 'SCORECARD'
-              ? 'border-[#173D32] dark:border-[#7BC4B2] text-[#173D32] dark:text-[#7BC4B2] font-semibold bg-[#ECE7DB] dark:bg-[#1D2A25]'
-              : 'border-transparent text-[#54625A] dark:text-[#C5D4C9] hover:text-[#202522] dark:hover:text-[#E8F0EC] hover:bg-[#ECE7DB]/50 dark:hover:bg-[#1D2A25]/50'
+          className={`civora-liquid-tab px-4 py-2 font-medium text-xs sm:text-sm rounded-lg flex items-center gap-2 whitespace-nowrap ${
+            activeTab === 'SCORECARD' ? 'font-semibold' : 'text-[#6B7280] dark:text-[#D1D5DB]'
           }`}
         >
           <BuildingIcon className="w-4 h-4" />
@@ -534,7 +531,7 @@ export function SlaManagementPage() {
       {!loading && activeTab === 'ESCALATIONS' && (
         <div className="space-y-6">
           {/* Filters */}
-          <div className="flex flex-wrap gap-4 items-center justify-between bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 p-4 rounded-xl border border-[#DED8CB] dark:border-[#283931]">
+          <div className="flex flex-wrap gap-4 items-center justify-between bg-[#F9FAFB] dark:bg-[#182230] p-4 rounded-xl border border-[#E5E7EB] dark:border-[#374151]">
             <div className="flex flex-wrap gap-3 items-center">
               <div className="w-48">
                 <Select
@@ -562,7 +559,7 @@ export function SlaManagementPage() {
               </div>
             </div>
 
-            <div className="text-sm text-[#54625A] dark:text-[#C5D4C9] font-medium">
+            <div className="text-sm text-[#6B7280] dark:text-[#D1D5DB] font-medium">
               Showing {escalations.length} escalated complaint{escalations.length === 1 ? '' : 's'}
             </div>
           </div>
@@ -587,14 +584,14 @@ export function SlaManagementPage() {
                         ? 'border-rose-500/40 bg-rose-500/5'
                         : esc.status === 'ACKNOWLEDGED'
                           ? 'border-amber-500/40 bg-amber-500/5'
-                          : 'border-[#DED8CB] dark:border-[#283931] bg-white dark:bg-[#16201C]'
+                          : 'border-[#E5E7EB] dark:border-[#374151] bg-white dark:bg-[#1F2937]'
                     }`}
                   >
                     <CardContent className="p-5">
                       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                         <div className="space-y-2 flex-1">
                           <div className="flex flex-wrap items-center gap-2">
-                            <span className="font-mono text-xs px-2 py-0.5 rounded bg-blue-900/40 text-blue-300 border border-blue-700/50">
+                            <span className="font-mono text-xs px-2 py-0.5 rounded bg-[#E5ECE8] text-[#0B3D2E] dark:bg-[#273548] dark:text-[#34D399] border border-[#0B3D2E]/20 dark:border-[#374151]">
                               {complaint?.trackingId || 'NO-TRACKING'}
                             </span>
 
@@ -623,38 +620,38 @@ export function SlaManagementPage() {
                             </Badge>
 
                             {isOverdue && (
-                              <span className="text-xs font-semibold px-2 py-0.5 rounded bg-red-900/50 text-red-300 border border-red-700/50">
+                              <span className="text-xs font-semibold px-2 py-0.5 rounded bg-red-50 dark:bg-red-900/50 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-700/50">
                                 Overdue Case
                               </span>
                             )}
                           </div>
 
-                          <h3 className="text-base font-semibold text-[#202522] dark:text-[#F5F2EA]">
+                          <h3 className="text-base font-semibold text-[#111827] dark:text-[#F9FAFB]">
                             {complaint?.title || 'Untitled Complaint'}
                           </h3>
 
-                          <div className="text-xs text-[#54625A] dark:text-[#C5D4C9] flex flex-wrap items-center gap-x-4 gap-y-1">
+                          <div className="text-xs text-[#6B7280] dark:text-[#D1D5DB] flex flex-wrap items-center gap-x-4 gap-y-1">
                             <span>
                               Department:{' '}
-                              <strong className="text-[#3E4B44] dark:text-[#C5D4C9]">
+                              <strong className="text-[#374151] dark:text-[#D1D5DB]">
                                 {complaint?.assignedDepartment?.name || 'Unassigned'}
                               </strong>
                             </span>
                             <span>
                               Official:{' '}
-                              <strong className="text-[#3E4B44] dark:text-[#C5D4C9]">
+                              <strong className="text-[#374151] dark:text-[#D1D5DB]">
                                 {complaint?.assignedOfficial?.name || 'Unassigned'}
                               </strong>
                             </span>
                             <span>
                               Trigger:{' '}
-                              <span className="text-amber-300 font-medium">
+                              <span className="text-amber-700 dark:text-amber-300 font-medium">
                                 {esc.triggerReason.replace(/_/g, ' ')}
                               </span>
                             </span>
                             <span>
                               Escalated:{' '}
-                              <span className="text-[#3E4B44] dark:text-[#C5D4C9]">
+                              <span className="text-[#374151] dark:text-[#D1D5DB]">
                                 {new Date(esc.createdAt).toLocaleDateString()}
                               </span>
                             </span>
@@ -662,8 +659,8 @@ export function SlaManagementPage() {
 
                           {/* Notes / Action Plan snippet */}
                           {esc.actionPlan && (
-                            <div className="mt-2 text-xs bg-[#ECE7DB]/60 dark:bg-[#1D2A25]/60 p-2.5 rounded-lg border border-[#DED8CB] dark:border-[#283931] text-[#3E4B44] dark:text-[#C5D4C9]">
-                              <span className="font-semibold text-blue-400 block mb-0.5">
+                            <div className="mt-2 text-xs bg-[#F9FAFB] dark:bg-[#182230] p-2.5 rounded-lg border border-[#E5E7EB] dark:border-[#374151] text-[#374151] dark:text-[#D1D5DB]">
+                              <span className="font-semibold text-[#0B3D2E] dark:text-[#34D399] block mb-0.5">
                                 Current Corrective Action Plan:
                               </span>
                               {esc.actionPlan}
@@ -716,7 +713,7 @@ export function SlaManagementPage() {
                           )}
 
                           {esc.status === 'RESOLVED' && (
-                            <div className="text-xs text-emerald-400 font-medium flex items-center gap-1">
+                            <div className="text-xs text-[#0B6640] dark:text-emerald-400 font-medium flex items-center gap-1">
                               <CheckCircleIcon className="w-4 h-4" />
                               Escalation Resolved
                             </div>
@@ -737,15 +734,15 @@ export function SlaManagementPage() {
       {/* ============================================================== */}
       {!loading && activeTab === 'POLICIES' && (
         <div className="space-y-6">
-          <div className="bg-[#ECE7DB]/60 dark:bg-[#1D2A25]/60 p-4 rounded-xl border border-[#DED8CB] dark:border-[#283931] text-xs text-[#54625A] dark:text-[#C5D4C9] space-y-1">
-            <span className="font-semibold text-[#202522] dark:text-[#E8F0EC] block text-sm mb-1">
+          <div className="bg-[#F9FAFB] dark:bg-[#182230] p-4 rounded-xl border border-[#E5E7EB] dark:border-[#374151] text-xs text-[#4B5563] dark:text-[#D1D5DB] space-y-1">
+            <span className="font-semibold text-[#111827] dark:text-[#F9FAFB] block text-sm mb-1">
               Deterministic Policy Precedence:
             </span>
             <p>1. Active policy matching both Category + Priority.</p>
             <p>2. Active policy matching Category with general priority.</p>
             <p>3. Active policy matching Priority with general category.</p>
             <p>4. Platform Default Policy (fallback).</p>
-            <p className="text-amber-400 pt-1">
+            <p className="text-amber-800 dark:text-amber-300 font-medium pt-1">
               Editing or deactivating a policy never rewrites existing complaint deadlines; historical
               commitments are permanently preserved in complaint snapshots.
             </p>
@@ -758,14 +755,14 @@ export function SlaManagementPage() {
                 className={`border transition-all flex flex-col justify-between ${
                   pol.isActive
                     ? pol.isDefault
-                      ? 'border-blue-500/40 bg-blue-950/10'
-                      : 'border-[#DED8CB] dark:border-[#283931] bg-[#ECE7DB]/70 dark:bg-[#1D2A25]/70'
-                    : 'border-[#DED8CB] dark:border-[#283931] bg-[#ECE7DB]/40 dark:bg-[#1D2A25]/40 opacity-75'
+                      ? 'border-[#0B3D2E]/35 bg-[#E5ECE8]/35 dark:bg-[#273548]'
+                      : 'border-[#E5E7EB] dark:border-[#374151] bg-white dark:bg-[#1F2937]'
+                    : 'border-[#E5E7EB] dark:border-[#374151] bg-[#F9FAFB] dark:bg-[#182230] opacity-75'
                 }`}
               >
                 <CardHeader>
                   <div className="flex items-center justify-between gap-2">
-                    <CardTitle className="text-base text-[#202522] dark:text-[#F5F2EA]">{pol.name}</CardTitle>
+                    <CardTitle className="text-base text-[#111827] dark:text-[#F9FAFB]">{pol.name}</CardTitle>
                     <div className="flex items-center gap-1">
                       {pol.isDefault && <Badge variant="info">Default</Badge>}
                       <Badge variant={pol.isActive ? 'success' : 'neutral'}>
@@ -774,43 +771,43 @@ export function SlaManagementPage() {
                     </div>
                   </div>
                   {pol.description && (
-                    <CardDescription className="text-xs text-[#54625A] dark:text-[#C5D4C9] line-clamp-2">
+                    <CardDescription className="text-xs text-[#6B7280] dark:text-[#D1D5DB] line-clamp-2">
                       {pol.description}
                     </CardDescription>
                   )}
                 </CardHeader>
 
                 <CardContent className="space-y-3 pt-0">
-                  <div className="text-xs space-y-1 text-[#3E4B44] dark:text-[#C5D4C9]">
-                    <div className="flex justify-between py-1 border-b border-[#DED8CB] dark:border-[#283931]">
-                      <span className="text-[#54625A] dark:text-[#C5D4C9]">Category:</span>
-                      <strong className="text-[#202522] dark:text-[#E8F0EC]">{pol.category?.name || 'All Categories'}</strong>
+                  <div className="text-xs space-y-1 text-[#374151] dark:text-[#D1D5DB]">
+                    <div className="flex justify-between py-1 border-b border-[#E5E7EB] dark:border-[#374151]">
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB]">Category:</span>
+                      <strong className="text-[#111827] dark:text-[#F9FAFB]">{pol.category?.name || 'All Categories'}</strong>
                     </div>
-                    <div className="flex justify-between py-1 border-b border-[#DED8CB] dark:border-[#283931]">
-                      <span className="text-[#54625A] dark:text-[#C5D4C9]">Priority:</span>
-                      <strong className="text-[#202522] dark:text-[#E8F0EC]">{pol.priority || 'All Priorities'}</strong>
+                    <div className="flex justify-between py-1 border-b border-[#E5E7EB] dark:border-[#374151]">
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB]">Priority:</span>
+                      <strong className="text-[#111827] dark:text-[#F9FAFB]">{pol.priority || 'All Priorities'}</strong>
                     </div>
-                    <div className="flex justify-between py-1 border-b border-[#DED8CB] dark:border-[#283931]">
-                      <span className="text-[#54625A] dark:text-[#C5D4C9]">Response Target:</span>
-                      <strong className="text-blue-300">{pol.responseTargetHours} Hours ({Math.round(pol.responseTargetHours / 24 * 10) / 10}d)</strong>
+                    <div className="flex justify-between py-1 border-b border-[#E5E7EB] dark:border-[#374151]">
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB]">Response Target:</span>
+                      <strong className="text-[#0B3D2E] dark:text-[#34D399]">{pol.responseTargetHours} Hours ({Math.round(pol.responseTargetHours / 24 * 10) / 10}d)</strong>
                     </div>
-                    <div className="flex justify-between py-1 border-b border-[#DED8CB] dark:border-[#283931]">
-                      <span className="text-[#54625A] dark:text-[#C5D4C9]">Resolution Target:</span>
-                      <strong className="text-emerald-300">{pol.resolutionTargetHours} Hours ({Math.round(pol.resolutionTargetHours / 24 * 10) / 10}d)</strong>
+                    <div className="flex justify-between py-1 border-b border-[#E5E7EB] dark:border-[#374151]">
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB]">Resolution Target:</span>
+                      <strong className="text-[#0B6640] dark:text-emerald-300">{pol.resolutionTargetHours} Hours ({Math.round(pol.resolutionTargetHours / 24 * 10) / 10}d)</strong>
                     </div>
-                    <div className="flex justify-between py-1 border-b border-[#DED8CB] dark:border-[#283931]">
-                      <span className="text-[#54625A] dark:text-[#C5D4C9]">Warning Threshold:</span>
-                      <strong className="text-amber-300">{pol.warningThresholdHours}h before</strong>
+                    <div className="flex justify-between py-1 border-b border-[#E5E7EB] dark:border-[#374151]">
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB]">Warning Threshold:</span>
+                      <strong className="text-amber-700 dark:text-amber-300">{pol.warningThresholdHours}h before</strong>
                     </div>
                     <div className="flex justify-between py-1">
-                      <span className="text-[#54625A] dark:text-[#C5D4C9]">Escalation Threshold:</span>
-                      <strong className="text-red-300">{pol.escalationThresholdHours}h after breach</strong>
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB]">Escalation Threshold:</span>
+                      <strong className="text-red-700 dark:text-red-300">{pol.escalationThresholdHours}h after breach</strong>
                     </div>
                   </div>
 
                   {isAdmin && (
-                    <div className="pt-2 flex items-center justify-between border-t border-[#DED8CB] dark:border-[#283931]">
-                      <span className="text-[11px] text-[#C5D4C9] dark:text-[#54625A]">
+                    <div className="pt-2 flex items-center justify-between border-t border-[#E5E7EB] dark:border-[#374151]">
+                      <span className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB]">
                         Used by {pol._count?.complaintSlas ?? 0} case(s)
                       </span>
                       <Button
@@ -835,7 +832,7 @@ export function SlaManagementPage() {
       {/* ============================================================== */}
       {!loading && activeTab === 'EXTENSIONS' && (
         <div className="space-y-6">
-          <div className="flex items-center justify-between bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 p-4 rounded-xl border border-[#DED8CB] dark:border-[#283931]">
+          <div className="flex items-center justify-between bg-[#F9FAFB] dark:bg-[#182230] p-4 rounded-xl border border-[#E5E7EB] dark:border-[#374151]">
             <div className="w-56">
               <Select
                 value={extensionStatusFilter}
@@ -847,7 +844,7 @@ export function SlaManagementPage() {
                 <option value="REJECTED">Rejected</option>
               </Select>
             </div>
-            <div className="text-sm text-[#54625A] dark:text-[#C5D4C9] font-medium">
+            <div className="text-sm text-[#6B7280] dark:text-[#D1D5DB] font-medium">
               Showing {extensionRequests.length} extension request{extensionRequests.length === 1 ? '' : 's'}
             </div>
           </div>
@@ -864,17 +861,17 @@ export function SlaManagementPage() {
                   key={req.id}
                   className={`border transition-all ${
                     req.status === 'PENDING'
-                      ? 'border-amber-500/40 bg-amber-950/10'
+                      ? 'border-amber-300 dark:border-amber-500/40 bg-amber-50/40 dark:bg-amber-950/10'
                       : req.status === 'APPROVED'
-                        ? 'border-emerald-500/30 bg-[#ECE7DB]/60 dark:bg-[#1D2A25]/60'
-                        : 'border-[#DED8CB] dark:border-[#283931] bg-[#ECE7DB]/40 dark:bg-[#1D2A25]/40'
+                        ? 'border-emerald-300 dark:border-emerald-500/30 bg-emerald-50/30 dark:bg-[#182230]'
+                        : 'border-[#E5E7EB] dark:border-[#374151] bg-white dark:bg-[#182230]'
                   }`}
                 >
                   <CardContent className="p-5">
                     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                       <div className="space-y-2 flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="font-mono text-xs px-2 py-0.5 rounded bg-blue-900/40 text-blue-300 border border-blue-700/50">
+                          <span className="font-mono text-xs px-2 py-0.5 rounded bg-[#E5ECE8] text-[#0B3D2E] dark:bg-[#273548] dark:text-[#34D399] border border-[#0B3D2E]/20 dark:border-[#374151]">
                             {req.complaint?.trackingId || 'CASE'}
                           </span>
                           <Badge
@@ -890,46 +887,46 @@ export function SlaManagementPage() {
                           </Badge>
                         </div>
 
-                        <h4 className="text-base font-semibold text-[#202522] dark:text-[#F5F2EA]">
+                        <h4 className="text-base font-semibold text-[#111827] dark:text-[#F9FAFB]">
                           {req.complaint?.title}
                         </h4>
 
-                        <div className="text-xs text-[#54625A] dark:text-[#C5D4C9] flex flex-wrap gap-x-4 gap-y-1">
+                        <div className="text-xs text-[#6B7280] dark:text-[#D1D5DB] flex flex-wrap gap-x-4 gap-y-1">
                           <span>
                             Requested by:{' '}
-                            <strong className="text-[#3E4B44] dark:text-[#C5D4C9]">
+                            <strong className="text-[#374151] dark:text-[#D1D5DB]">
                               {req.requestedByOfficial?.name}
                             </strong>
                           </span>
                           <span>
                             Department:{' '}
-                            <strong className="text-[#3E4B44] dark:text-[#C5D4C9]">
+                            <strong className="text-[#374151] dark:text-[#D1D5DB]">
                               {req.complaint?.assignedDepartment?.name || 'General'}
                             </strong>
                           </span>
                           <span>
                             Original Deadline:{' '}
-                            <strong className="text-[#3E4B44] dark:text-[#C5D4C9]">
+                            <strong className="text-[#374151] dark:text-[#D1D5DB]">
                               {new Date(req.previousResolutionDeadline).toLocaleDateString()}
                             </strong>
                           </span>
                           <span>
                             Requested Target:{' '}
-                            <strong className="text-blue-400">
+                            <strong className="text-[#0B6640] dark:text-[#34D399]">
                               {new Date(req.requestedResolutionDeadline).toLocaleDateString()}
                             </strong>
                           </span>
                         </div>
 
-                        <div className="mt-2 text-xs bg-[#ECE7DB]/60 dark:bg-[#1D2A25]/60 p-3 rounded-lg border border-[#DED8CB] dark:border-[#283931] text-[#3E4B44] dark:text-[#C5D4C9]">
-                          <span className="font-semibold text-[#54625A] dark:text-[#C5D4C9] block mb-0.5">
+                        <div className="mt-2 text-xs bg-[#F9FAFB] dark:bg-[#182230] p-3 rounded-lg border border-[#E5E7EB] dark:border-[#374151] text-[#374151] dark:text-[#D1D5DB]">
+                          <span className="font-semibold text-[#6B7280] dark:text-[#D1D5DB] block mb-0.5">
                             Justification / Circumstances:
                           </span>
                           {req.reason}
                         </div>
 
                         {req.decisionNotes && (
-                          <div className="mt-1 text-xs text-[#54625A] dark:text-[#C5D4C9]">
+                          <div className="mt-1 text-xs text-[#6B7280] dark:text-[#D1D5DB]">
                             <strong>Supervisor Notes:</strong> {req.decisionNotes} (Decided by{' '}
                             {req.decisionBy?.name || 'Authority'})
                           </div>
@@ -968,69 +965,69 @@ export function SlaManagementPage() {
           {/* Summary KPIs */}
           {scorecardSummary && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Card className="border-blue-500/30 bg-[#E8F1F8]/40 dark:bg-blue-950/20">
+              <Card className="border-[#E5E7EB] dark:border-[#374151] bg-white dark:bg-[#1F2937]">
                 <CardContent className="p-4 text-center">
-                  <div className="text-xs font-semibold text-[#1B5E8A] dark:text-[#78B4DD] uppercase tracking-wide">
+                  <div className="text-xs font-semibold text-[#6B7280] dark:text-[#D1D5DB] uppercase tracking-wide">
                     SLA Compliance Rate
                   </div>
-                  <div className="text-3xl font-bold text-[#1B5E8A] dark:text-[#78B4DD] mt-1">
+                  <div className="text-3xl font-bold text-[#0B6640] dark:text-[#34D399] mt-1">
                     {scorecardSummary.complianceRate}%
                   </div>
-                  <div className="text-[11px] text-[#54625A] dark:text-[#C5D4C9] mt-0.5">
+                  <div className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB] mt-0.5">
                     {scorecardSummary.resolvedOnTime} of {scorecardSummary.totalResolved} resolved on target
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="border-red-500/30 bg-[#FBEBE8]/40 dark:bg-red-950/20">
+              <Card className="border-[#E5E7EB] dark:border-[#374151] bg-white dark:bg-[#1F2937]">
                 <CardContent className="p-4 text-center">
-                  <div className="text-xs font-semibold text-[#9C3B2D] dark:text-[#F39182] uppercase tracking-wide">
+                  <div className="text-xs font-semibold text-[#6B7280] dark:text-[#D1D5DB] uppercase tracking-wide">
                     Active Overdue Cases
                   </div>
-                  <div className="text-3xl font-bold text-[#9C3B2D] dark:text-[#F39182] mt-1">
+                  <div className="text-3xl font-bold text-red-700 dark:text-[#F39182] mt-1">
                     {scorecardSummary.activeOverdue}
                   </div>
-                  <div className="text-[11px] text-[#54625A] dark:text-[#C5D4C9] mt-0.5">Exceeding response or resolution SLA</div>
+                  <div className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB] mt-0.5">Exceeding response or resolution SLA</div>
                 </CardContent>
               </Card>
 
-              <Card className="border-amber-500/30 bg-[#FEF6E9]/40 dark:bg-amber-950/20">
+              <Card className="border-[#E5E7EB] dark:border-[#374151] bg-white dark:bg-[#1F2937]">
                 <CardContent className="p-4 text-center">
-                  <div className="text-xs font-semibold text-[#854F0B] dark:text-[#F3B768] uppercase tracking-wide">
+                  <div className="text-xs font-semibold text-[#6B7280] dark:text-[#D1D5DB] uppercase tracking-wide">
                     Approaching Deadline
                   </div>
-                  <div className="text-3xl font-bold text-[#854F0B] dark:text-[#F3B768] mt-1">
+                  <div className="text-3xl font-bold text-amber-700 dark:text-[#F3B768] mt-1">
                     {scorecardSummary.approaching}
                   </div>
-                  <div className="text-[11px] text-[#54625A] dark:text-[#C5D4C9] mt-0.5">Within policy warning threshold</div>
+                  <div className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB] mt-0.5">Within policy warning threshold</div>
                 </CardContent>
               </Card>
 
-              <Card className="border-purple-500/30 bg-[#F4ECFA]/40 dark:bg-purple-950/20">
+              <Card className="border-[#E5E7EB] dark:border-[#374151] bg-white dark:bg-[#1F2937]">
                 <CardContent className="p-4 text-center">
-                  <div className="text-xs font-semibold text-[#6A3D9A] dark:text-[#C59BEE] uppercase tracking-wide">
+                  <div className="text-xs font-semibold text-[#6B7280] dark:text-[#D1D5DB] uppercase tracking-wide">
                     Active Escalations
                   </div>
-                  <div className="text-3xl font-bold text-[#6A3D9A] dark:text-[#C59BEE] mt-1">
+                  <div className="text-3xl font-bold text-[#111827] dark:text-[#F9FAFB] mt-1">
                     {scorecardSummary.activeEscalations}
                   </div>
-                  <div className="text-[11px] text-[#54625A] dark:text-[#C5D4C9] mt-0.5">Under supervisory investigation</div>
+                  <div className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB] mt-0.5">Under supervisory investigation</div>
                 </CardContent>
               </Card>
             </div>
           )}
 
           {/* Department breakdown table */}
-          <Card className="border-[#DED8CB] dark:border-[#283931] bg-[#ECE7DB]/60 dark:bg-[#1D2A25]/60 overflow-hidden">
-            <CardHeader className="border-b border-[#DED8CB] dark:border-[#283931]">
-              <CardTitle className="text-lg text-[#202522] dark:text-[#F5F2EA]">Department SLA Performance Scorecard</CardTitle>
+          <Card className="border-[#E5E7EB] dark:border-[#374151] bg-white dark:bg-[#1F2937] overflow-hidden">
+            <CardHeader className="border-b border-[#E5E7EB] dark:border-[#374151]">
+              <CardTitle className="text-lg text-[#111827] dark:text-[#F9FAFB]">Department SLA Performance Scorecard</CardTitle>
               <CardDescription>
                 Auditable metrics on resolution compliance and active overdue workload by municipal department.
               </CardDescription>
             </CardHeader>
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm text-[#3E4B44] dark:text-[#C5D4C9]">
-                <thead className="bg-[#ECE7DB]/60 dark:bg-[#1D2A25]/60 text-xs uppercase text-[#54625A] dark:text-[#C5D4C9] border-b border-[#DED8CB] dark:border-[#283931]">
+              <table className="w-full text-left text-sm text-[#374151] dark:text-[#D1D5DB]">
+                <thead className="bg-[#F9FAFB] dark:bg-[#182230] text-xs uppercase text-[#6B7280] dark:text-[#D1D5DB] border-b border-[#E5E7EB] dark:border-[#374151]">
                   <tr>
                     <th className="py-3 px-4">Department</th>
                     <th className="py-3 px-4 text-center">Total Assigned</th>
@@ -1040,26 +1037,26 @@ export function SlaManagementPage() {
                     <th className="py-3 px-4 text-center">Active Overdue</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#DED8CB] dark:divide-[#283931]">
+                <tbody className="divide-y divide-[#E5E7EB] dark:divide-[#374151]">
                   {departmentScorecards.map((dept) => (
-                    <tr key={dept.id} className="hover:bg-[#ECE7DB]/40 dark:hover:bg-[#1D2A25]/40 transition-colors">
-                      <td className="py-3.5 px-4 font-medium text-[#202522] dark:text-[#F5F2EA] flex items-center gap-2">
-                        <BuildingIcon className="w-4 h-4 text-blue-400 shrink-0" />
+                    <tr key={dept.id} className="hover:bg-[#F9FAFB] dark:hover:bg-[#273548]/60 transition-colors">
+                      <td className="py-3.5 px-4 font-medium text-[#111827] dark:text-[#F9FAFB] flex items-center gap-2">
+                        <BuildingIcon className="w-4 h-4 text-[#0B6640] dark:text-[#34D399] shrink-0" />
                         {dept.name} ({dept.code})
                       </td>
                       <td className="py-3.5 px-4 text-center">{dept.totalAssigned}</td>
-                      <td className="py-3.5 px-4 text-center text-emerald-400 font-semibold">
+                      <td className="py-3.5 px-4 text-center text-[#0B6640] dark:text-emerald-400 font-semibold">
                         {dept.resolvedOnTime}
                       </td>
-                      <td className="py-3.5 px-4 text-center text-amber-400">{dept.resolvedLate}</td>
+                      <td className="py-3.5 px-4 text-center text-amber-700 dark:text-amber-400">{dept.resolvedLate}</td>
                       <td className="py-3.5 px-4 text-center">
                         <span
                           className={`inline-block px-2 py-0.5 rounded text-xs font-bold ${
                             dept.complianceRate >= 80
-                              ? 'bg-emerald-950/60 text-emerald-300 border border-emerald-700/50'
+                              ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700/50'
                               : dept.complianceRate >= 50
-                                ? 'bg-amber-950/60 text-amber-300 border border-amber-700/50'
-                                : 'bg-red-950/60 text-red-300 border border-red-700/50'
+                                ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-700/50'
+                                : 'bg-red-50 dark:bg-red-950/60 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-700/50'
                           }`}
                         >
                           {dept.complianceRate}%
@@ -1067,9 +1064,9 @@ export function SlaManagementPage() {
                       </td>
                       <td className="py-3.5 px-4 text-center">
                         {dept.activeOverdue > 0 ? (
-                          <span className="font-bold text-red-400">{dept.activeOverdue}</span>
+                          <span className="font-bold text-red-700 dark:text-red-400">{dept.activeOverdue}</span>
                         ) : (
-                          <span className="text-[#C5D4C9] dark:text-[#54625A]">0</span>
+                          <span className="text-[#6B7280] dark:text-[#D1D5DB]">0</span>
                         )}
                       </td>
                     </tr>
@@ -1086,15 +1083,17 @@ export function SlaManagementPage() {
       {/* ============================================================== */}
       {ackModalEscalation && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="w-full max-w-lg bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] rounded-2xl p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-[#DED8CB] dark:border-[#283931] pb-3">
-              <h3 className="text-lg font-bold text-[#202522] dark:text-[#F5F2EA] flex items-center gap-2">
+          <div className="w-full max-w-lg bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-2xl p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
+              <h3 className="text-lg font-bold text-[#111827] dark:text-[#F9FAFB] flex items-center gap-2">
                 <AlertTriangleIcon className="w-5 h-5 text-[#854F0B] dark:text-[#F3B768]" />
                 Acknowledge Escalation
               </h3>
               <button
+                type="button"
+                aria-label="Close dialog"
                 onClick={() => setAckModalEscalation(null)}
-                className="text-[#54625A] hover:text-[#202522] dark:text-[#C5D4C9] dark:hover:text-[#E8F0EC]"
+                className="civora-liquid-btn civora-liquid-btn--ghost p-1.5 rounded-lg"
               >
                 <CloseIcon className="w-5 h-5" />
               </button>
@@ -1102,7 +1101,7 @@ export function SlaManagementPage() {
 
             {modalError && <Alert variant="error">{modalError}</Alert>}
 
-            <div className="text-sm text-[#3E4B44] dark:text-[#C5D4C9] space-y-1">
+            <div className="text-sm text-[#374151] dark:text-[#D1D5DB] space-y-1">
               <p>
                 <strong>Complaint:</strong> {ackModalEscalation.complaint?.title}
               </p>
@@ -1146,15 +1145,17 @@ export function SlaManagementPage() {
       {/* ============================================================== */}
       {planModalEscalation && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="w-full max-w-lg bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] rounded-2xl p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-[#DED8CB] dark:border-[#283931] pb-3">
-              <h3 className="text-lg font-bold text-[#202522] dark:text-[#F5F2EA] flex items-center gap-2">
+          <div className="w-full max-w-lg bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-2xl p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
+              <h3 className="text-lg font-bold text-[#111827] dark:text-[#F9FAFB] flex items-center gap-2">
                 <FileTextIcon className="w-5 h-5 text-[#1B5E8A] dark:text-[#78B4DD]" />
                 Record Corrective Action Plan
               </h3>
               <button
+                type="button"
+                aria-label="Close dialog"
                 onClick={() => setPlanModalEscalation(null)}
-                className="text-[#54625A] hover:text-[#202522] dark:text-[#C5D4C9] dark:hover:text-[#E8F0EC]"
+                className="civora-liquid-btn civora-liquid-btn--ghost p-1.5 rounded-lg"
               >
                 <CloseIcon className="w-5 h-5" />
               </button>
@@ -1197,15 +1198,17 @@ export function SlaManagementPage() {
       {/* ============================================================== */}
       {resolveModalEscalation && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="w-full max-w-lg bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] rounded-2xl p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-[#DED8CB] dark:border-[#283931] pb-3">
-              <h3 className="text-lg font-bold text-[#202522] dark:text-[#F5F2EA] flex items-center gap-2">
-                <CheckCircleIcon className="w-5 h-5 text-[#185541] dark:text-[#78C7AE]" />
+          <div className="w-full max-w-lg bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-2xl p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
+              <h3 className="text-lg font-bold text-[#111827] dark:text-[#F9FAFB] flex items-center gap-2">
+                <CheckCircleIcon className="w-5 h-5 text-[#185541] dark:text-[#34D399]" />
                 Resolve Supervisory Escalation
               </h3>
               <button
+                type="button"
+                aria-label="Close dialog"
                 onClick={() => setResolveModalEscalation(null)}
-                className="text-[#54625A] hover:text-[#202522] dark:text-[#C5D4C9] dark:hover:text-[#E8F0EC]"
+                className="civora-liquid-btn civora-liquid-btn--ghost p-1.5 rounded-lg"
               >
                 <CloseIcon className="w-5 h-5" />
               </button>
@@ -1213,7 +1216,7 @@ export function SlaManagementPage() {
 
             {modalError && <Alert variant="error">{modalError}</Alert>}
 
-            <div className="text-xs text-amber-300 bg-amber-950/40 p-3 rounded-lg border border-amber-800/60">
+            <div className="text-xs text-amber-900 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 p-3 rounded-lg border border-amber-200 dark:border-amber-800/60">
               <strong>Core Rule:</strong> Resolving an escalation closes the supervisory intervention
               queue. It does <em>not</em> mark the underlying complaint resolved, which remains governed by
               actual on-the-ground inspection and resolution verification.
@@ -1254,15 +1257,17 @@ export function SlaManagementPage() {
       {/* ============================================================== */}
       {showCreatePolicyModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="w-full max-w-xl bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] rounded-2xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-[#DED8CB] dark:border-[#283931] pb-3">
-              <h3 className="text-lg font-bold text-[#202522] dark:text-[#F5F2EA] flex items-center gap-2">
+          <div className="w-full max-w-xl bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-2xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
+              <h3 className="text-lg font-bold text-[#111827] dark:text-[#F9FAFB] flex items-center gap-2">
                 <ShieldCheckIcon className="w-5 h-5 text-[#1B5E8A] dark:text-[#78B4DD]" />
                 Configure Service-Level Commitment Policy
               </h3>
               <button
+                type="button"
+                aria-label="Close dialog"
                 onClick={() => setShowCreatePolicyModal(false)}
-                className="text-[#54625A] hover:text-[#202522] dark:text-[#C5D4C9] dark:hover:text-[#E8F0EC]"
+                className="civora-liquid-btn civora-liquid-btn--ghost p-1.5 rounded-lg"
               >
                 <CloseIcon className="w-5 h-5" />
               </button>
@@ -1378,15 +1383,15 @@ export function SlaManagementPage() {
                   id="pol-default"
                   checked={newPolicyIsDefault}
                   onChange={(e) => setNewPolicyIsDefault(e.target.checked)}
-                  className="rounded border-[#DED8CB] dark:border-[#283931] bg-[#ECE7DB] dark:bg-[#1D2A25] text-blue-600 focus:ring-blue-500"
+                  className="rounded border-[#D1D5DB] dark:border-[#374151] bg-white dark:bg-[#273548] text-[#0B3D2E] accent-[#0B3D2E] dark:accent-[#34D399] focus:ring-[#0B3D2E] dark:focus:ring-[#34D399]"
                 />
-                <label htmlFor="pol-default" className="text-sm font-medium text-[#3E4B44] dark:text-[#C5D4C9]">
+                <label htmlFor="pol-default" className="text-sm font-medium text-[#374151] dark:text-[#D1D5DB]">
                   Set as platform-wide fallback default policy
                 </label>
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 pt-3 border-t border-[#DED8CB] dark:border-[#283931]">
+            <div className="flex justify-end gap-3 pt-3 border-t border-[#E5E7EB] dark:border-[#374151]">
               <Button
                 variant="outline"
                 onClick={() => setShowCreatePolicyModal(false)}
@@ -1411,15 +1416,17 @@ export function SlaManagementPage() {
       {/* ============================================================== */}
       {reviewModalRequest && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="w-full max-w-lg bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] rounded-2xl p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-[#DED8CB] dark:border-[#283931] pb-3">
-              <h3 className="text-lg font-bold text-[#202522] dark:text-[#F5F2EA] flex items-center gap-2">
+          <div className="w-full max-w-lg bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-2xl p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
+              <h3 className="text-lg font-bold text-[#111827] dark:text-[#F9FAFB] flex items-center gap-2">
                 <ClockIcon className="w-5 h-5 text-[#1B5E8A] dark:text-[#78B4DD]" />
                 Review SLA Extension Request
               </h3>
               <button
+                type="button"
+                aria-label="Close dialog"
                 onClick={() => setReviewModalRequest(null)}
-                className="text-[#54625A] hover:text-[#202522] dark:text-[#C5D4C9] dark:hover:text-[#E8F0EC]"
+                className="civora-liquid-btn civora-liquid-btn--ghost p-1.5 rounded-lg"
               >
                 <CloseIcon className="w-5 h-5" />
               </button>
@@ -1429,14 +1436,14 @@ export function SlaManagementPage() {
 
             {/* Separation of Duties Rule Check */}
             {reviewModalRequest.requestedByOfficialId === user?.id && !isAdmin && (
-              <div className="text-xs text-amber-300 bg-amber-950/50 p-3 rounded-lg border border-amber-800/80">
+              <div className="text-xs text-amber-900 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/50 p-3 rounded-lg border border-amber-200 dark:border-amber-800/80">
                 <strong>Separation of Duties Notice:</strong> You submitted this extension request.
                 Department accountability rules prohibit officials from approving their own deadline
                 extensions. A supervisor or administrator must make this decision.
               </div>
             )}
 
-            <div className="text-xs space-y-1.5 text-[#3E4B44] dark:text-[#C5D4C9] bg-[#ECE7DB]/60 dark:bg-[#1D2A25]/60 p-3 rounded-lg border border-[#DED8CB] dark:border-[#283931]">
+            <div className="text-xs space-y-1.5 text-[#374151] dark:text-[#D1D5DB] bg-[#F9FAFB] dark:bg-[#182230] p-3 rounded-lg border border-[#E5E7EB] dark:border-[#374151]">
               <div>
                 <strong>Complaint:</strong> {reviewModalRequest.complaint?.title}
               </div>
@@ -1446,7 +1453,7 @@ export function SlaManagementPage() {
               </div>
               <div>
                 <strong>Requested Deadline:</strong>{' '}
-                <span className="text-blue-400 font-semibold">
+                <span className="text-[#0B6640] dark:text-[#34D399] font-semibold">
                   {new Date(reviewModalRequest.requestedResolutionDeadline).toLocaleString()}
                 </span>
               </div>

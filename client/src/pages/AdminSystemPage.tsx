@@ -1024,7 +1024,7 @@ export function AdminSystemPage() {
     { id: 'overview', label: t('adminSystem.tabOverview'), icon: <ActivityIcon className="w-4 h-4" /> },
     { id: 'config', label: t('adminSystem.tabConfig'), icon: <SettingsIcon className="w-4 h-4" /> },
     { id: 'users', label: t('adminSystem.tabUsers'), icon: <UsersIcon className="w-4 h-4" /> },
-    { id: 'contractors', label: 'Contractor Apps', icon: <ShieldCheckIcon className="w-4 h-4 text-emerald-400" /> },
+    { id: 'contractors', label: 'Contractor Apps', icon: <ShieldCheckIcon className="w-4 h-4 text-[#0B6640] dark:text-emerald-400" /> },
     { id: 'health', label: 'Operational Health', icon: <ServerIcon className="w-4 h-4" /> },
     { id: 'audit', label: t('adminSystem.tabAudit'), icon: <ShieldCheckIcon className="w-4 h-4" /> },
     { id: 'incidents', label: t('adminSystem.tabIncidents'), icon: <AlertTriangleIcon className="w-4 h-4" /> },
@@ -1033,37 +1033,35 @@ export function AdminSystemPage() {
 
 
   return (
-    <Container size="lg" className="space-y-6 py-8">
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <PageHeading
-            title={t('adminSystem.title')}
-            description={t('adminSystem.subtitle')}
-          />
-        </div>
-
-        <div className="flex items-center gap-2.5">
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={handleRefresh}
-            isLoading={refreshing}
-            leftIcon={<RefreshCwIcon className="w-4 h-4" />}
-          >
-            {t('adminSystem.refreshBtn')}
-          </Button>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={handleTriggerSlaEvaluation}
-            isLoading={evaluatingSla}
-            leftIcon={<ClockIcon className="w-4 h-4" />}
-          >
-            {t('adminSystem.runSlaBtn')}
-          </Button>
-        </div>
-      </div>
+    <Container size="xl" className="space-y-6">
+      {/* Standardized Page Header */}
+      <PageHeading
+        title={t('adminSystem.title')}
+        description={t('adminSystem.subtitle')}
+        className="mb-0"
+        actions={
+          <>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={handleRefresh}
+              isLoading={refreshing}
+              leftIcon={<RefreshCwIcon className="w-4 h-4" />}
+            >
+              {t('adminSystem.refreshBtn')}
+            </Button>
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={handleTriggerSlaEvaluation}
+              isLoading={evaluatingSla}
+              leftIcon={<ClockIcon className="w-4 h-4" />}
+            >
+              {t('adminSystem.runSlaBtn')}
+            </Button>
+          </>
+        }
+      />
 
       {/* Global Alerts */}
       {errorMsg && <Alert variant="error" title="Administrative Alert" onDismiss={() => setErrorMsg(null)}>{errorMsg}</Alert>}
@@ -1083,14 +1081,14 @@ export function AdminSystemPage() {
             <div className="flex items-center gap-3">
               <div className={`w-3.5 h-3.5 rounded-full shrink-0 ${isDbConnected ? 'bg-emerald-400 animate-pulse' : 'bg-rose-500'}`} />
               <div>
-                <h2 className="text-sm font-semibold text-[#202522] dark:text-[#F5F2EA]">
+                <h2 className="text-sm font-semibold text-[#111827] dark:text-[#F9FAFB]">
                   Platform Core: {health?.status?.toUpperCase() || 'UNKNOWN'}
-                  <span className="ml-2 text-xs font-normal text-[#54625A] dark:text-[#C5D4C9]">
+                  <span className="ml-2 text-xs font-normal text-[#6B7280] dark:text-[#D1D5DB]">
                     (Readiness: <strong className={isReady ? 'text-emerald-700 dark:text-emerald-400' : 'text-amber-700 dark:text-amber-400'}>{readiness?.status?.toUpperCase() ?? 'CHECKING'}</strong>)
                   </span>
                 </h2>
-                <p className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
-                  Backend: <code className="text-[#3E4B44] dark:text-[#C5D4C9]">{health?.service}</code> (v{health?.version}) &bull; Latency: {health?.data?.latencyMs != null ? `${health.data.latencyMs}ms` : 'N/A'} &bull; Uptime: {diagnostics ? formatUptime(diagnostics.uptimeSeconds) : '...'}
+                <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
+                  Backend: <code className="text-[#374151] dark:text-[#D1D5DB]">{health?.service}</code> (v{health?.version}) &bull; Latency: {health?.data?.latencyMs != null ? `${health.data.latencyMs}ms` : 'N/A'} &bull; Uptime: {diagnostics ? formatUptime(diagnostics.uptimeSeconds) : '...'}
                 </p>
               </div>
             </div>
@@ -1111,24 +1109,25 @@ export function AdminSystemPage() {
       </Card>
 
       {/* Tab Navigation */}
-      <nav aria-label="Administrative Navigation Tabs" className="flex border-b border-[#DED8CB] dark:border-[#283931] gap-1 overflow-x-auto pb-px">
+      <nav aria-label="Administrative Navigation Tabs" className="flex border-b border-[#E5E7EB] dark:border-[#374151] gap-1.5 overflow-x-auto pb-2">
         {tabButtons.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
             <button
               key={tab.id}
               type="button"
+              data-active={isActive}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2.5 text-xs font-medium border-b-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-t-lg ${
+              className={`civora-liquid-tab flex items-center gap-2 px-4 py-2 text-xs font-medium whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0B3D2E] rounded-lg ${
                 isActive
-                  ? 'border-[#173D32] dark:border-[#7BC4B2] text-[#173D32] dark:text-[#7BC4B2] font-semibold bg-[#ECE7DB] dark:bg-[#1D2A25]'
-                  : 'border-transparent text-[#54625A] dark:text-[#C5D4C9] hover:text-[#202522] dark:hover:text-[#E8F0EC] hover:bg-[#ECE7DB]/50 dark:hover:bg-[#1D2A25]/50'
+                  ? 'font-semibold'
+                  : 'text-[#6B7280] dark:text-[#D1D5DB]'
               }`}
             >
               {tab.icon}
               {tab.label}
               {tab.id === 'incidents' && (overview?.metrics?.openIncidents ?? 0) > 0 && (
-                <span className="ml-1 px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                <span className="ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-500/30">
                   {overview?.metrics?.openIncidents}
                 </span>
               )}
@@ -1147,28 +1146,28 @@ export function AdminSystemPage() {
               value={overview?.metrics?.totalUsers ?? diagnostics?.metrics?.usersCount ?? 0}
               subtext={`${overview?.metrics?.activeUsers ?? 0} active recently`}
               accentColor="blue"
-              icon={<UsersIcon className="w-5 h-5 text-blue-400" />}
+              icon={<UsersIcon className="w-5 h-5 text-[#0B3D2E] dark:text-[#34D399]" />}
             />
             <MetricCard
               label={t('adminSystem.totalComplaints')}
               value={overview?.metrics?.totalComplaints ?? diagnostics?.metrics?.complaintsCount ?? 0}
               subtext={`${overview?.metrics?.complaintsAwaitingAction ?? 0} awaiting assignment`}
               accentColor="purple"
-              icon={<ActivityIcon className="w-5 h-5 text-purple-400" />}
+              icon={<ActivityIcon className="w-5 h-5 text-[#0B6640] dark:text-emerald-400" />}
             />
             <MetricCard
               label={t('adminSystem.overdueCases')}
               value={overview?.metrics?.complaintsOverdue ?? 0}
               subtext="Beyond target SLA resolution window"
               accentColor="rose"
-              icon={<AlertTriangleIcon className="w-5 h-5 text-rose-400" />}
+              icon={<AlertTriangleIcon className="w-5 h-5 text-rose-700 dark:text-rose-400" />}
             />
             <MetricCard
               label={t('adminSystem.openIncidents')}
               value={overview?.metrics?.openIncidents ?? 0}
               subtext="Active system alerts & degradations"
               accentColor="amber"
-              icon={<ShieldCheckIcon className="w-5 h-5 text-amber-400" />}
+              icon={<ShieldCheckIcon className="w-5 h-5 text-amber-700 dark:text-amber-400" />}
             />
           </div>
 
@@ -1181,26 +1180,26 @@ export function AdminSystemPage() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-                  <div className="p-3 rounded-lg bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 border border-[#DED8CB] dark:border-[#283931]">
-                    <p className="text-xs text-[#54625A] dark:text-[#C5D4C9]">Awaiting Action</p>
-                    <p className="text-xl font-bold text-amber-300 mt-1">{overview?.metrics?.complaintsAwaitingAction ?? 0}</p>
+                  <div className="p-3 rounded-lg bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151]">
+                    <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">Awaiting Action</p>
+                    <p className="text-xl font-bold text-amber-700 dark:text-amber-300 mt-1">{overview?.metrics?.complaintsAwaitingAction ?? 0}</p>
                   </div>
-                  <div className="p-3 rounded-lg bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 border border-[#DED8CB] dark:border-[#283931]">
-                    <p className="text-xs text-[#54625A] dark:text-[#C5D4C9]">In Progress</p>
-                    <p className="text-xl font-bold text-sky-300 mt-1">{overview?.metrics?.complaintsInProgress ?? 0}</p>
+                  <div className="p-3 rounded-lg bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151]">
+                    <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">In Progress</p>
+                    <p className="text-xl font-bold text-[#0B3D2E] dark:text-[#34D399] mt-1">{overview?.metrics?.complaintsInProgress ?? 0}</p>
                   </div>
-                  <div className="p-3 rounded-lg bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 border border-[#DED8CB] dark:border-[#283931]">
-                    <p className="text-xs text-[#54625A] dark:text-[#C5D4C9]">Resolved Cases</p>
-                    <p className="text-xl font-bold text-emerald-300 mt-1">{overview?.metrics?.complaintsResolved ?? 0}</p>
+                  <div className="p-3 rounded-lg bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151]">
+                    <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">Resolved Cases</p>
+                    <p className="text-xl font-bold text-[#0B6640] dark:text-emerald-300 mt-1">{overview?.metrics?.complaintsResolved ?? 0}</p>
                   </div>
-                  <div className="p-3 rounded-lg bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 border border-[#DED8CB] dark:border-[#283931]">
-                    <p className="text-xs text-[#54625A] dark:text-[#C5D4C9]">Overdue (SLA)</p>
-                    <p className="text-xl font-bold text-rose-400 mt-1">{overview?.metrics?.complaintsOverdue ?? 0}</p>
+                  <div className="p-3 rounded-lg bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151]">
+                    <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">Overdue (SLA)</p>
+                    <p className="text-xl font-bold text-rose-700 dark:text-rose-400 mt-1">{overview?.metrics?.complaintsOverdue ?? 0}</p>
                   </div>
                 </div>
 
-                <div className="mt-6 flex flex-wrap gap-3 items-center justify-between border-t border-[#DED8CB] dark:border-[#283931] pt-4">
-                  <span className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
+                <div className="mt-6 flex flex-wrap gap-3 items-center justify-between border-t border-[#E5E7EB] dark:border-[#374151] pt-4">
+                  <span className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
                     User demographics: <strong>{overview?.metrics?.usersByRole?.CITIZEN ?? 0} Citizens</strong>,{' '}
                     <strong>{overview?.metrics?.usersByRole?.OFFICIAL ?? 0} Officials</strong>,{' '}
                     <strong>{overview?.metrics?.usersByRole?.ADMIN ?? 0} Administrators</strong>.
@@ -1219,14 +1218,14 @@ export function AdminSystemPage() {
                 <CardDescription>Safe platform maintenance triggers</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="p-3 rounded-lg bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 border border-[#DED8CB] dark:border-[#283931] space-y-2">
+                <div className="p-3 rounded-lg bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151] space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium text-[#3E4B44] dark:text-[#C5D4C9]">Maintenance Window</span>
+                    <span className="text-xs font-medium text-[#374151] dark:text-[#D1D5DB]">Maintenance Window</span>
                     <Badge variant={isMaintenanceActive ? 'warning' : 'neutral'} size="sm">
                       {isMaintenanceActive ? 'Active' : 'Inactive'}
                     </Badge>
                   </div>
-                  <p className="text-[11px] text-[#54625A] dark:text-[#C5D4C9]">
+                  <p className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB]">
                     {isMaintenanceActive
                       ? 'Platform writes are currently suspended for non-admin citizens.'
                       : 'Platform is operating normally for all citizens and officials.'}
@@ -1244,9 +1243,9 @@ export function AdminSystemPage() {
                   </Button>
                 </div>
 
-                <div className="p-3 rounded-lg bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 border border-[#DED8CB] dark:border-[#283931] space-y-2">
-                  <span className="text-xs font-medium text-[#3E4B44] dark:text-[#C5D4C9] block">SLA Policy Evaluation</span>
-                  <p className="text-[11px] text-[#54625A] dark:text-[#C5D4C9]">
+                <div className="p-3 rounded-lg bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151] space-y-2">
+                  <span className="text-xs font-medium text-[#374151] dark:text-[#D1D5DB] block">SLA Policy Evaluation</span>
+                  <p className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB]">
                     Force an immediate recalculation of overdue complaint milestones and automatic supervisory escalations.
                   </p>
                   <Button
@@ -1277,12 +1276,12 @@ export function AdminSystemPage() {
               </CardHeader>
               <CardContent>
                 {overview?.recentAuditEvents && overview.recentAuditEvents.length > 0 ? (
-                  <div className="divide-y divide-[#DED8CB] dark:divide-[#283931] text-xs">
+                  <div className="divide-y divide-[#E5E7EB] dark:divide-[#374151] text-xs">
                     {overview.recentAuditEvents.slice(0, 5).map((evt) => (
                       <div key={evt.id} className="py-2.5 flex items-center justify-between gap-2">
                         <div>
-                          <span className="font-semibold text-[#202522] dark:text-[#E8F0EC] block">{evt.action}</span>
-                          <span className="text-[11px] text-[#54625A] dark:text-[#C5D4C9]">
+                          <span className="font-semibold text-[#111827] dark:text-[#F9FAFB] block">{evt.action}</span>
+                          <span className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB]">
                             By {evt.actor?.name || 'System'} on {evt.entityType} ({new Date(evt.createdAt).toLocaleTimeString()})
                           </span>
                         </div>
@@ -1291,7 +1290,7 @@ export function AdminSystemPage() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-xs text-[#C5D4C9] dark:text-[#54625A] py-4 text-center">No recent administrative audit records found.</p>
+                  <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] py-4 text-center">No recent administrative audit records found.</p>
                 )}
               </CardContent>
             </Card>
@@ -1308,15 +1307,15 @@ export function AdminSystemPage() {
               </CardHeader>
               <CardContent>
                 {overview?.recentIncidents && overview.recentIncidents.length > 0 ? (
-                  <div className="divide-y divide-[#DED8CB] dark:divide-[#283931] text-xs">
+                  <div className="divide-y divide-[#E5E7EB] dark:divide-[#374151] text-xs">
                     {overview.recentIncidents.slice(0, 5).map((inc) => (
                       <div key={inc.id} className="py-2.5 flex items-center justify-between gap-2">
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="font-mono text-[11px] text-sky-400 font-semibold">{inc.incidentNumber}</span>
-                            <span className="font-semibold text-[#202522] dark:text-[#E8F0EC]">{inc.title}</span>
+                            <span className="font-mono text-[11px] text-[#0B3D2E] dark:text-[#34D399] font-semibold">{inc.incidentNumber}</span>
+                            <span className="font-semibold text-[#111827] dark:text-[#F9FAFB]">{inc.title}</span>
                           </div>
-                          <span className="text-[11px] text-[#54625A] dark:text-[#C5D4C9]">
+                          <span className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB]">
                             Logged on {new Date(inc.createdAt).toLocaleDateString()}
                           </span>
                         </div>
@@ -1330,7 +1329,7 @@ export function AdminSystemPage() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-xs text-[#C5D4C9] dark:text-[#54625A] py-4 text-center">No open incidents. Systems operating within parameters.</p>
+                  <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] py-4 text-center">No open incidents. Systems operating within parameters.</p>
                 )}
               </CardContent>
             </Card>
@@ -1373,28 +1372,28 @@ export function AdminSystemPage() {
                     if (catSettings.length === 0) return null;
                     return (
                       <div key={category} className="space-y-3">
-                        <div className="flex items-center gap-2 border-b border-[#DED8CB] dark:border-[#283931] pb-2">
-                          <h4 className="text-xs font-bold uppercase tracking-wider text-[#54625A] dark:text-[#C5D4C9]">
+                        <div className="flex items-center gap-2 border-b border-[#E5E7EB] dark:border-[#374151] pb-2">
+                          <h4 className="text-xs font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#D1D5DB]">
                             Category: {category}
                           </h4>
                           <Badge variant="neutral" size="sm">{catSettings.length} settings</Badge>
                         </div>
 
-                        <div className="divide-y divide-[#DED8CB] dark:divide-[#283931] rounded-lg border border-[#DED8CB] dark:border-[#283931] bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 overflow-hidden">
+                        <div className="divide-y divide-[#E5E7EB] dark:divide-[#374151] rounded-lg border border-[#E5E7EB] dark:border-[#374151] bg-[#F9FAFB] dark:bg-[#182230] overflow-hidden">
                           {catSettings.map((item) => (
                             <div key={item.key} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                               <div className="space-y-1">
                                 <div className="flex items-center gap-2">
-                                  <code className="text-xs font-semibold text-[#173D32] dark:text-[#7BC4B2] bg-[#ECE7DB] dark:bg-[#1D2A25] border border-[#DED8CB] dark:border-[#283931] px-2 py-0.5 rounded font-mono">
+                                  <code className="text-xs font-semibold text-[#0B3D2E] dark:text-[#34D399] bg-[#F3F4F6] dark:bg-[#273548] border border-[#E5E7EB] dark:border-[#374151] px-2 py-0.5 rounded font-mono">
                                     {item.key}
                                   </code>
                                   {item.isPublic && (
                                     <Badge variant="info" size="sm">Public</Badge>
                                   )}
                                 </div>
-                                <p className="text-xs text-[#3E4B44] dark:text-[#C5D4C9] font-medium">{item.description}</p>
-                                <p className="text-[11px] text-[#54625A] dark:text-[#C5D4C9]">
-                                  Current value: <strong className="text-[#202522] dark:text-[#F5F2EA] font-mono">{item.value}</strong> &bull; Last updated by {item.updatedBy?.name || 'System'} ({new Date(item.updatedAt).toLocaleDateString()})
+                                <p className="text-xs text-[#374151] dark:text-[#D1D5DB] font-medium">{item.description}</p>
+                                <p className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB]">
+                                  Current value: <strong className="text-[#111827] dark:text-[#F9FAFB] font-mono">{item.value}</strong> &bull; Last updated by {item.updatedBy?.name || 'System'} ({new Date(item.updatedAt).toLocaleDateString()})
                                 </p>
                               </div>
 
@@ -1428,11 +1427,11 @@ export function AdminSystemPage() {
             </CardHeader>
             <CardContent>
               {configHistory.length === 0 ? (
-                <p className="text-xs text-[#C5D4C9] dark:text-[#54625A] py-4 text-center">No configuration changes logged yet.</p>
+                <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] py-4 text-center">No configuration changes logged yet.</p>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs text-[#3E4B44] dark:text-[#C5D4C9]">
-                    <thead className="border-b border-[#DED8CB] dark:border-[#283931] text-[11px] uppercase tracking-wider text-[#54625A] dark:text-[#C5D4C9] bg-[#ECE7DB]/60 dark:bg-[#1D2A25]/60">
+                  <table className="w-full text-left text-xs text-[#374151] dark:text-[#D1D5DB]">
+                    <thead className="border-b border-[#E5E7EB] dark:border-[#374151] text-[11px] uppercase tracking-wider text-[#6B7280] dark:text-[#D1D5DB] bg-[#F9FAFB] dark:bg-[#182230]">
                       <tr>
                         <th className="py-2.5 px-3">Setting Key</th>
                         <th className="py-2.5 px-3">Previous Value</th>
@@ -1442,15 +1441,15 @@ export function AdminSystemPage() {
                         <th className="py-2.5 px-3">Date</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#DED8CB] dark:divide-[#283931]">
+                    <tbody className="divide-y divide-[#E5E7EB] dark:divide-[#374151]">
                       {configHistory.map((item) => (
-                        <tr key={item.id} className="hover:bg-[#ECE7DB]/40 dark:hover:bg-[#1D2A25]/40">
-                          <td className="py-2.5 px-3 font-mono font-semibold text-sky-400">{item.key}</td>
-                          <td className="py-2.5 px-3 font-mono text-[#54625A] dark:text-[#C5D4C9]">{item.previousValue}</td>
-                          <td className="py-2.5 px-3 font-mono text-emerald-400">{item.newValue}</td>
-                          <td className="py-2.5 px-3 text-[#3E4B44] dark:text-[#C5D4C9]">{item.reason || '—'}</td>
+                        <tr key={item.id} className="hover:bg-[#F9FAFB] dark:hover:bg-[#273548]/60">
+                          <td className="py-2.5 px-3 font-mono font-semibold text-[#0B3D2E] dark:text-[#34D399]">{item.key}</td>
+                          <td className="py-2.5 px-3 font-mono text-[#6B7280] dark:text-[#D1D5DB]">{item.previousValue}</td>
+                          <td className="py-2.5 px-3 font-mono text-[#0B6640] dark:text-emerald-400">{item.newValue}</td>
+                          <td className="py-2.5 px-3 text-[#374151] dark:text-[#D1D5DB]">{item.reason || '—'}</td>
                           <td className="py-2.5 px-3">{item.changedBy?.name}</td>
-                          <td className="py-2.5 px-3 text-[#54625A] dark:text-[#C5D4C9]">{new Date(item.createdAt).toLocaleString()}</td>
+                          <td className="py-2.5 px-3 text-[#6B7280] dark:text-[#D1D5DB]">{new Date(item.createdAt).toLocaleString()}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -1492,7 +1491,7 @@ export function AdminSystemPage() {
                       setUserSearch(e.target.value);
                       setUserPage(1);
                     }}
-                    leftIcon={<SearchIcon className="w-4 h-4 text-[#54625A] dark:text-[#C5D4C9]" />}
+                    leftIcon={<SearchIcon className="w-4 h-4 text-[#6B7280] dark:text-[#D1D5DB]" />}
                   />
                 </div>
                 <div className="w-36">
@@ -1536,8 +1535,8 @@ export function AdminSystemPage() {
                 />
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs text-[#3E4B44] dark:text-[#C5D4C9]">
-                    <thead className="border-b border-[#DED8CB] dark:border-[#283931] text-[11px] uppercase tracking-wider text-[#54625A] dark:text-[#C5D4C9] bg-[#ECE7DB]/60 dark:bg-[#1D2A25]/60">
+                  <table className="w-full text-left text-xs text-[#374151] dark:text-[#D1D5DB]">
+                    <thead className="border-b border-[#E5E7EB] dark:border-[#374151] text-[11px] uppercase tracking-wider text-[#6B7280] dark:text-[#D1D5DB] bg-[#F9FAFB] dark:bg-[#182230]">
                       <tr>
                         <th className="py-2.5 px-3">User</th>
                         <th className="py-2.5 px-3">Role</th>
@@ -1547,16 +1546,16 @@ export function AdminSystemPage() {
                         <th className="py-2.5 px-3 text-right">Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#DED8CB] dark:divide-[#283931]">
+                    <tbody className="divide-y divide-[#E5E7EB] dark:divide-[#374151]">
                       {users.map((usr) => {
                         const isSelf = usr.id === user?.id;
                         return (
-                          <tr key={usr.id} className="hover:bg-[#ECE7DB]/40 dark:hover:bg-[#1D2A25]/40">
+                          <tr key={usr.id} className="hover:bg-[#F9FAFB] dark:hover:bg-[#273548]/60">
                             <td className="py-2.5 px-3">
-                              <span className="font-semibold text-[#202522] dark:text-[#F5F2EA] block">
-                                {usr.name} {isSelf && <span className="text-[10px] text-blue-700 dark:text-blue-400 font-normal">(You)</span>}
+                              <span className="font-semibold text-[#111827] dark:text-[#F9FAFB] block">
+                                {usr.name} {isSelf && <span className="text-[10px] text-[#0B6640] dark:text-[#34D399] font-normal">(You)</span>}
                               </span>
-                              <span className="text-[11px] text-[#54625A] dark:text-[#C5D4C9]">{usr.email}</span>
+                              <span className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB]">{usr.email}</span>
                             </td>
                             <td className="py-2.5 px-3">
                               <Badge
@@ -1574,7 +1573,7 @@ export function AdminSystemPage() {
                                 {usr.role === 'GOVERNMENT_OFFICIAL' ? 'Official' : usr.role}
                               </Badge>
                               {usr.department && (
-                                <span className="text-[10px] text-[#54625A] dark:text-[#C5D4C9] block mt-0.5 truncate max-w-[140px]" title={usr.department.name}>
+                                <span className="text-[10px] text-[#6B7280] dark:text-[#D1D5DB] block mt-0.5 truncate max-w-[140px]" title={usr.department.name}>
                                   {usr.department.name}
                                 </span>
                               )}
@@ -1589,7 +1588,7 @@ export function AdminSystemPage() {
                               </Badge>
                             </td>
                             <td className="py-2.5 px-3 font-mono">{usr._count?.complaints ?? 0}</td>
-                            <td className="py-2.5 px-3 text-[#54625A] dark:text-[#C5D4C9]">{new Date(usr.createdAt).toLocaleDateString()}</td>
+                            <td className="py-2.5 px-3 text-[#6B7280] dark:text-[#D1D5DB]">{new Date(usr.createdAt).toLocaleDateString()}</td>
                             <td className="py-2.5 px-3 text-right">
                               <div className="inline-flex items-center gap-1.5">
                                 <Button
@@ -1609,7 +1608,7 @@ export function AdminSystemPage() {
                                   variant="ghost"
                                   size="sm"
                                   disabled={isSelf}
-                                  className={usr.status === 'ACTIVE' ? 'text-rose-400 hover:text-rose-300' : 'text-emerald-400 hover:text-emerald-300'}
+                                  className={usr.status === 'ACTIVE' ? 'text-rose-700 dark:text-rose-400 hover:text-rose-800 dark:hover:text-rose-300' : 'text-[#0B6640] dark:text-emerald-400 hover:text-[#0B3D2E] dark:hover:text-emerald-300'}
                                   onClick={() => {
                                     setSelectedUserForStatus(usr);
                                     setStatusChangeReason('');
@@ -1629,7 +1628,7 @@ export function AdminSystemPage() {
 
               {/* Pagination */}
               {userTotalPages > 1 && (
-                <div className="flex items-center justify-between border-t border-[#DED8CB] dark:border-[#283931] pt-4 mt-4 text-xs text-[#54625A] dark:text-[#C5D4C9]">
+                <div className="flex items-center justify-between border-t border-[#E5E7EB] dark:border-[#374151] pt-4 mt-4 text-xs text-[#6B7280] dark:text-[#D1D5DB]">
                   <span>Page {userPage} of {userTotalPages}</span>
                   <div className="flex items-center gap-2">
                     <Button
@@ -1678,7 +1677,7 @@ export function AdminSystemPage() {
                       setContractorAppSearch(e.target.value);
                       setContractorAppPage(1);
                     }}
-                    leftIcon={<SearchIcon className="w-4 h-4 text-[#54625A] dark:text-[#C5D4C9]" />}
+                    leftIcon={<SearchIcon className="w-4 h-4 text-[#6B7280] dark:text-[#D1D5DB]" />}
                   />
                 </div>
                 <div className="w-44">
@@ -1701,7 +1700,7 @@ export function AdminSystemPage() {
 
             <CardContent>
               {loadingContractors ? (
-                <div className="py-12 flex justify-center text-[#54625A] dark:text-[#C5D4C9]">
+                <div className="py-12 flex justify-center text-[#6B7280] dark:text-[#D1D5DB]">
                   <LoadingIndicator label="Loading contractor applications..." size="md" />
                 </div>
               ) : contractorApps.length === 0 ? (
@@ -1711,8 +1710,8 @@ export function AdminSystemPage() {
                 />
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs text-[#3E4B44] dark:text-[#C5D4C9]">
-                    <thead className="border-b border-[#DED8CB] dark:border-[#283931] text-[11px] uppercase tracking-wider text-[#54625A] dark:text-[#C5D4C9] bg-[#ECE7DB]/60 dark:bg-[#1D2A25]/60">
+                  <table className="w-full text-left text-xs text-[#374151] dark:text-[#D1D5DB]">
+                    <thead className="border-b border-[#E5E7EB] dark:border-[#374151] text-[11px] uppercase tracking-wider text-[#6B7280] dark:text-[#D1D5DB] bg-[#F9FAFB] dark:bg-[#182230]">
                       <tr>
                         <th className="py-2.5 px-3">Contractor / Company</th>
                         <th className="py-2.5 px-3">Reg #</th>
@@ -1723,33 +1722,33 @@ export function AdminSystemPage() {
                         <th className="py-2.5 px-3 text-right">Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#DED8CB] dark:divide-[#283931]">
+                    <tbody className="divide-y divide-[#E5E7EB] dark:divide-[#374151]">
                       {contractorApps.map((app) => {
                         const primaryUser = app.users?.[0];
                         return (
-                          <tr key={app.id} className="hover:bg-[#ECE7DB]/40 dark:hover:bg-[#1D2A25]/40">
+                          <tr key={app.id} className="hover:bg-[#F9FAFB] dark:hover:bg-[#273548]/60">
                             <td className="py-2.5 px-3">
-                              <span className="font-semibold text-[#202522] dark:text-[#F5F2EA] block">{app.name}</span>
-                              <span className="text-[11px] text-[#54625A] dark:text-[#C5D4C9]">
+                              <span className="font-semibold text-[#111827] dark:text-[#F9FAFB] block">{app.name}</span>
+                              <span className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB]">
                                 {app.businessAddress || 'No address provided'}
                               </span>
                             </td>
-                            <td className="py-2.5 px-3 font-mono font-semibold text-sky-700 dark:text-sky-400">
+                            <td className="py-2.5 px-3 font-mono font-semibold text-[#0B3D2E] dark:text-[#34D399]">
                               {app.registrationNumber}
                             </td>
                             <td className="py-2.5 px-3">
-                              <span className="bg-[#ECE7DB] dark:bg-[#1D2A25] text-[#3E4B44] dark:text-[#C5D4C9] px-2 py-0.5 rounded text-[11px]">
+                              <span className="bg-[#F3F4F6] dark:bg-[#273548] text-[#374151] dark:text-[#D1D5DB] px-2 py-0.5 rounded text-[11px]">
                                 {app.workCategories?.join(', ') || app.licenseClass || 'General'}
                               </span>
                             </td>
                             <td className="py-2.5 px-3">
                               {primaryUser ? (
                                 <div>
-                                  <span className="text-[#202522] dark:text-[#F5F2EA] block font-medium">{primaryUser.name}</span>
-                                  <span className="text-[11px] text-[#54625A] dark:text-[#C5D4C9]">{primaryUser.email}</span>
+                                  <span className="text-[#111827] dark:text-[#F9FAFB] block font-medium">{primaryUser.name}</span>
+                                  <span className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB]">{primaryUser.email}</span>
                                 </div>
                               ) : (
-                                <span className="text-[#54625A] dark:text-[#C5D4C9] italic">No linked user</span>
+                                <span className="text-[#6B7280] dark:text-[#D1D5DB] italic">No linked user</span>
                               )}
                             </td>
                             <td className="py-2.5 px-3">
@@ -1772,11 +1771,11 @@ export function AdminSystemPage() {
                                     : 'PENDING'}
                                 </Badge>
                                 {app.status === 'INACTIVE' && (
-                                  <span className="text-[10px] text-rose-400">Suspended / Rejected</span>
+                                  <span className="text-[10px] text-rose-700 dark:text-rose-400">Suspended / Rejected</span>
                                 )}
                               </div>
                             </td>
-                            <td className="py-2.5 px-3 text-[#54625A] dark:text-[#C5D4C9]">
+                            <td className="py-2.5 px-3 text-[#6B7280] dark:text-[#D1D5DB]">
                               {new Date(app.createdAt).toLocaleDateString()}
                             </td>
                             <td className="py-2.5 px-3 text-right">
@@ -1796,7 +1795,7 @@ export function AdminSystemPage() {
                                     <Button
                                       variant="ghost"
                                       size="sm"
-                                      className="text-rose-400 hover:text-rose-300"
+                                      className="text-rose-700 dark:text-rose-400 hover:text-rose-800 dark:hover:text-rose-300"
                                       onClick={() => {
                                         setSelectedContractorForReject(app);
                                         setRejectReason('');
@@ -1809,7 +1808,7 @@ export function AdminSystemPage() {
                                   <Button
                                     variant="ghost"
                                     size="sm"
-                                    className="text-rose-400 hover:text-rose-300"
+                                    className="text-rose-700 dark:text-rose-400 hover:text-rose-800 dark:hover:text-rose-300"
                                     onClick={() => {
                                       setSelectedContractorForReject(app);
                                       setRejectReason('');
@@ -1841,7 +1840,7 @@ export function AdminSystemPage() {
 
               {/* Pagination */}
               {contractorAppTotalPages > 1 && (
-                <div className="flex items-center justify-between border-t border-[#DED8CB] dark:border-[#283931] pt-4 mt-4 text-xs text-[#54625A] dark:text-[#C5D4C9]">
+                <div className="flex items-center justify-between border-t border-[#E5E7EB] dark:border-[#374151] pt-4 mt-4 text-xs text-[#6B7280] dark:text-[#D1D5DB]">
                   <span>Page {contractorAppPage} of {contractorAppTotalPages}</span>
                   <div className="flex items-center gap-2">
                     <Button
@@ -1877,28 +1876,28 @@ export function AdminSystemPage() {
               value={diagnostics ? formatUptime(diagnostics.uptimeSeconds) : 'Checking...'}
               subtext="Platform operational"
               accentColor="blue"
-              icon={<ClockIcon className="w-5 h-5 text-blue-400" />}
+              icon={<ClockIcon className="w-5 h-5 text-[#0B3D2E] dark:text-[#34D399]" />}
             />
             <MetricCard
               label={t('adminSystem.databaseLatency')}
               value={diagnostics?.database?.latencyMs != null ? `${diagnostics.database.latencyMs} ms` : 'N/A'}
               subtext={isDbConnected ? 'Active connection healthy' : 'Connection degraded'}
               accentColor="emerald"
-              icon={<CheckCircleIcon className="w-5 h-5 text-emerald-400" />}
+              icon={<CheckCircleIcon className="w-5 h-5 text-[#0B6640] dark:text-emerald-400" />}
             />
             <MetricCard
               label={t('adminSystem.heapUsed')}
               value={diagnostics?.memory?.heapUsedMb != null ? `${diagnostics.memory.heapUsedMb} MB` : 'Checking...'}
               subtext={diagnostics?.memory?.heapTotalMb != null ? `Total Heap: ${diagnostics.memory.heapTotalMb} MB` : ''}
               accentColor="purple"
-              icon={<ServerIcon className="w-5 h-5 text-purple-400" />}
+              icon={<ServerIcon className="w-5 h-5 text-[#0B3D2E] dark:text-[#34D399]" />}
             />
             <MetricCard
               label={t('adminSystem.activeEscalations')}
               value={diagnostics?.metrics?.activeEscalationsCount ?? '0'}
               subtext="Requiring supervisory attention"
               accentColor="amber"
-              icon={<AlertTriangleIcon className="w-5 h-5 text-amber-400" />}
+              icon={<AlertTriangleIcon className="w-5 h-5 text-amber-700 dark:text-amber-400" />}
             />
           </div>
 
@@ -1909,29 +1908,29 @@ export function AdminSystemPage() {
                 <CardDescription>Live counts queried from PostgreSQL database storage</CardDescription>
               </CardHeader>
               <CardContent>
-                <dl className="divide-y divide-[#DED8CB] dark:divide-[#283931] text-sm">
+                <dl className="divide-y divide-[#E5E7EB] dark:divide-[#374151] text-sm">
                   <div className="py-2.5 flex justify-between">
-                    <dt className="text-[#54625A] dark:text-[#C5D4C9]">Total Grievance Complaints</dt>
-                    <dd className="font-semibold text-[#202522] dark:text-[#F5F2EA] font-mono">{diagnostics?.metrics?.complaintsCount ?? 0}</dd>
+                    <dt className="text-[#6B7280] dark:text-[#D1D5DB]">Total Grievance Complaints</dt>
+                    <dd className="font-semibold text-[#111827] dark:text-[#F9FAFB] font-mono">{diagnostics?.metrics?.complaintsCount ?? 0}</dd>
                   </div>
                   <div className="py-2.5 flex justify-between">
-                    <dt className="text-[#54625A] dark:text-[#C5D4C9]">Registered Users</dt>
-                    <dd className="font-semibold text-[#202522] dark:text-[#F5F2EA] font-mono">{diagnostics?.metrics?.usersCount ?? 0}</dd>
+                    <dt className="text-[#6B7280] dark:text-[#D1D5DB]">Registered Users</dt>
+                    <dd className="font-semibold text-[#111827] dark:text-[#F9FAFB] font-mono">{diagnostics?.metrics?.usersCount ?? 0}</dd>
                   </div>
                   <div className="py-2.5 flex justify-between">
-                    <dt className="text-[#54625A] dark:text-[#C5D4C9]">Designated Departments</dt>
-                    <dd className="font-semibold text-[#202522] dark:text-[#F5F2EA] font-mono">{diagnostics?.metrics?.departmentsCount ?? 0}</dd>
+                    <dt className="text-[#6B7280] dark:text-[#D1D5DB]">Designated Departments</dt>
+                    <dd className="font-semibold text-[#111827] dark:text-[#F9FAFB] font-mono">{diagnostics?.metrics?.departmentsCount ?? 0}</dd>
                   </div>
                   <div className="py-2.5 flex justify-between">
-                    <dt className="text-[#54625A] dark:text-[#C5D4C9]">Active SLA Policies</dt>
-                    <dd className="font-semibold text-[#202522] dark:text-[#F5F2EA] font-mono">{diagnostics?.metrics?.slaPoliciesCount ?? 0}</dd>
+                    <dt className="text-[#6B7280] dark:text-[#D1D5DB]">Active SLA Policies</dt>
+                    <dd className="font-semibold text-[#111827] dark:text-[#F9FAFB] font-mono">{diagnostics?.metrics?.slaPoliciesCount ?? 0}</dd>
                   </div>
                   <div className="py-2.5 flex justify-between">
-                    <dt className="text-[#54625A] dark:text-[#C5D4C9]">Active Supervisory Escalations</dt>
+                    <dt className="text-[#6B7280] dark:text-[#D1D5DB]">Active Supervisory Escalations</dt>
                     <dd className="font-semibold text-amber-700 dark:text-amber-300 font-mono">{diagnostics?.metrics?.activeEscalationsCount ?? 0}</dd>
                   </div>
                   <div className="py-2.5 flex justify-between">
-                    <dt className="text-[#54625A] dark:text-[#C5D4C9]">Open Operational Incidents</dt>
+                    <dt className="text-[#6B7280] dark:text-[#D1D5DB]">Open Operational Incidents</dt>
                     <dd className="font-semibold text-rose-700 dark:text-rose-300 font-mono">{diagnostics?.metrics?.openIncidentsCount ?? 0}</dd>
                   </div>
                 </dl>
@@ -1944,30 +1943,30 @@ export function AdminSystemPage() {
                 <CardDescription>Host telemetry and execution environment specifications</CardDescription>
               </CardHeader>
               <CardContent>
-                <dl className="divide-y divide-[#DED8CB] dark:divide-[#283931] text-sm">
+                <dl className="divide-y divide-[#E5E7EB] dark:divide-[#374151] text-sm">
                   <div className="py-2.5 flex justify-between">
-                    <dt className="text-[#54625A] dark:text-[#C5D4C9]">Node.js Engine</dt>
-                    <dd className="font-mono text-[#202522] dark:text-[#E8F0EC]">{diagnostics?.nodeVersion ?? 'N/A'}</dd>
+                    <dt className="text-[#6B7280] dark:text-[#D1D5DB]">Node.js Engine</dt>
+                    <dd className="font-mono text-[#111827] dark:text-[#F9FAFB]">{diagnostics?.nodeVersion ?? 'N/A'}</dd>
                   </div>
                   <div className="py-2.5 flex justify-between">
-                    <dt className="text-[#54625A] dark:text-[#C5D4C9]">Platform OS</dt>
-                    <dd className="font-mono text-[#202522] dark:text-[#E8F0EC]">{diagnostics?.platform ?? 'N/A'}</dd>
+                    <dt className="text-[#6B7280] dark:text-[#D1D5DB]">Platform OS</dt>
+                    <dd className="font-mono text-[#111827] dark:text-[#F9FAFB]">{diagnostics?.platform ?? 'N/A'}</dd>
                   </div>
                   <div className="py-2.5 flex justify-between">
-                    <dt className="text-[#54625A] dark:text-[#C5D4C9]">Resident Set Size (RSS)</dt>
-                    <dd className="font-mono text-[#202522] dark:text-[#E8F0EC]">{diagnostics?.memory?.rssMb ?? 0} MB</dd>
+                    <dt className="text-[#6B7280] dark:text-[#D1D5DB]">Resident Set Size (RSS)</dt>
+                    <dd className="font-mono text-[#111827] dark:text-[#F9FAFB]">{diagnostics?.memory?.rssMb ?? 0} MB</dd>
                   </div>
                   <div className="py-2.5 flex justify-between">
-                    <dt className="text-[#54625A] dark:text-[#C5D4C9]">Public Liveness Probe</dt>
-                    <dd className="font-mono text-sky-400 text-xs bg-[#ECE7DB] dark:bg-[#1D2A25] px-1.5 py-0.5 rounded">GET /api/health</dd>
+                    <dt className="text-[#6B7280] dark:text-[#D1D5DB]">Public Liveness Probe</dt>
+                    <dd className="font-mono text-[#0B3D2E] dark:text-[#34D399] text-xs bg-[#F3F4F6] dark:bg-[#273548] px-1.5 py-0.5 rounded">GET /api/health</dd>
                   </div>
                   <div className="py-2.5 flex justify-between">
-                    <dt className="text-[#54625A] dark:text-[#C5D4C9]">Readiness Probe</dt>
-                    <dd className="font-mono text-emerald-400 text-xs bg-[#ECE7DB] dark:bg-[#1D2A25] px-1.5 py-0.5 rounded">GET /api/health/ready</dd>
+                    <dt className="text-[#6B7280] dark:text-[#D1D5DB]">Readiness Probe</dt>
+                    <dd className="font-mono text-[#0B6640] dark:text-emerald-400 text-xs bg-[#F3F4F6] dark:bg-[#273548] px-1.5 py-0.5 rounded">GET /api/health/ready</dd>
                   </div>
                   <div className="py-2.5 flex justify-between">
-                    <dt className="text-[#54625A] dark:text-[#C5D4C9]">Last Telemetry Check</dt>
-                    <dd className="font-mono text-xs text-[#54625A] dark:text-[#C5D4C9]">{health?.timestamp ? new Date(health.timestamp).toLocaleTimeString() : 'N/A'}</dd>
+                    <dt className="text-[#6B7280] dark:text-[#D1D5DB]">Last Telemetry Check</dt>
+                    <dd className="font-mono text-xs text-[#6B7280] dark:text-[#D1D5DB]">{health?.timestamp ? new Date(health.timestamp).toLocaleTimeString() : 'N/A'}</dd>
                   </div>
                 </dl>
               </CardContent>
@@ -1975,7 +1974,7 @@ export function AdminSystemPage() {
           </div>
 
           {/* Database Schema Synchronization & Health */}
-          <Card className="border-[#DED8CB] dark:border-[#283931]">
+          <Card className="border-[#E5E7EB] dark:border-[#374151]">
             <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2">
               <div>
                 <CardTitle as="h3">Database Schema Synchronization & Migration Integrity</CardTitle>
@@ -1994,7 +1993,7 @@ export function AdminSystemPage() {
               </Button>
             </CardHeader>
             <CardContent>
-              <p className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
+              <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
                 Ensures all tables, additive columns (AI verification, fraud risk scores, complaint consolidation, contractor extensions), and foreign key indexes are aligned with the Prisma data model without downtime or destructive resets.
               </p>
             </CardContent>
@@ -2003,9 +2002,9 @@ export function AdminSystemPage() {
           <Card variant="subtle">
             <CardContent className="py-4">
               <div className="flex items-start gap-3">
-                <ShieldCheckIcon className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
-                <div className="text-xs text-[#54625A] dark:text-[#C5D4C9] space-y-1">
-                  <p className="font-semibold text-[#202522] dark:text-[#E8F0EC]">
+                <ShieldCheckIcon className="w-5 h-5 text-[#0B6640] dark:text-emerald-400 shrink-0 mt-0.5" />
+                <div className="text-xs text-[#6B7280] dark:text-[#D1D5DB] space-y-1">
+                  <p className="font-semibold text-[#111827] dark:text-[#F9FAFB]">
                     Security & Data Protection Isolation
                   </p>
                   <p>
@@ -2039,7 +2038,7 @@ export function AdminSystemPage() {
                       setAuditSearch(e.target.value);
                       setAuditPage(1);
                     }}
-                    leftIcon={<SearchIcon className="w-4 h-4 text-[#54625A] dark:text-[#C5D4C9]" />}
+                    leftIcon={<SearchIcon className="w-4 h-4 text-[#6B7280] dark:text-[#D1D5DB]" />}
                   />
                 </div>
                 <div className="w-36">
@@ -2080,8 +2079,8 @@ export function AdminSystemPage() {
                 />
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs text-[#3E4B44] dark:text-[#C5D4C9]">
-                    <thead className="border-b border-[#DED8CB] dark:border-[#283931] text-[11px] uppercase tracking-wider text-[#54625A] dark:text-[#C5D4C9] bg-[#ECE7DB]/60 dark:bg-[#1D2A25]/60">
+                  <table className="w-full text-left text-xs text-[#374151] dark:text-[#D1D5DB]">
+                    <thead className="border-b border-[#E5E7EB] dark:border-[#374151] text-[11px] uppercase tracking-wider text-[#6B7280] dark:text-[#D1D5DB] bg-[#F9FAFB] dark:bg-[#182230]">
                       <tr>
                         <th className="py-2.5 px-3">Timestamp</th>
                         <th className="py-2.5 px-3">Action</th>
@@ -2090,21 +2089,21 @@ export function AdminSystemPage() {
                         <th className="py-2.5 px-3 text-right">Details</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#DED8CB] dark:divide-[#283931]">
+                    <tbody className="divide-y divide-[#E5E7EB] dark:divide-[#374151]">
                       {auditEvents.map((evt) => (
-                        <tr key={evt.id} className="hover:bg-[#ECE7DB]/40 dark:hover:bg-[#1D2A25]/40">
-                          <td className="py-2.5 px-3 text-[#54625A] dark:text-[#C5D4C9] whitespace-nowrap">
+                        <tr key={evt.id} className="hover:bg-[#F9FAFB] dark:hover:bg-[#273548]/60">
+                          <td className="py-2.5 px-3 text-[#6B7280] dark:text-[#D1D5DB] whitespace-nowrap">
                             {new Date(evt.createdAt).toLocaleString()}
                           </td>
                           <td className="py-2.5 px-3">
-                            <span className="font-semibold text-[#202522] dark:text-[#F5F2EA]">{evt.action}</span>
+                            <span className="font-semibold text-[#111827] dark:text-[#F9FAFB]">{evt.action}</span>
                           </td>
                           <td className="py-2.5 px-3">
                             <Badge variant="neutral" size="sm">{evt.entityType}</Badge>
                           </td>
                           <td className="py-2.5 px-3">
-                            <span className="text-[#202522] dark:text-[#E8F0EC] block">{evt.actor?.name || 'System / Automated'}</span>
-                            {evt.actor?.email && <span className="text-[11px] text-[#54625A] dark:text-[#C5D4C9]">{evt.actor.email}</span>}
+                            <span className="text-[#111827] dark:text-[#F9FAFB] block">{evt.actor?.name || 'System / Automated'}</span>
+                            {evt.actor?.email && <span className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB]">{evt.actor.email}</span>}
                           </td>
                           <td className="py-2.5 px-3 text-right">
                             <Button
@@ -2125,7 +2124,7 @@ export function AdminSystemPage() {
 
               {/* Pagination */}
               {auditTotalPages > 1 && (
-                <div className="flex items-center justify-between border-t border-[#DED8CB] dark:border-[#283931] pt-4 mt-4 text-xs text-[#54625A] dark:text-[#C5D4C9]">
+                <div className="flex items-center justify-between border-t border-[#E5E7EB] dark:border-[#374151] pt-4 mt-4 text-xs text-[#6B7280] dark:text-[#D1D5DB]">
                   <span>Page {auditPage} of {auditTotalPages}</span>
                   <div className="flex items-center gap-2">
                     <Button
@@ -2222,14 +2221,14 @@ export function AdminSystemPage() {
                   {incidents.map((inc) => (
                     <div
                       key={inc.id}
-                      className="p-4 rounded-lg border border-[#DED8CB] dark:border-[#283931] bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 space-y-3"
+                      className="p-4 rounded-lg border border-[#E5E7EB] dark:border-[#374151] bg-[#F9FAFB] dark:bg-[#182230] space-y-3"
                     >
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                         <div className="flex items-center gap-2.5">
-                          <code className="text-xs font-mono font-bold text-[#173D32] dark:text-[#7BC4B2] bg-[#ECE7DB] dark:bg-[#1D2A25] border border-[#DED8CB] dark:border-[#283931] px-2 py-0.5 rounded font-mono">
+                          <code className="text-xs font-mono font-bold text-[#0B3D2E] dark:text-[#34D399] bg-[#F3F4F6] dark:bg-[#273548] border border-[#E5E7EB] dark:border-[#374151] px-2 py-0.5 rounded font-mono">
                             {inc.incidentNumber}
                           </code>
-                          <h4 className="text-sm font-semibold text-[#202522] dark:text-[#F5F2EA]">{inc.title}</h4>
+                          <h4 className="text-sm font-semibold text-[#111827] dark:text-[#F9FAFB]">{inc.title}</h4>
                         </div>
                         <div className="flex items-center gap-2">
                           <Badge
@@ -2254,11 +2253,11 @@ export function AdminSystemPage() {
                         </div>
                       </div>
 
-                      <p className="text-xs text-[#3E4B44] dark:text-[#C5D4C9]">{inc.description}</p>
+                      <p className="text-xs text-[#374151] dark:text-[#D1D5DB]">{inc.description}</p>
 
-                      <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[#DED8CB] dark:border-[#283931] pt-3 text-[11px] text-[#54625A] dark:text-[#C5D4C9]">
+                      <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[#E5E7EB] dark:border-[#374151] pt-3 text-[11px] text-[#6B7280] dark:text-[#D1D5DB]">
                         <span>
-                          Subsystem: <strong className="text-[#3E4B44] dark:text-[#C5D4C9]">{inc.subsystem}</strong> &bull; Logged by {inc.reportedBy?.name} on {new Date(inc.createdAt).toLocaleString()}
+                          Subsystem: <strong className="text-[#374151] dark:text-[#D1D5DB]">{inc.subsystem}</strong> &bull; Logged by {inc.reportedBy?.name} on {new Date(inc.createdAt).toLocaleString()}
                           {inc.resolvedAt && ` &bull; Resolved on ${new Date(inc.resolvedAt).toLocaleString()}`}
                         </span>
 
@@ -2280,8 +2279,8 @@ export function AdminSystemPage() {
                       </div>
 
                       {inc.resolutionNotes && (
-                        <div className="p-2.5 rounded bg-[#ECE7DB]/60 dark:bg-[#1D2A25]/60 border border-[#DED8CB] dark:border-[#283931] text-xs text-[#3E4B44] dark:text-[#C5D4C9]">
-                          <strong className="text-emerald-400 block mb-1">Resolution Summary:</strong>
+                        <div className="p-2.5 rounded bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151] text-xs text-[#374151] dark:text-[#D1D5DB]">
+                          <strong className="text-[#0B6640] dark:text-emerald-400 block mb-1">Resolution Summary:</strong>
                           {inc.resolutionNotes}
                         </div>
                       )}
@@ -2307,13 +2306,13 @@ export function AdminSystemPage() {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Audit Export Card */}
-                <div className="p-4 rounded-xl border border-[#DED8CB] dark:border-[#283931] bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 space-y-3 flex flex-col justify-between">
+                <div className="p-4 rounded-xl border border-[#E5E7EB] dark:border-[#374151] bg-[#F9FAFB] dark:bg-[#182230] space-y-3 flex flex-col justify-between">
                   <div className="space-y-2">
-                    <div className="w-8 h-8 rounded-lg bg-blue-600/20 text-blue-400 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-lg bg-[#E5ECE8] dark:bg-[#273548] text-[#0B3D2E] dark:text-[#34D399] flex items-center justify-center">
                       <ShieldCheckIcon className="w-5 h-5" />
                     </div>
-                    <h4 className="text-sm font-semibold text-[#202522] dark:text-[#F5F2EA]">Administrative Audit Trail</h4>
-                    <p className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
+                    <h4 className="text-sm font-semibold text-[#111827] dark:text-[#F9FAFB]">Administrative Audit Trail</h4>
+                    <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
                       Complete activity logs covering user role modifications, status alterations, platform configuration updates, and operational interventions.
                     </p>
                   </div>
@@ -2330,13 +2329,13 @@ export function AdminSystemPage() {
                 </div>
 
                 {/* Workflow Export Card */}
-                <div className="p-4 rounded-xl border border-[#DED8CB] dark:border-[#283931] bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 space-y-3 flex flex-col justify-between">
+                <div className="p-4 rounded-xl border border-[#E5E7EB] dark:border-[#374151] bg-[#F9FAFB] dark:bg-[#182230] space-y-3 flex flex-col justify-between">
                   <div className="space-y-2">
-                    <div className="w-8 h-8 rounded-lg bg-purple-600/20 text-purple-400 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-[#0B6640] dark:text-emerald-400 flex items-center justify-center">
                       <ActivityIcon className="w-5 h-5" />
                     </div>
-                    <h4 className="text-sm font-semibold text-[#202522] dark:text-[#F5F2EA]">Complaint Workflow & Queue</h4>
-                    <p className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
+                    <h4 className="text-sm font-semibold text-[#111827] dark:text-[#F9FAFB]">Complaint Workflow & Queue</h4>
+                    <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
                       Grievance processing dataset including tracking numbers, categories, current status, urgency priority, department assignments, and SLA milestones.
                     </p>
                   </div>
@@ -2353,13 +2352,13 @@ export function AdminSystemPage() {
                 </div>
 
                 {/* Incidents Export Card */}
-                <div className="p-4 rounded-xl border border-[#DED8CB] dark:border-[#283931] bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 space-y-3 flex flex-col justify-between">
+                <div className="p-4 rounded-xl border border-[#E5E7EB] dark:border-[#374151] bg-[#F9FAFB] dark:bg-[#182230] space-y-3 flex flex-col justify-between">
                   <div className="space-y-2">
-                    <div className="w-8 h-8 rounded-lg bg-amber-600/20 text-amber-400 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 flex items-center justify-center">
                       <AlertTriangleIcon className="w-5 h-5" />
                     </div>
-                    <h4 className="text-sm font-semibold text-[#202522] dark:text-[#F5F2EA]">Operational Incidents Log</h4>
-                    <p className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
+                    <h4 className="text-sm font-semibold text-[#111827] dark:text-[#F9FAFB]">Operational Incidents Log</h4>
+                    <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
                       Incident tracking dataset with Crockford identifiers, reported severities, affected subsystems, operational statuses, and logged resolution notes.
                     </p>
                   </div>
@@ -2382,9 +2381,9 @@ export function AdminSystemPage() {
           <Card variant="subtle">
             <CardContent className="py-4">
               <div className="flex items-start gap-3">
-                <ShieldCheckIcon className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
-                <div className="text-xs text-[#54625A] dark:text-[#C5D4C9] space-y-1">
-                  <p className="font-semibold text-[#202522] dark:text-[#E8F0EC]">
+                <ShieldCheckIcon className="w-5 h-5 text-[#0B6640] dark:text-emerald-400 shrink-0 mt-0.5" />
+                <div className="text-xs text-[#6B7280] dark:text-[#D1D5DB] space-y-1">
+                  <p className="font-semibold text-[#111827] dark:text-[#F9FAFB]">
                     CWE-1236 Formula Injection Defense
                   </p>
                   <p>
@@ -2400,13 +2399,14 @@ export function AdminSystemPage() {
       {/* MODAL 1: EDIT CONFIG SETTING */}
       {editingSetting && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] rounded-xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-[#DED8CB] dark:border-[#283931] pb-3">
-              <h3 className="text-base font-bold text-[#202522] dark:text-[#F5F2EA]">Update Platform Setting</h3>
+          <div className="bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
+              <h3 className="text-base font-bold text-[#111827] dark:text-[#F9FAFB]">Update Platform Setting</h3>
               <button
                 type="button"
+                aria-label="Close dialog"
                 onClick={() => setEditingSetting(null)}
-                className="text-[#54625A] dark:text-[#C5D4C9] hover:text-[#202522] dark:hover:text-[#F5F2EA]"
+                className="civora-liquid-btn civora-liquid-btn--ghost px-2.5 py-1 rounded-lg text-sm font-bold"
               >
                 &times;
               </button>
@@ -2414,19 +2414,19 @@ export function AdminSystemPage() {
 
             <div className="space-y-3">
               <div>
-                <label className="text-xs font-semibold text-[#54625A] dark:text-[#C5D4C9] block mb-1">Setting Key</label>
-                <code className="text-xs font-mono font-semibold text-[#173D32] dark:text-[#7BC4B2] bg-[#ECE7DB] dark:bg-[#1D2A25] border border-[#DED8CB] dark:border-[#283931] px-2 py-1 rounded block font-mono">
+                <label className="text-xs font-semibold text-[#6B7280] dark:text-[#D1D5DB] block mb-1">Setting Key</label>
+                <code className="text-xs font-mono font-semibold text-[#0B3D2E] dark:text-[#34D399] bg-[#F3F4F6] dark:bg-[#273548] border border-[#E5E7EB] dark:border-[#374151] px-2 py-1 rounded block font-mono">
                   {editingSetting.key}
                 </code>
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-[#54625A] dark:text-[#C5D4C9] block mb-1">Description</label>
-                <p className="text-xs text-[#3E4B44] dark:text-[#C5D4C9]">{editingSetting.description}</p>
+                <label className="text-xs font-semibold text-[#6B7280] dark:text-[#D1D5DB] block mb-1">Description</label>
+                <p className="text-xs text-[#374151] dark:text-[#D1D5DB]">{editingSetting.description}</p>
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-[#54625A] dark:text-[#C5D4C9] block mb-1">New Value</label>
+                <label className="text-xs font-semibold text-[#6B7280] dark:text-[#D1D5DB] block mb-1">New Value</label>
                 <TextInput
                   value={editSettingValue}
                   onChange={(e) => setEditSettingValue(e.target.value)}
@@ -2435,8 +2435,8 @@ export function AdminSystemPage() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-[#54625A] dark:text-[#C5D4C9] block mb-1">
-                  Justification Reason <span className="text-rose-400">*</span>
+                <label className="text-xs font-semibold text-[#6B7280] dark:text-[#D1D5DB] block mb-1">
+                  Justification Reason <span className="text-rose-600 dark:text-rose-400">*</span>
                 </label>
                 <TextInput
                   value={editSettingReason}
@@ -2446,7 +2446,7 @@ export function AdminSystemPage() {
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 border-t border-[#DED8CB] dark:border-[#283931] pt-4">
+            <div className="flex items-center justify-end gap-2 border-t border-[#E5E7EB] dark:border-[#374151] pt-4">
               <Button variant="ghost" size="sm" onClick={() => setEditingSetting(null)}>
                 Cancel
               </Button>
@@ -2466,15 +2466,15 @@ export function AdminSystemPage() {
       {/* MODAL 2: MAINTENANCE MODE CONFIRMATION */}
       {maintenanceModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white dark:bg-[#16201C] border border-amber-500/40 rounded-xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-            <div className="flex items-center gap-3 border-b border-[#DED8CB] dark:border-[#283931] pb-3">
+          <div className="bg-white dark:bg-[#1F2937] border border-amber-500/40 rounded-xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center gap-3 border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
               <AlertTriangleIcon className="w-6 h-6 text-amber-700 dark:text-amber-400" />
-              <h3 className="text-base font-bold text-[#202522] dark:text-[#F5F2EA]">
+              <h3 className="text-base font-bold text-[#111827] dark:text-[#F9FAFB]">
                 {maintenanceTargetValue ? 'Enable Maintenance Mode?' : 'Disable Maintenance Mode?'}
               </h3>
             </div>
 
-            <div className="text-xs text-[#3E4B44] dark:text-[#C5D4C9] space-y-2">
+            <div className="text-xs text-[#374151] dark:text-[#D1D5DB] space-y-2">
               {maintenanceTargetValue ? (
                 <p>
                   Activating Maintenance Mode will immediately cause all citizen-facing write operations (issue reporting, evidence upload, voting, comments) to be <strong>suspended with HTTP 503</strong>. Authorized administrators retain full access for recovery.
@@ -2486,8 +2486,8 @@ export function AdminSystemPage() {
               )}
 
               <div>
-                <label className="text-xs font-semibold text-[#54625A] dark:text-[#C5D4C9] block mt-3 mb-1">
-                  Operational Reason <span className="text-rose-400">*</span>
+                <label className="text-xs font-semibold text-[#6B7280] dark:text-[#D1D5DB] block mt-3 mb-1">
+                  Operational Reason <span className="text-rose-600 dark:text-rose-400">*</span>
                 </label>
                 <TextInput
                   value={maintenanceReason}
@@ -2497,12 +2497,12 @@ export function AdminSystemPage() {
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 border-t border-[#DED8CB] dark:border-[#283931] pt-4">
+            <div className="flex items-center justify-end gap-2 border-t border-[#E5E7EB] dark:border-[#374151] pt-4">
               <Button variant="ghost" size="sm" onClick={() => setMaintenanceModalOpen(false)}>
                 Cancel
               </Button>
               <Button
-                variant={maintenanceTargetValue ? 'primary' : 'secondary'}
+                variant={maintenanceTargetValue ? 'warning' : 'success'}
                 size="sm"
                 onClick={handleConfirmMaintenanceMode}
                 isLoading={savingSetting}
@@ -2517,15 +2517,15 @@ export function AdminSystemPage() {
       {/* MODAL 3: USER ROLE UPDATE */}
       {selectedUserForRole && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] rounded-xl max-w-md w-full p-6 shadow-2xl space-y-4">
-            <div className="border-b border-[#DED8CB] dark:border-[#283931] pb-3">
-              <h3 className="text-base font-bold text-[#202522] dark:text-[#F5F2EA]">Update User Role</h3>
-              <p className="text-xs text-[#54625A] dark:text-[#C5D4C9]">{selectedUserForRole.name} ({selectedUserForRole.email})</p>
+          <div className="bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-xl max-w-md w-full p-6 shadow-2xl space-y-4">
+            <div className="border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
+              <h3 className="text-base font-bold text-[#111827] dark:text-[#F9FAFB]">Update User Role</h3>
+              <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">{selectedUserForRole.name} ({selectedUserForRole.email})</p>
             </div>
 
             <div className="space-y-3">
               <div>
-                <label className="text-xs font-semibold text-[#54625A] dark:text-[#C5D4C9] block mb-1">New Role</label>
+                <label className="text-xs font-semibold text-[#6B7280] dark:text-[#D1D5DB] block mb-1">New Role</label>
                 <Select
                   value={newUserRole}
                   onChange={(e) => setNewUserRole(e.target.value as 'CITIZEN' | 'GOVERNMENT_OFFICIAL' | 'ADMIN' | 'CONTRACTOR')}
@@ -2540,8 +2540,8 @@ export function AdminSystemPage() {
 
               {newUserRole === 'GOVERNMENT_OFFICIAL' && (
                 <div>
-                  <label className="text-xs font-semibold text-[#54625A] dark:text-[#C5D4C9] block mb-1">
-                    Department Assignment <span className="text-rose-400">*</span>
+                  <label className="text-xs font-semibold text-[#6B7280] dark:text-[#D1D5DB] block mb-1">
+                    Department Assignment <span className="text-rose-600 dark:text-rose-400">*</span>
                   </label>
                   <Select
                     value={newDepartmentId}
@@ -2555,7 +2555,7 @@ export function AdminSystemPage() {
                     ]}
                   />
                   {!newDepartmentId && (
-                    <span className="text-[10px] text-amber-400 mt-1 block">
+                    <span className="text-[10px] text-amber-700 dark:text-amber-400 mt-1 block">
                       Officials must be mapped to an authorized civic department.
                     </span>
                   )}
@@ -2563,7 +2563,7 @@ export function AdminSystemPage() {
               )}
 
               <div>
-                <label className="text-xs font-semibold text-[#54625A] dark:text-[#C5D4C9] block mb-1">Justification Reason</label>
+                <label className="text-xs font-semibold text-[#6B7280] dark:text-[#D1D5DB] block mb-1">Justification Reason</label>
                 <TextInput
                   value={roleChangeReason}
                   onChange={(e) => setRoleChangeReason(e.target.value)}
@@ -2571,13 +2571,13 @@ export function AdminSystemPage() {
                 />
               </div>
 
-              <div className="p-2.5 rounded bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 border border-[#DED8CB] dark:border-[#283931] text-[11px] text-[#54625A] dark:text-[#C5D4C9]">
-                <InfoIcon className="w-3.5 h-3.5 text-blue-400 inline mr-1" />
+              <div className="p-2.5 rounded bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151] text-[11px] text-[#6B7280] dark:text-[#D1D5DB]">
+                <InfoIcon className="w-3.5 h-3.5 text-[#0B3D2E] dark:text-[#34D399] inline mr-1" />
                 Backend RBAC guarantees that the last remaining platform administrator cannot be demoted.
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 border-t border-[#DED8CB] dark:border-[#283931] pt-4">
+            <div className="flex items-center justify-end gap-2 border-t border-[#E5E7EB] dark:border-[#374151] pt-4">
               <Button variant="ghost" size="sm" onClick={() => setSelectedUserForRole(null)}>
                 Cancel
               </Button>
@@ -2597,24 +2597,24 @@ export function AdminSystemPage() {
       {/* MODAL 4: USER STATUS UPDATE (SUSPEND / ACTIVATE) */}
       {selectedUserForStatus && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] rounded-xl max-w-md w-full p-6 shadow-2xl space-y-4">
-            <div className="border-b border-[#DED8CB] dark:border-[#283931] pb-3">
-              <h3 className="text-base font-bold text-[#202522] dark:text-[#F5F2EA]">
+          <div className="bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-xl max-w-md w-full p-6 shadow-2xl space-y-4">
+            <div className="border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
+              <h3 className="text-base font-bold text-[#111827] dark:text-[#F9FAFB]">
                 {selectedUserForStatus.status === 'ACTIVE' ? 'Suspend Account' : 'Reactivate Account'}
               </h3>
-              <p className="text-xs text-[#54625A] dark:text-[#C5D4C9]">{selectedUserForStatus.name} ({selectedUserForStatus.email})</p>
+              <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">{selectedUserForStatus.name} ({selectedUserForStatus.email})</p>
             </div>
 
             <div className="space-y-3">
-              <p className="text-xs text-[#3E4B44] dark:text-[#C5D4C9]">
+              <p className="text-xs text-[#374151] dark:text-[#D1D5DB]">
                 {selectedUserForStatus.status === 'ACTIVE'
                   ? 'Suspended accounts cannot authenticate or access platform resources.'
                   : 'Reactivating this account will restore standard login access.'}
               </p>
 
               <div>
-                <label className="text-xs font-semibold text-[#54625A] dark:text-[#C5D4C9] block mb-1">
-                  Mandatory Audit Reason <span className="text-rose-400">*</span>
+                <label className="text-xs font-semibold text-[#6B7280] dark:text-[#D1D5DB] block mb-1">
+                  Mandatory Audit Reason <span className="text-rose-600 dark:text-rose-400">*</span>
                 </label>
                 <TextInput
                   value={statusChangeReason}
@@ -2624,12 +2624,12 @@ export function AdminSystemPage() {
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 border-t border-[#DED8CB] dark:border-[#283931] pt-4">
+            <div className="flex items-center justify-end gap-2 border-t border-[#E5E7EB] dark:border-[#374151] pt-4">
               <Button variant="ghost" size="sm" onClick={() => setSelectedUserForStatus(null)}>
                 Cancel
               </Button>
               <Button
-                variant={selectedUserForStatus.status === 'ACTIVE' ? 'primary' : 'secondary'}
+                variant={selectedUserForStatus.status === 'ACTIVE' ? 'danger' : 'success'}
                 size="sm"
                 onClick={handleUpdateStatus}
                 isLoading={actionInProgress}
@@ -2644,50 +2644,51 @@ export function AdminSystemPage() {
       {/* MODAL 5: INSPECT AUDIT ITEM */}
       {inspectAuditItem && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] rounded-xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-[#DED8CB] dark:border-[#283931] pb-3">
+          <div className="bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
               <div>
-                <h3 className="text-base font-bold text-[#202522] dark:text-[#F5F2EA]">Audit Event Details</h3>
-                <p className="text-xs text-[#54625A] dark:text-[#C5D4C9]">{inspectAuditItem.action}</p>
+                <h3 className="text-base font-bold text-[#111827] dark:text-[#F9FAFB]">Audit Event Details</h3>
+                <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">{inspectAuditItem.action}</p>
               </div>
               <button
                 type="button"
+                aria-label="Close dialog"
                 onClick={() => setInspectAuditItem(null)}
-                className="text-[#54625A] dark:text-[#C5D4C9] hover:text-[#202522] dark:hover:text-[#F5F2EA]"
+                className="civora-liquid-btn civora-liquid-btn--ghost px-2.5 py-1 rounded-lg text-sm font-bold"
               >
                 &times;
               </button>
             </div>
 
             <div className="space-y-2 text-xs">
-              <div className="grid grid-cols-2 gap-2 p-2.5 rounded bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 border border-[#DED8CB] dark:border-[#283931]">
+              <div className="grid grid-cols-2 gap-2 p-2.5 rounded bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151]">
                 <div>
-                  <span className="text-[#54625A] dark:text-[#C5D4C9] block">Entity</span>
-                  <span className="text-[#202522] dark:text-[#E8F0EC] font-semibold">{inspectAuditItem.entityType} ({inspectAuditItem.entityId})</span>
+                  <span className="text-[#6B7280] dark:text-[#D1D5DB] block">Entity</span>
+                  <span className="text-[#111827] dark:text-[#F9FAFB] font-semibold">{inspectAuditItem.entityType} ({inspectAuditItem.entityId})</span>
                 </div>
                 <div>
-                  <span className="text-[#54625A] dark:text-[#C5D4C9] block">Timestamp</span>
-                  <span className="text-[#202522] dark:text-[#E8F0EC]">{new Date(inspectAuditItem.createdAt).toLocaleString()}</span>
+                  <span className="text-[#6B7280] dark:text-[#D1D5DB] block">Timestamp</span>
+                  <span className="text-[#111827] dark:text-[#F9FAFB]">{new Date(inspectAuditItem.createdAt).toLocaleString()}</span>
                 </div>
                 <div>
-                  <span className="text-[#54625A] dark:text-[#C5D4C9] block">Actor</span>
-                  <span className="text-[#202522] dark:text-[#E8F0EC]">{inspectAuditItem.actor?.name || 'Automated / System'}</span>
+                  <span className="text-[#6B7280] dark:text-[#D1D5DB] block">Actor</span>
+                  <span className="text-[#111827] dark:text-[#F9FAFB]">{inspectAuditItem.actor?.name || 'Automated / System'}</span>
                 </div>
                 <div>
-                  <span className="text-[#54625A] dark:text-[#C5D4C9] block">Actor Role</span>
-                  <span className="text-[#202522] dark:text-[#E8F0EC]">{inspectAuditItem.actor?.role || 'N/A'}</span>
+                  <span className="text-[#6B7280] dark:text-[#D1D5DB] block">Actor Role</span>
+                  <span className="text-[#111827] dark:text-[#F9FAFB]">{inspectAuditItem.actor?.role || 'N/A'}</span>
                 </div>
               </div>
 
               <div>
-                <span className="text-[#54625A] dark:text-[#C5D4C9] font-semibold block mb-1">Sanitized Event Details & Payload</span>
-                <pre className="p-3 rounded bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 border border-[#DED8CB] dark:border-[#283931] text-[11px] font-mono text-[#3E4B44] dark:text-[#C5D4C9] overflow-x-auto max-h-60">
+                <span className="text-[#6B7280] dark:text-[#D1D5DB] font-semibold block mb-1">Sanitized Event Details & Payload</span>
+                <pre className="p-3 rounded bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151] text-[11px] font-mono text-[#374151] dark:text-[#D1D5DB] overflow-x-auto max-h-60">
                   {JSON.stringify(inspectAuditItem.details, null, 2)}
                 </pre>
               </div>
             </div>
 
-            <div className="flex items-center justify-end border-t border-[#DED8CB] dark:border-[#283931] pt-4">
+            <div className="flex items-center justify-end border-t border-[#E5E7EB] dark:border-[#374151] pt-4">
               <Button variant="secondary" size="sm" onClick={() => setInspectAuditItem(null)}>
                 Close
               </Button>
@@ -2699,13 +2700,14 @@ export function AdminSystemPage() {
       {/* MODAL 6: LOG OPERATIONAL INCIDENT */}
       {createIncidentModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] rounded-xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-[#DED8CB] dark:border-[#283931] pb-3">
-              <h3 className="text-base font-bold text-[#202522] dark:text-[#F5F2EA]">Log Operational Incident</h3>
+          <div className="bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
+              <h3 className="text-base font-bold text-[#111827] dark:text-[#F9FAFB]">Log Operational Incident</h3>
               <button
                 type="button"
+                aria-label="Close dialog"
                 onClick={() => setCreateIncidentModalOpen(false)}
-                className="text-[#54625A] dark:text-[#C5D4C9] hover:text-[#202522] dark:hover:text-[#F5F2EA]"
+                className="civora-liquid-btn civora-liquid-btn--ghost px-2.5 py-1 rounded-lg text-sm font-bold"
               >
                 &times;
               </button>
@@ -2713,8 +2715,8 @@ export function AdminSystemPage() {
 
             <div className="space-y-3">
               <div>
-                <label className="text-xs font-semibold text-[#54625A] dark:text-[#C5D4C9] block mb-1">
-                  Incident Title <span className="text-rose-400">*</span>
+                <label className="text-xs font-semibold text-[#6B7280] dark:text-[#D1D5DB] block mb-1">
+                  Incident Title <span className="text-rose-600 dark:text-rose-400">*</span>
                 </label>
                 <TextInput
                   value={incidentTitle}
@@ -2725,7 +2727,7 @@ export function AdminSystemPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-semibold text-[#54625A] dark:text-[#C5D4C9] block mb-1">Severity</label>
+                  <label className="text-xs font-semibold text-[#6B7280] dark:text-[#D1D5DB] block mb-1">Severity</label>
                   <Select
                     value={incidentSeverity}
                     onChange={(e) => setIncidentSeverity(e.target.value as 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL')}
@@ -2738,7 +2740,7 @@ export function AdminSystemPage() {
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-[#54625A] dark:text-[#C5D4C9] block mb-1">Affected Subsystem</label>
+                  <label className="text-xs font-semibold text-[#6B7280] dark:text-[#D1D5DB] block mb-1">Affected Subsystem</label>
                   <TextInput
                     value={incidentSubsystem}
                     onChange={(e) => setIncidentSubsystem(e.target.value)}
@@ -2748,8 +2750,8 @@ export function AdminSystemPage() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-[#54625A] dark:text-[#C5D4C9] block mb-1">
-                  Description & Impact <span className="text-rose-400">*</span>
+                <label className="text-xs font-semibold text-[#6B7280] dark:text-[#D1D5DB] block mb-1">
+                  Description & Impact <span className="text-rose-600 dark:text-rose-400">*</span>
                 </label>
                 <TextArea
                   rows={3}
@@ -2760,7 +2762,7 @@ export function AdminSystemPage() {
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 border-t border-[#DED8CB] dark:border-[#283931] pt-4">
+            <div className="flex items-center justify-end gap-2 border-t border-[#E5E7EB] dark:border-[#374151] pt-4">
               <Button variant="ghost" size="sm" onClick={() => setCreateIncidentModalOpen(false)}>
                 Cancel
               </Button>
@@ -2780,17 +2782,17 @@ export function AdminSystemPage() {
       {/* MODAL 7: UPDATE INCIDENT STATUS / RESOLUTION */}
       {selectedIncidentForUpdate && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] rounded-xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-            <div className="border-b border-[#DED8CB] dark:border-[#283931] pb-3">
-              <h3 className="text-base font-bold text-[#202522] dark:text-[#F5F2EA]">Update Incident Status</h3>
-              <p className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
+          <div className="bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div className="border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
+              <h3 className="text-base font-bold text-[#111827] dark:text-[#F9FAFB]">Update Incident Status</h3>
+              <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
                 {selectedIncidentForUpdate.incidentNumber} &bull; {selectedIncidentForUpdate.title}
               </p>
             </div>
 
             <div className="space-y-3">
               <div>
-                <label className="text-xs font-semibold text-[#54625A] dark:text-[#C5D4C9] block mb-1">Status</label>
+                <label className="text-xs font-semibold text-[#6B7280] dark:text-[#D1D5DB] block mb-1">Status</label>
                 <Select
                   value={updateIncidentStatus}
                   onChange={(e) => setUpdateIncidentStatus(e.target.value as 'OPEN' | 'INVESTIGATING' | 'MONITORING' | 'RESOLVED')}
@@ -2804,8 +2806,8 @@ export function AdminSystemPage() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-[#54625A] dark:text-[#C5D4C9] block mb-1">
-                  Resolution Notes {updateIncidentStatus === 'RESOLVED' && <span className="text-rose-400">* (Mandatory for resolution)</span>}
+                <label className="text-xs font-semibold text-[#6B7280] dark:text-[#D1D5DB] block mb-1">
+                  Resolution Notes {updateIncidentStatus === 'RESOLVED' && <span className="text-rose-600 dark:text-rose-400">* (Mandatory for resolution)</span>}
                 </label>
                 <TextArea
                   rows={3}
@@ -2816,7 +2818,7 @@ export function AdminSystemPage() {
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 border-t border-[#DED8CB] dark:border-[#283931] pt-4">
+            <div className="flex items-center justify-end gap-2 border-t border-[#E5E7EB] dark:border-[#374151] pt-4">
               <Button variant="ghost" size="sm" onClick={() => setSelectedIncidentForUpdate(null)}>
                 Cancel
               </Button>
@@ -2836,18 +2838,19 @@ export function AdminSystemPage() {
       {/* MODAL 8: ONBOARD GOVERNMENT OFFICIAL */}
       {createOfficialModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] rounded-xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-[#DED8CB] dark:border-[#283931] pb-3">
+          <div className="bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
               <div>
-                <h3 className="text-base font-bold text-[#202522] dark:text-[#F5F2EA]">Onboard Government Official</h3>
-                <p className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
+                <h3 className="text-base font-bold text-[#111827] dark:text-[#F9FAFB]">Onboard Government Official</h3>
+                <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
                   Provision an official account with departmental grievance processing privileges.
                 </p>
               </div>
               <button
                 type="button"
+                aria-label="Close dialog"
                 onClick={() => setCreateOfficialModalOpen(false)}
-                className="text-[#54625A] dark:text-[#C5D4C9] hover:text-[#202522] dark:hover:text-[#F5F2EA]"
+                className="civora-liquid-btn civora-liquid-btn--ghost px-2.5 py-1 rounded-lg text-sm font-bold"
               >
                 &times;
               </button>
@@ -2855,8 +2858,8 @@ export function AdminSystemPage() {
 
             <form onSubmit={handleCreateOfficial} className="space-y-3">
               <div>
-                <label className="text-xs font-semibold text-[#54625A] dark:text-[#C5D4C9] block mb-1">
-                  Full Name <span className="text-rose-400">*</span>
+                <label className="text-xs font-semibold text-[#6B7280] dark:text-[#D1D5DB] block mb-1">
+                  Full Name <span className="text-rose-600 dark:text-rose-400">*</span>
                 </label>
                 <TextInput
                   value={newOfficialName}
@@ -2867,8 +2870,8 @@ export function AdminSystemPage() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-[#54625A] dark:text-[#C5D4C9] block mb-1">
-                  Government / Official Email <span className="text-rose-400">*</span>
+                <label className="text-xs font-semibold text-[#6B7280] dark:text-[#D1D5DB] block mb-1">
+                  Government / Official Email <span className="text-rose-600 dark:text-rose-400">*</span>
                 </label>
                 <TextInput
                   type="email"
@@ -2880,7 +2883,7 @@ export function AdminSystemPage() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-[#54625A] dark:text-[#C5D4C9] block mb-1">Phone Number</label>
+                <label className="text-xs font-semibold text-[#6B7280] dark:text-[#D1D5DB] block mb-1">Phone Number</label>
                 <TextInput
                   type="tel"
                   value={newOfficialPhone}
@@ -2890,8 +2893,8 @@ export function AdminSystemPage() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-[#54625A] dark:text-[#C5D4C9] block mb-1">
-                  Department Assignment <span className="text-rose-400">*</span>
+                <label className="text-xs font-semibold text-[#6B7280] dark:text-[#D1D5DB] block mb-1">
+                  Department Assignment <span className="text-rose-600 dark:text-rose-400">*</span>
                 </label>
                 <Select
                   value={newOfficialDepartmentId}
@@ -2907,8 +2910,8 @@ export function AdminSystemPage() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-[#54625A] dark:text-[#C5D4C9] block mb-1">
-                  Initial Password <span className="text-rose-400">*</span>
+                <label className="text-xs font-semibold text-[#6B7280] dark:text-[#D1D5DB] block mb-1">
+                  Initial Password <span className="text-rose-600 dark:text-rose-400">*</span>
                 </label>
                 <div className="relative">
                   <TextInput
@@ -2918,20 +2921,22 @@ export function AdminSystemPage() {
                     placeholder="Min 8 chars, 1 uppercase, 1 lowercase, 1 number"
                     required
                   />
-                  <button
-                    type="button"
-                    onClick={() => setNewOfficialShowPassword((prev) => !prev)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#54625A] dark:text-[#C5D4C9] hover:text-[#202522] dark:text-[#E8F0EC] text-xs"
-                  >
-                    {newOfficialShowPassword ? 'Hide' : 'Show'}
-                  </button>
+                  <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                    <button
+                      type="button"
+                      onClick={() => setNewOfficialShowPassword((prev) => !prev)}
+                      className="civora-liquid-btn civora-liquid-btn--secondary px-2.5 py-1 rounded-md text-xs font-medium"
+                    >
+                      {newOfficialShowPassword ? 'Hide' : 'Show'}
+                    </button>
+                  </div>
                 </div>
-                <span className="text-[10px] text-[#54625A] dark:text-[#C5D4C9] mt-1 block">
+                <span className="text-[10px] text-[#6B7280] dark:text-[#D1D5DB] mt-1 block">
                   Password must meet platform security standards (uppercase, lowercase, number).
                 </span>
               </div>
 
-              <div className="flex items-center justify-end gap-2 border-t border-[#DED8CB] dark:border-[#283931] pt-4 mt-4">
+              <div className="flex items-center justify-end gap-2 border-t border-[#E5E7EB] dark:border-[#374151] pt-4 mt-4">
                 <Button variant="ghost" size="sm" type="button" onClick={() => setCreateOfficialModalOpen(false)}>
                   Cancel
                 </Button>
@@ -2953,33 +2958,33 @@ export function AdminSystemPage() {
       {/* MODAL 9: APPROVE CONTRACTOR APPLICATION */}
       {selectedContractorForApprove && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white dark:bg-[#16201C] border border-emerald-500/40 rounded-xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-            <div className="border-b border-[#DED8CB] dark:border-[#283931] pb-3">
-              <h3 className="text-base font-bold text-[#202522] dark:text-[#F5F2EA]">Approve Contractor Application</h3>
-              <p className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
+          <div className="bg-white dark:bg-[#1F2937] border border-emerald-500/40 rounded-xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div className="border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
+              <h3 className="text-base font-bold text-[#111827] dark:text-[#F9FAFB]">Approve Contractor Application</h3>
+              <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
                 Verify this contractor and activate the applicant account for municipal tenders.
               </p>
             </div>
 
-            <div className="p-3 rounded-lg bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 border border-[#DED8CB] dark:border-[#283931] space-y-1 text-xs">
+            <div className="p-3 rounded-lg bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151] space-y-1 text-xs">
               <div className="flex justify-between">
-                <span className="text-[#54625A] dark:text-[#C5D4C9]">Company Name:</span>
-                <span className="text-[#202522] dark:text-[#F5F2EA] font-semibold">{selectedContractorForApprove.name}</span>
+                <span className="text-[#6B7280] dark:text-[#D1D5DB]">Company Name:</span>
+                <span className="text-[#111827] dark:text-[#F9FAFB] font-semibold">{selectedContractorForApprove.name}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#54625A] dark:text-[#C5D4C9]">Registration Number:</span>
-                <span className="font-mono font-semibold text-sky-700 dark:text-sky-400">{selectedContractorForApprove.registrationNumber}</span>
+                <span className="text-[#6B7280] dark:text-[#D1D5DB]">Registration Number:</span>
+                <span className="font-mono font-semibold text-[#0B3D2E] dark:text-[#34D399]">{selectedContractorForApprove.registrationNumber}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#54625A] dark:text-[#C5D4C9]">Categories / Class:</span>
-                <span className="text-[#3E4B44] dark:text-[#C5D4C9]">
+                <span className="text-[#6B7280] dark:text-[#D1D5DB]">Categories / Class:</span>
+                <span className="text-[#374151] dark:text-[#D1D5DB]">
                   {selectedContractorForApprove.workCategories?.join(', ') || selectedContractorForApprove.licenseClass || 'General'}
                 </span>
               </div>
               {selectedContractorForApprove.users?.[0] && (
                 <div className="flex justify-between">
-                  <span className="text-[#54625A] dark:text-[#C5D4C9]">Applicant:</span>
-                  <span className="text-[#3E4B44] dark:text-[#C5D4C9]">
+                  <span className="text-[#6B7280] dark:text-[#D1D5DB]">Applicant:</span>
+                  <span className="text-[#374151] dark:text-[#D1D5DB]">
                     {selectedContractorForApprove.users[0].name} ({selectedContractorForApprove.users[0].email})
                   </span>
                 </div>
@@ -2987,8 +2992,8 @@ export function AdminSystemPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-[#54625A] dark:text-[#C5D4C9] block">
-                Verification Notes / Audit Summary <span className="text-[#54625A] dark:text-[#C5D4C9]">(Optional)</span>
+              <label className="text-xs font-semibold text-[#6B7280] dark:text-[#D1D5DB] block">
+                Verification Notes / Audit Summary <span className="text-[#6B7280] dark:text-[#D1D5DB]">(Optional)</span>
               </label>
               <TextArea
                 rows={3}
@@ -2998,12 +3003,12 @@ export function AdminSystemPage() {
               />
             </div>
 
-            <div className="flex items-center justify-end gap-2 border-t border-[#DED8CB] dark:border-[#283931] pt-4">
+            <div className="flex items-center justify-end gap-2 border-t border-[#E5E7EB] dark:border-[#374151] pt-4">
               <Button variant="ghost" size="sm" onClick={() => setSelectedContractorForApprove(null)}>
                 Cancel
               </Button>
               <Button
-                variant="primary"
+                variant="success"
                 size="sm"
                 onClick={handleApproveContractor}
                 isLoading={approvingContractor}
@@ -3018,24 +3023,24 @@ export function AdminSystemPage() {
       {/* MODAL 10: REJECT CONTRACTOR APPLICATION */}
       {selectedContractorForReject && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white dark:bg-[#16201C] border border-rose-500/40 rounded-xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-            <div className="flex items-center gap-3 border-b border-[#DED8CB] dark:border-[#283931] pb-3">
+          <div className="bg-white dark:bg-[#1F2937] border border-rose-500/40 rounded-xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center gap-3 border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
               <AlertTriangleIcon className="w-6 h-6 text-rose-500" />
               <div>
-                <h3 className="text-base font-bold text-[#202522] dark:text-[#F5F2EA]">Reject Contractor Application</h3>
-                <p className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
+                <h3 className="text-base font-bold text-[#111827] dark:text-[#F9FAFB]">Reject Contractor Application</h3>
+                <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
                   {selectedContractorForReject.name} ({selectedContractorForReject.registrationNumber})
                 </p>
               </div>
             </div>
 
-            <p className="text-xs text-[#3E4B44] dark:text-[#C5D4C9]">
+            <p className="text-xs text-[#374151] dark:text-[#D1D5DB]">
               Rejecting this contractor application will set the contractor entity to <strong>INACTIVE</strong> and suspend the linked applicant account. The rejection reason will be visible when the applicant checks their registration status.
             </p>
 
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-[#54625A] dark:text-[#C5D4C9] block">
-                Mandatory Rejection Reason <span className="text-rose-400">*</span>
+              <label className="text-xs font-semibold text-[#6B7280] dark:text-[#D1D5DB] block">
+                Mandatory Rejection Reason <span className="text-rose-600 dark:text-rose-400">*</span>
               </label>
               <TextArea
                 rows={3}
@@ -3046,14 +3051,13 @@ export function AdminSystemPage() {
               />
             </div>
 
-            <div className="flex items-center justify-end gap-2 border-t border-[#DED8CB] dark:border-[#283931] pt-4">
+            <div className="flex items-center justify-end gap-2 border-t border-[#E5E7EB] dark:border-[#374151] pt-4">
               <Button variant="ghost" size="sm" onClick={() => setSelectedContractorForReject(null)}>
                 Cancel
               </Button>
               <Button
-                variant="primary"
+                variant="danger"
                 size="sm"
-                className="bg-rose-600 hover:bg-rose-500 text-white"
                 onClick={handleRejectContractor}
                 isLoading={rejectingContractor}
                 disabled={!rejectReason.trim() || rejectReason.trim().length < 5}

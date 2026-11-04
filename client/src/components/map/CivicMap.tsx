@@ -182,32 +182,32 @@ export const CivicMap: React.FC<CivicMapProps> = ({
       const popupContent = document.createElement('div');
       popupContent.style.padding = '8px';
       popupContent.style.fontFamily = 'inherit';
-      popupContent.style.color = '#0f172a';
+      popupContent.style.color = 'var(--color-text-primary)';
       popupContent.style.maxWidth = '260px';
 
       popupContent.innerHTML = `
-        <div style="font-size:11px;font-weight:bold;color:#475569;margin-bottom:2px;display:flex;justify-content:space-between;">
+        <div style="font-size:11px;font-weight:bold;color:var(--color-text-secondary);margin-bottom:2px;display:flex;justify-content:space-between;">
           <span>${marker.trackingId}</span>
-          <span style="color:#2563eb;">${marker.category?.name || 'Grievance'}</span>
+          <span style="color:var(--color-text-link);">${marker.category?.name || 'Grievance'}</span>
         </div>
-        <div style="font-size:13px;font-weight:700;line-height:1.25;margin-bottom:6px;color:#0f172a;">
+        <div style="font-size:13px;font-weight:700;line-height:1.25;margin-bottom:6px;color:var(--color-text-primary);">
           ${escapeHtml(marker.title)}
         </div>
-        <div style="font-size:11px;color:#64748b;margin-bottom:8px;">
+        <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:8px;">
           📍 ${escapeHtml(marker.locality)}${marker.ward ? ` (${escapeHtml(marker.ward)})` : ''}
         </div>
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-          <span style="font-size:10px;padding:2px 6px;border-radius:9999px;font-weight:600;background:#f1f5f9;color:#334155;border:1px solid #cbd5e1;">
+          <span style="font-size:10px;padding:2px 6px;border-radius:9999px;font-weight:600;background:var(--color-surface-muted);color:var(--color-text-secondary);border:1px solid var(--color-border);">
             ${marker.status}
           </span>
-          <span style="font-size:10px;color:#94a3b8;">
+          <span style="font-size:10px;color:var(--color-text-muted);">
             ${new Date(marker.createdAt).toLocaleDateString()}
           </span>
         </div>
         <a href="/track?id=${marker.trackingId}" style="
           display:block;
           text-align:center;
-          background:#2563eb;
+          background:var(--color-brand);
           color:white;
           text-decoration:none;
           font-size:11px;
@@ -236,7 +236,7 @@ export const CivicMap: React.FC<CivicMapProps> = ({
   };
 
   return (
-    <div className="relative w-full rounded-2xl overflow-hidden border border-[#DED8CB] dark:border-[#283931] bg-white dark:bg-[#16201C] shadow-md">
+    <div className="relative w-full rounded-2xl overflow-hidden border border-[#E5E7EB] dark:border-[#374151] bg-white dark:bg-[#1F2937] shadow-xs">
       {/* Map Element */}
       <div
         ref={mapContainerRef}
@@ -246,9 +246,9 @@ export const CivicMap: React.FC<CivicMapProps> = ({
 
       {/* Loading Overlay */}
       {loading && (
-        <div className="absolute inset-0 bg-[#ECE7DB]/60 dark:bg-[#1D2A25]/60 backdrop-blur-xs flex items-center justify-center z-20">
-          <div className="flex items-center space-x-3 px-4 py-2 bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] rounded-xl text-[#202522] dark:text-[#E8F0EC] text-xs font-medium shadow-lg">
-            <span className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></span>
+        <div className="absolute inset-0 bg-white/75 dark:bg-[#111827]/70 backdrop-blur-xs flex items-center justify-center z-20">
+          <div className="flex items-center space-x-3 px-4 py-2 bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-xl text-[#111827] dark:text-[#F9FAFB] text-xs font-medium shadow-md">
+            <span className="w-4 h-4 border-2 border-[#0B3D2E] dark:border-[#34D399] border-t-transparent rounded-full animate-spin"></span>
             <span>Querying civic coordinates...</span>
           </div>
         </div>
@@ -259,10 +259,10 @@ export const CivicMap: React.FC<CivicMapProps> = ({
         <button
           type="button"
           onClick={handleResetView}
-          className="px-3 py-1.5 bg-white dark:bg-[#16201C] hover:bg-[#ECE7DB] dark:bg-[#1D2A25] border border-[#DED8CB] dark:border-[#283931] text-[#202522] dark:text-[#E8F0EC] text-xs font-medium rounded-lg shadow-md transition-colors cursor-pointer flex items-center gap-1.5 backdrop-blur-xs"
+          className="civora-liquid-btn civora-liquid-btn--secondary px-3 py-1.5 text-xs font-medium rounded-lg gap-1.5"
           title="Reset map to central city overview"
         >
-          <svg className="w-3.5 h-3.5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-3.5 h-3.5 text-[#0B6640] dark:text-[#34D399]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
           </svg>
           Reset View
@@ -271,8 +271,8 @@ export const CivicMap: React.FC<CivicMapProps> = ({
 
       {/* Privacy Notice in Bottom Left */}
       <div className="absolute bottom-2 left-2 z-20 pointer-events-none">
-        <div className="px-2.5 py-1 bg-[#14241E]/90 border border-[#283931] rounded-md text-[11px] text-[#F4F0E6] flex items-center gap-1.5 shadow-sm">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#7BC4B2]"></span>
+        <div className="px-2.5 py-1 bg-white/95 dark:bg-[#1F2937]/95 border border-[#E5E7EB] dark:border-[#374151] rounded-md text-[11px] text-[#374151] dark:text-[#D1D5DB] flex items-center gap-1.5 shadow-xs">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#0B6640] dark:bg-[#34D399]"></span>
           <span>Public coordinates generalized to ~110m for resident privacy</span>
         </div>
       </div>

@@ -3,6 +3,7 @@ import { useRouter } from '../router';
 import { useAuth } from '../context/useAuth';
 import { Card } from '../components/ui/Card';
 import { Container } from '../components/layout/Container';
+import { PageHeading } from '../components/ui/PageHeading';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { LoadingIndicator } from '../components/ui/LoadingIndicator';
@@ -11,7 +12,6 @@ import { TextArea } from '../components/ui/TextArea';
 import {
   ThumbUpIcon,
   ChatBubbleIcon,
-  ClockIcon,
   CheckCircleIcon,
   AlertTriangleIcon,
 } from '../components/ui/icons';
@@ -254,7 +254,7 @@ export function ProposalDetailPage() {
 
   if (error || !proposal) {
     return (
-      <Container size="sm" className="py-12 space-y-4">
+      <Container size="sm" className="space-y-4">
         <Alert variant="error" title="Proposal Unavailable">
           {error || 'The requested community proposal does not exist or has not been published.'}
         </Alert>
@@ -266,83 +266,66 @@ export function ProposalDetailPage() {
   }
 
   return (
-    <Container size="md" className="space-y-6 pb-12">
-      {/* Navigation Breadcrumb */}
-      <button
-        type="button"
-        onClick={() => navigate('/engagement')}
-        className="text-xs font-semibold text-blue-400 hover:text-blue-300 transition-colors cursor-pointer flex items-center gap-1"
-      >
-        &larr; Back to Civic Engagement Hub
-      </button>
-
-      {/* Main Proposal Card */}
-      <Card className="p-6 sm:p-8 space-y-6">
-        {/* Header Badges */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[#DED8CB] dark:border-[#283931]">
-          <div className="flex items-center gap-2">
-            <span className="font-mono text-xs font-semibold text-blue-400 bg-blue-500/10 px-2.5 py-1 rounded border border-blue-500/20">
+    <Container size="md" className="space-y-6">
+      <PageHeading
+        title={proposal.title}
+        description={`Submitted by ${proposal.submitter.name} • ${new Date(proposal.createdAt).toLocaleDateString()}${proposal.locality ? ` • Locality: ${proposal.locality}` : ''}`}
+        className="mb-0"
+        eyebrow={
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => navigate('/engagement')}
+              className="civora-liquid-btn civora-liquid-btn--text px-2 py-0.5 -ml-2 rounded-md text-xs font-semibold gap-1"
+            >
+              &larr; Back to Civic Engagement Hub
+            </button>
+            <span className="text-[#D1D5DB]">&bull;</span>
+            <span className="font-mono text-xs font-semibold text-[#0B3D2E] bg-[#E5ECE8] dark:bg-[#34D399]/15 dark:text-[#34D399] px-2 py-0.5 rounded">
               {proposal.trackingId}
             </span>
-            <span className="text-xs text-[#54625A] dark:text-[#C5D4C9] bg-[#ECE7DB] dark:bg-[#1D2A25] border border-[#DED8CB] dark:border-[#283931] px-2 py-1 rounded">
+            <span className="text-xs text-[#4B5563] dark:text-[#D1D5DB] bg-[#F3F4F6] dark:bg-[#273548] border border-[#E5E7EB] dark:border-[#374151] px-2 py-0.5 rounded">
               {proposal.category.name}
             </span>
           </div>
+        }
+        badge={
+          <Badge variant={getStatusBadgeVariant(proposal.status) as any}>
+            {proposal.status.replace(/_/g, ' ')}
+          </Badge>
+        }
+        actions={
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => openReportModal('PROPOSAL', proposal.id, proposal.title)}
+            leftIcon={<AlertTriangleIcon className="w-3.5 h-3.5 text-[#B91C1C] dark:text-[#FCA5A5]" />}
+          >
+            Report
+          </Button>
+        }
+      />
 
-          <div className="flex items-center gap-3">
-            <Badge variant={getStatusBadgeVariant(proposal.status) as any}>
-              {proposal.status.replace(/_/g, ' ')}
-            </Badge>
-            <button
-              type="button"
-              onClick={() => openReportModal('PROPOSAL', proposal.id, proposal.title)}
-              className="text-xs text-[#C5D4C9] dark:text-[#54625A] hover:text-rose-400 transition-colors flex items-center gap-1 cursor-pointer"
-              title="Report this proposal"
-            >
-              <AlertTriangleIcon className="w-3.5 h-3.5" />
-              Report
-            </button>
-          </div>
-        </div>
-
-        {/* Title & Metadata */}
-        <div className="space-y-2">
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#202522] dark:text-[#F5F2EA] tracking-tight">
-            {proposal.title}
-          </h1>
-          <div className="flex flex-wrap items-center gap-4 text-xs text-[#54625A] dark:text-[#C5D4C9]">
-            <span>Submitted by <strong>{proposal.submitter.name}</strong></span>
-            <span>&bull;</span>
-            <span className="flex items-center gap-1">
-              <ClockIcon className="w-3.5 h-3.5" />
-              {new Date(proposal.createdAt).toLocaleDateString()}
-            </span>
-            {proposal.locality && (
-              <>
-                <span>&bull;</span>
-                <span>Locality: <strong>{proposal.locality}</strong></span>
-              </>
-            )}
-          </div>
-        </div>
+      {/* Main Proposal Card */}
+      <Card className="p-6 sm:p-8 space-y-6">
 
         {/* Official Authority Response Banner */}
         {proposal.officialResponse && (
-          <div className="p-5 rounded-xl bg-gradient-to-r from-[#173D32]/20 via-[#1F4E40]/15 to-[#ECE7DB]/40 dark:to-[#16201C] border border-[#173D32]/40 dark:border-[#7BC4B2]/40 space-y-2">
+          <div className="p-5 rounded-xl bg-[#E5ECE8]/60 dark:bg-[#273548] border border-[#0B3D2E]/25 dark:border-[#34D399]/35 space-y-2">
             <div className="flex items-center justify-between">
-              <div className="inline-flex items-center gap-2 text-xs font-bold text-emerald-400 uppercase tracking-wider">
+              <div className="inline-flex items-center gap-2 text-xs font-bold text-[#0B6640] dark:text-emerald-400 uppercase tracking-wider">
                 <CheckCircleIcon className="w-4 h-4" /> Official Authority Response
               </div>
               {proposal.officialResponseBy && (
-                <span className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
+                <span className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
                   {proposal.officialResponseBy.name} ({proposal.officialResponseBy.role})
                 </span>
               )}
             </div>
-            <p className="text-sm text-[#202522] dark:text-[#E8F0EC] leading-relaxed font-sans">
+            <p className="text-sm text-[#111827] dark:text-[#F9FAFB] leading-relaxed font-sans">
               {proposal.officialResponse}
             </p>
-            <p className="text-[11px] text-[#C5D4C9] dark:text-[#54625A]">
+            <p className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB]">
               Civic Note: An official response acknowledges consideration and feasibility study; it is distinct from approved capital project tenders.
             </p>
           </div>
@@ -350,7 +333,7 @@ export function ProposalDetailPage() {
 
         {/* Public Moderator Explanation if Declined or Clarification */}
         {proposal.publicExplanation && (
-          <div className="p-4 rounded-lg bg-amber-950/20 border border-amber-500/30 text-xs text-amber-300">
+          <div className="p-4 rounded-lg bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-500/30 text-xs text-amber-900 dark:text-amber-300">
             <strong>Moderator Note:</strong> {proposal.publicExplanation}
           </div>
         )}
@@ -359,21 +342,21 @@ export function ProposalDetailPage() {
         {(proposal.problemStatement || proposal.suggestedSolution) && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
             {proposal.problemStatement && (
-              <div className="p-4 rounded-xl bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 border border-[#DED8CB] dark:border-[#283931] space-y-1">
-                <span className="text-[11px] font-bold text-[#54625A] dark:text-[#C5D4C9] uppercase tracking-wider block">
+              <div className="p-4 rounded-xl bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151] space-y-1">
+                <span className="text-[11px] font-bold text-[#6B7280] dark:text-[#D1D5DB] uppercase tracking-wider block">
                   Identified Problem / Challenge
                 </span>
-                <p className="text-xs text-[#3E4B44] dark:text-[#C5D4C9] leading-relaxed">
+                <p className="text-xs text-[#374151] dark:text-[#D1D5DB] leading-relaxed">
                   {proposal.problemStatement}
                 </p>
               </div>
             )}
             {proposal.suggestedSolution && (
-              <div className="p-4 rounded-xl bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 border border-[#DED8CB] dark:border-[#283931] space-y-1">
-                <span className="text-[11px] font-bold text-[#54625A] dark:text-[#C5D4C9] uppercase tracking-wider block">
+              <div className="p-4 rounded-xl bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151] space-y-1">
+                <span className="text-[11px] font-bold text-[#6B7280] dark:text-[#D1D5DB] uppercase tracking-wider block">
                   Suggested Action / Solution
                 </span>
-                <p className="text-xs text-[#3E4B44] dark:text-[#C5D4C9] leading-relaxed">
+                <p className="text-xs text-[#374151] dark:text-[#D1D5DB] leading-relaxed">
                   {proposal.suggestedSolution}
                 </p>
               </div>
@@ -383,34 +366,34 @@ export function ProposalDetailPage() {
 
         {/* Full Proposal Description */}
         <div className="space-y-2 pt-2">
-          <span className="text-xs font-bold text-[#54625A] dark:text-[#C5D4C9] uppercase tracking-wider block">
+          <span className="text-xs font-bold text-[#6B7280] dark:text-[#D1D5DB] uppercase tracking-wider block">
             Detailed Proposal Description
           </span>
-          <p className="text-sm text-[#202522] dark:text-[#E8F0EC] whitespace-pre-wrap leading-relaxed">
+          <p className="text-sm text-[#111827] dark:text-[#F9FAFB] whitespace-pre-wrap leading-relaxed">
             {proposal.description}
           </p>
         </div>
 
         {/* Endorsement Action */}
-        <div className="pt-6 border-t border-[#DED8CB] dark:border-[#283931] flex flex-wrap items-center justify-between gap-4">
+        <div className="pt-6 border-t border-[#E5E7EB] dark:border-[#374151] flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Button
               variant={proposal.hasSupported ? 'primary' : 'outline'}
               onClick={handleToggleSupport}
-              className="inline-flex items-center gap-2 cursor-pointer shadow-md"
+              className="inline-flex items-center gap-2 cursor-pointer"
             >
               <ThumbUpIcon className="w-4 h-4" />
               <span>{proposal.hasSupported ? 'Endorsed' : 'Endorse Proposal'}</span>
-              <span className="bg-[#ECE7DB] dark:bg-[#1D2A25] border border-[#DED8CB] dark:border-[#283931] px-2 py-0.5 rounded-full text-xs font-mono">
+              <span className="bg-black/10 dark:bg-[#273548] px-2 py-0.5 rounded-full text-xs font-mono">
                 {proposal.supportCount}
               </span>
             </Button>
-            <span className="text-xs text-[#C5D4C9] dark:text-[#54625A]">
+            <span className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
               {proposal.supportCount === 1 ? '1 citizen endorsement' : `${proposal.supportCount} citizen endorsements`}
             </span>
           </div>
 
-          <span className="text-xs text-[#C5D4C9] dark:text-[#54625A] flex items-center gap-1">
+          <span className="text-xs text-[#6B7280] dark:text-[#D1D5DB] flex items-center gap-1">
             <ChatBubbleIcon className="w-3.5 h-3.5" /> {comments.length} comments
           </span>
         </div>
@@ -418,12 +401,12 @@ export function ProposalDetailPage() {
 
       {/* Staff Moderation & Authority Tools (Visible to Admins / Officials) */}
       {isStaff && (
-        <Card className="p-6 bg-purple-950/10 border-purple-900/30 space-y-4">
+        <Card className="p-6 bg-[#F9FAFB] dark:bg-[#273548] border-[#E5E7EB] dark:border-[#374151] space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-purple-300 flex items-center gap-2">
-              <AlertTriangleIcon className="w-4 h-4" /> Municipal Moderation & Authority Desk
+            <h3 className="text-sm font-bold text-[#111827] dark:text-[#F9FAFB] flex items-center gap-2">
+              <AlertTriangleIcon className="w-4 h-4 text-[#0B6640] dark:text-[#34D399]" /> Municipal Moderation & Authority Desk
             </h3>
-            <span className="text-[11px] text-purple-400 bg-purple-900/40 px-2 py-0.5 rounded">
+            <span className="text-[11px] font-semibold text-[#0B3D2E] dark:text-[#34D399] bg-[#E5ECE8] dark:bg-[#1F2937] px-2 py-0.5 rounded border border-[#0B3D2E]/20 dark:border-[#374151]">
               Staff Only
             </span>
           </div>
@@ -437,13 +420,13 @@ export function ProposalDetailPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-3">
               <div>
-                <label className="text-xs font-semibold text-[#3E4B44] dark:text-[#C5D4C9] block mb-1">
+                <label className="text-xs font-semibold text-[#374151] dark:text-[#D1D5DB] block mb-1">
                   Change Review Status
                 </label>
                 <select
                   value={moderationStatus}
                   onChange={(e) => setModerationStatus(e.target.value)}
-                  className="w-full bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] rounded-lg px-3 py-2 text-xs text-[#202522] dark:text-[#E8F0EC]"
+                  className="w-full bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-lg px-3 py-2 text-xs text-[#111827] dark:text-[#F9FAFB]"
                 >
                   <option value="SUBMITTED">SUBMITTED</option>
                   <option value="UNDER_REVIEW">UNDER REVIEW</option>
@@ -456,7 +439,7 @@ export function ProposalDetailPage() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-[#3E4B44] dark:text-[#C5D4C9] block mb-1">
+                <label className="text-xs font-semibold text-[#374151] dark:text-[#D1D5DB] block mb-1">
                   Internal Staff Memo (Confidential)
                 </label>
                 <TextArea
@@ -468,7 +451,7 @@ export function ProposalDetailPage() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-[#3E4B44] dark:text-[#C5D4C9] block mb-1">
+                <label className="text-xs font-semibold text-[#374151] dark:text-[#D1D5DB] block mb-1">
                   Public Explanation (Visible to citizen if clarified/declined)
                 </label>
                 <TextArea
@@ -489,8 +472,8 @@ export function ProposalDetailPage() {
               </Button>
             </div>
 
-            <div className="space-y-3 border-t md:border-t-0 md:border-l border-[#DED8CB] dark:border-[#283931] md:pl-4">
-              <label className="text-xs font-semibold text-[#3E4B44] dark:text-[#C5D4C9] block mb-1">
+            <div className="space-y-3 border-t md:border-t-0 md:border-l border-[#E5E7EB] dark:border-[#374151] md:pl-4">
+              <label className="text-xs font-semibold text-[#374151] dark:text-[#D1D5DB] block mb-1">
                 Post Official Authority Response
               </label>
               <TextArea
@@ -514,7 +497,7 @@ export function ProposalDetailPage() {
 
       {/* Community Discussion Thread */}
       <Card className="p-6 space-y-6">
-        <h3 className="text-lg font-bold text-[#202522] dark:text-[#F5F2EA] flex items-center gap-2">
+        <h3 className="text-lg font-bold text-[#111827] dark:text-[#F9FAFB] flex items-center gap-2">
           <ChatBubbleIcon className="w-5 h-5 text-[#1B5E8A] dark:text-[#78B4DD]" /> Community Discussion ({comments.length})
         </h3>
 
@@ -547,8 +530,8 @@ export function ProposalDetailPage() {
             </div>
           </form>
         ) : (
-          <div className="p-4 rounded-lg bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 border border-[#DED8CB] dark:border-[#283931] text-center space-y-2">
-            <p className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
+          <div className="p-4 rounded-lg bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151] text-center space-y-2">
+            <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
               Sign in to participate in community discussion on this proposal.
             </p>
             <Button variant="outline" size="sm" onClick={() => navigate('/login')}>
@@ -560,19 +543,19 @@ export function ProposalDetailPage() {
         {/* Comments List */}
         <div className="space-y-3 pt-2">
           {comments.length === 0 ? (
-            <p className="text-xs text-[#C5D4C9] dark:text-[#54625A] italic text-center py-4">
+            <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] italic text-center py-4">
               No comments posted yet. Start the conversation!
             </p>
           ) : (
             comments.map((comment) => (
               <div
                 key={comment.id}
-                className="p-4 rounded-xl bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 border border-[#DED8CB] dark:border-[#283931] space-y-1.5"
+                className="p-4 rounded-xl bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151] space-y-1.5"
               >
                 <div className="flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-[#202522] dark:text-[#E8F0EC]">{comment.author.name}</span>
-                    <span className="text-[10px] text-[#54625A] dark:text-[#C5D4C9] bg-[#ECE7DB] dark:bg-[#1D2A25] border border-[#DED8CB] dark:border-[#283931] px-1.5 py-0.2 rounded">
+                    <span className="font-semibold text-[#111827] dark:text-[#F9FAFB]">{comment.author.name}</span>
+                    <span className="text-[10px] text-[#374151] dark:text-[#D1D5DB] bg-white dark:bg-[#273548] border border-[#E5E7EB] dark:border-[#374151] px-1.5 py-0.2 rounded">
                       {comment.author.role === 'ADMIN'
                         ? 'Admin'
                         : comment.author.role === 'GOVERNMENT_OFFICIAL'
@@ -581,20 +564,20 @@ export function ProposalDetailPage() {
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[#C5D4C9] dark:text-[#54625A]">
+                    <span className="text-[#6B7280] dark:text-[#D1D5DB]">
                       {new Date(comment.createdAt).toLocaleDateString()}
                     </span>
                     <button
                       type="button"
                       onClick={() => openReportModal('PROPOSAL_COMMENT', comment.id, comment.content.slice(0, 60))}
-                      className="text-[11px] text-[#C5D4C9] dark:text-[#54625A] hover:text-rose-400 transition-colors cursor-pointer"
+                      className="civora-liquid-btn civora-liquid-btn--ghost px-2 py-0.5 rounded-md text-[11px] hover:!text-rose-700 dark:hover:!text-rose-400"
                       title="Report comment"
                     >
                       Report
                     </button>
                   </div>
                 </div>
-                <p className="text-xs text-[#3E4B44] dark:text-[#C5D4C9] whitespace-pre-wrap leading-relaxed">
+                <p className="text-xs text-[#374151] dark:text-[#D1D5DB] whitespace-pre-wrap leading-relaxed">
                   {comment.content}
                 </p>
               </div>

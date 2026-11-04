@@ -130,8 +130,8 @@ export function ComplaintMessageThread({
   if (!isAuthenticated) {
     return (
       <Card className={`p-6 ${className}`}>
-        <div className="flex items-center gap-2 text-[#54625A] dark:text-[#C5D4C9] text-sm">
-          <ChatBubbleIcon className="w-5 h-5 text-[#54625A] dark:text-[#C5D4C9]" />
+        <div className="flex items-center gap-2 text-[#6B7280] dark:text-[#D1D5DB] text-sm">
+          <ChatBubbleIcon className="w-5 h-5 text-[#6B7280] dark:text-[#D1D5DB]" />
           <span>Sign in to view and participate in this complaint communication thread.</span>
         </div>
       </Card>
@@ -141,24 +141,24 @@ export function ComplaintMessageThread({
   return (
     <Card className={`p-5 sm:p-6 flex flex-col h-full ${className}`}>
       {/* Header */}
-      <div className="flex items-center justify-between pb-4 border-b border-[#DED8CB] dark:border-[#283931] mb-4">
+      <div className="flex items-center justify-between pb-4 border-b border-[#E5E7EB] dark:border-[#374151] mb-4">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-[#E8F1F8] dark:bg-[#152733] border border-[#A8C9E3] dark:border-[#22445E] flex items-center justify-center text-[#1B5E8A] dark:text-[#78B4DD]">
+          <div className="w-8 h-8 rounded-lg bg-[#E5ECE8] dark:bg-[#273548] border border-[#0B3D2E]/20 dark:border-[#374151] flex items-center justify-center text-[#0B3D2E] dark:text-[#34D399]">
             <ChatBubbleIcon className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-[#202522] dark:text-[#F5F2EA]">Direct Communication Thread</h3>
-            <p className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
+            <h3 className="text-sm font-semibold text-[#111827] dark:text-[#F9FAFB]">Direct Communication Thread</h3>
+            <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
               Official dialogue between citizen and department {trackingId ? `for ${trackingId}` : ''}
             </p>
           </div>
         </div>
         <Button
           variant="ghost"
-          size="sm"
+          size="icon"
           onClick={fetchMessages}
-          className="text-[#54625A] hover:text-[#202522] dark:text-[#C5D4C9] dark:hover:text-[#E8F0EC]"
           title="Refresh messages"
+          aria-label="Refresh messages"
         >
           <RefreshCwIcon className="w-4 h-4" />
         </Button>
@@ -183,14 +183,14 @@ export function ComplaintMessageThread({
       {/* Message History Container */}
       <div ref={messagesContainerRef} className="flex-1 overflow-y-auto space-y-4 max-h-96 pr-1 mb-4">
         {isLoading ? (
-          <div className="p-8 text-center text-[#54625A] dark:text-[#C5D4C9] text-xs">
+          <div className="p-8 text-center text-[#6B7280] dark:text-[#D1D5DB] text-xs">
             Loading communication history...
           </div>
         ) : messages.length === 0 ? (
-          <div className="p-8 text-center text-[#54625A] dark:text-[#C5D4C9] border border-dashed border-[#DED8CB] dark:border-[#283931] rounded-xl">
-            <ChatBubbleIcon className="w-8 h-8 mx-auto mb-2 text-[#54625A] dark:text-[#C5D4C9]" />
-            <p className="text-sm font-medium text-[#202522] dark:text-[#F5F2EA]">No messages yet</p>
-            <p className="text-xs text-[#54625A] dark:text-[#C5D4C9] mt-1">
+          <div className="p-8 text-center text-[#6B7280] dark:text-[#D1D5DB] border border-dashed border-[#E5E7EB] dark:border-[#374151] bg-[#F9FAFB] dark:bg-[#1F2937] rounded-xl">
+            <ChatBubbleIcon className="w-8 h-8 mx-auto mb-2 text-[#6B7280] dark:text-[#D1D5DB]" />
+            <p className="text-sm font-medium text-[#111827] dark:text-[#F9FAFB]">No messages yet</p>
+            <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] mt-1">
               Ask a question, report additional details, or provide departmental clarifications below.
             </p>
           </div>
@@ -205,24 +205,24 @@ export function ComplaintMessageThread({
                 className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}
               >
                 <div className="flex items-center gap-1.5 mb-1 px-1 text-[11px]">
-                  <span className="font-semibold text-[#3E4B44] dark:text-[#C5D4C9]">
+                  <span className="font-semibold text-[#374151] dark:text-[#D1D5DB]">
                     {isMe ? 'You' : msg.sender.name}
                   </span>
                   <span
                     className={`px-1.5 py-0.2 rounded text-[9px] font-bold border ${
                       isSenderCitizen
-                        ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
-                        : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                        ? 'bg-[#F3F4F6] text-[#374151] border-[#D1D5DB] dark:bg-[#273548] dark:text-[#D1D5DB] dark:border-[#374151]'
+                        : 'bg-[#E5ECE8] text-[#0B3D2E] border-[#0B3D2E]/20 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800/40'
                     }`}
                   >
                     {isSenderCitizen ? 'CITIZEN' : 'OFFICIAL'}
                   </span>
                   {msg.isInternal && (
-                    <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                    <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-500/10 dark:text-amber-300 dark:border-amber-500/20">
                       INTERNAL NOTE
                     </span>
                   )}
-                  <span className="text-[#54625A] dark:text-[#C5D4C9] ml-1">
+                  <span className="text-[#6B7280] dark:text-[#D1D5DB] ml-1">
                     {formatMessageTime(msg.createdAt)}
                   </span>
                 </div>
@@ -230,10 +230,10 @@ export function ComplaintMessageThread({
                 <div
                   className={`max-w-[85%] sm:max-w-[75%] rounded-2xl p-3.5 text-xs sm:text-sm leading-relaxed ${
                     msg.isInternal
-                      ? 'bg-amber-950/40 border border-amber-500/30 text-amber-200'
+                      ? 'bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-500/30 text-amber-900 dark:text-amber-200'
                       : isMe
-                      ? 'bg-[#173D32] text-[#F4F0E6] rounded-tr-none'
-                      : 'bg-[#ECE7DB]/90 dark:bg-[#1D2A25]/90 text-[#202522] dark:text-[#F5F2EA] border border-[#DED8CB] dark:border-[#283931] rounded-tl-none'
+                      ? 'bg-[#0B3D2E] dark:bg-[#0D7A58] text-white rounded-tr-none'
+                      : 'bg-[#F9FAFB] dark:bg-[#273548] text-[#111827] dark:text-[#F9FAFB] border border-[#E5E7EB] dark:border-[#374151] rounded-tl-none'
                   }`}
                 >
                   <p className="whitespace-pre-wrap break-words">{msg.message}</p>
@@ -245,30 +245,30 @@ export function ComplaintMessageThread({
       </div>
 
       {/* Message Composer */}
-      <form onSubmit={handleSendMessage} className="pt-3 border-t border-[#DED8CB] dark:border-[#283931] space-y-3">
+      <form onSubmit={handleSendMessage} className="pt-3 border-t border-[#E5E7EB] dark:border-[#374151] space-y-3">
         <TextArea
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder="Type your message or departmental update here..."
           rows={2}
           maxLength={2000}
-          className="text-xs sm:text-sm bg-white dark:bg-[#16201C]"
+          className="text-xs sm:text-sm bg-white dark:bg-[#1F2937]"
         />
 
         <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
           <div className="flex items-center gap-3">
             {isStaff && (
-              <label className="flex items-center gap-1.5 cursor-pointer text-[#54625A] hover:text-[#202522] dark:text-[#C5D4C9] dark:hover:text-[#F5F2EA]">
+              <label className="flex items-center gap-1.5 cursor-pointer text-[#6B7280] hover:text-[#111827] dark:text-[#D1D5DB] dark:hover:text-[#F9FAFB]">
                 <input
                   type="checkbox"
                   checked={isInternal}
                   onChange={(e) => setIsInternal(e.target.checked)}
-                  className="w-4 h-4 rounded bg-white dark:bg-[#16201C] border-[#DED8CB] dark:border-[#283931] text-amber-600 focus:ring-amber-500"
+                  className="w-4 h-4 rounded bg-white dark:bg-[#1F2937] border-[#D1D5DB] dark:border-[#374151] text-[#0B3D2E] accent-[#0B3D2E] dark:accent-[#34D399] focus:ring-[#0B3D2E] dark:focus:ring-[#34D399]"
                 />
                 <span className="text-[11px]">Internal staff note only</span>
               </label>
             )}
-            <span className="text-[11px] text-[#54625A] dark:text-[#C5D4C9]">
+            <span className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB]">
               {newMessage.length} / 2000 characters
             </span>
           </div>

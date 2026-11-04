@@ -6,6 +6,44 @@ export interface NavLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   children: ReactNode;
   className?: string;
   activeClassName?: string;
+  exact?: boolean;
+}
+
+function checkNavActive(currentPath: string, to: string, exact = false): boolean {
+  if (!to || to.startsWith('#') || to.includes('#')) {
+    return false;
+  }
+
+  const [currBaseRaw, currQuery = ''] = currentPath.split('?');
+  const [toBaseRaw, toQuery] = to.split('?');
+
+  const currBase = (currBaseRaw || '/').replace(/\/+$/, '') || '/';
+  const toBase = (toBaseRaw || '/').replace(/\/+$/, '') || '/';
+
+  // Root home route matches '/' or '/dashboard' only
+  if (toBase === '/') {
+    return (currBase === '/' || currBase === '/dashboard') && !currQuery;
+  }
+
+  // If link specifies query parameters (e.g. '/contractor?tab=bids'), match exact path + query
+  if (toQuery !== undefined) {
+    return currBase === toBase && currQuery === toQuery;
+  }
+
+  // Exact base match: if on '/contractor?tab=bids', plain '/contractor' should not also highlight
+  if (currBase === toBase) {
+    if (currQuery && currQuery.includes('tab=')) {
+      return false;
+    }
+    return true;
+  }
+
+  if (exact) {
+    return false;
+  }
+
+  // Sub-route prefix match (e.g. '/tenders/123' highlights '/tenders', '/engagement/polls/1' highlights '/engagement')
+  return currBase.startsWith(`${toBase}/`);
 }
 
 export function NavLink({
@@ -13,11 +51,12 @@ export function NavLink({
   children,
   className = '',
   activeClassName = '',
+  exact = false,
   onClick,
   ...props
 }: NavLinkProps) {
   const { currentPath, navigate } = useRouter();
-  const isActive = currentPath.split('?')[0] === to;
+  const isActive = checkNavActive(currentPath, to, exact);
 
   const handleClick = (e: MouseEvent<HTMLAnchorElement>) => {
     // Respect browser conventions for opening in new tabs

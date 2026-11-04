@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from '../router';
 import { useAuth } from '../context/useAuth';
 import { Container } from '../components/layout/Container';
+import { PageHeading } from '../components/ui/PageHeading';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { FormField } from '../components/ui/FormField';
@@ -9,7 +10,7 @@ import { TextInput } from '../components/ui/TextInput';
 import { TextArea } from '../components/ui/TextArea';
 import { Select } from '../components/ui/Select';
 import { Alert } from '../components/ui/Alert';
-import { LightbulbIcon, CheckCircleIcon, InfoIcon } from '../components/ui/icons';
+import { CheckCircleIcon, InfoIcon } from '../components/ui/icons';
 import type { ProposalCategory } from '../types/engagement';
 
 export function ProposalSubmitPage() {
@@ -115,23 +116,22 @@ export function ProposalSubmitPage() {
   };
 
   return (
-    <Container size="md" className="space-y-6 pb-12">
-      {/* Header */}
-      <div className="space-y-2">
-        <button
-          type="button"
-          onClick={() => navigate('/engagement')}
-          className="text-xs font-semibold text-[#1B5E8A] dark:text-[#78B4DD] hover:underline transition-colors cursor-pointer flex items-center gap-1 mb-2"
-        >
-          &larr; Back to Civic Engagement Hub
-        </button>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#202522] dark:text-[#F5F2EA] tracking-tight flex items-center gap-2">
-          <LightbulbIcon className="w-7 h-7 text-[#1B5E8A] dark:text-[#78B4DD]" /> Submit a Community Proposal
-        </h1>
-        <p className="text-[#54625A] dark:text-[#C5D4C9] text-sm leading-relaxed">
-          Propose an initiative or civic improvement for your neighborhood. All proposals are reviewed by municipal moderators before publication for public endorsement and community discussion.
-        </p>
-      </div>
+    <Container size="md" className="space-y-8">
+      {/* Standardized Page Header */}
+      <PageHeading
+        title="Submit a Community Proposal"
+        description="Propose an initiative or civic improvement for your neighborhood. All proposals are reviewed by municipal moderators before publication for public endorsement and community discussion."
+        className="mb-0"
+        eyebrow={
+          <button
+            type="button"
+            onClick={() => navigate('/engagement')}
+            className="civora-liquid-btn civora-liquid-btn--text px-2 py-0.5 -ml-2 rounded-md text-xs font-semibold gap-1"
+          >
+            &larr; Back to Civic Engagement Hub
+          </button>
+        }
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Form (2 cols) */}
@@ -241,7 +241,7 @@ export function ProposalSubmitPage() {
                 />
               </FormField>
 
-              <div className="pt-4 border-t border-[#DED8CB] dark:border-[#283931] flex items-center justify-end gap-3">
+              <div className="pt-4 border-t border-[#E5E7EB] dark:border-[#374151] flex items-center justify-end gap-3">
                 <Button
                   type="button"
                   variant="outline"
@@ -266,10 +266,10 @@ export function ProposalSubmitPage() {
         {/* Sidebar Guidelines (1 col) */}
         <div className="space-y-4">
           <Card className="p-5 space-y-3">
-            <h3 className="text-sm font-bold text-[#202522] dark:text-[#F5F2EA] flex items-center gap-2">
+            <h3 className="text-sm font-bold text-[#111827] dark:text-[#F9FAFB] flex items-center gap-2">
               <InfoIcon className="w-4 h-4 text-[#1B5E8A] dark:text-[#78B4DD]" /> Proposal Guidelines
             </h3>
-            <ul className="text-xs text-[#54625A] dark:text-[#C5D4C9] space-y-2 list-disc list-inside leading-relaxed">
+            <ul className="text-xs text-[#6B7280] dark:text-[#D1D5DB] space-y-2 list-disc list-inside leading-relaxed">
               <li>
                 <strong>Constructive & Public:</strong> Focus on shared community amenities, green spaces, waste reduction, or safety improvements.
               </li>
@@ -288,7 +288,7 @@ export function ProposalSubmitPage() {
             </ul>
           </Card>
 
-          <Card className="p-4 bg-blue-950/20 border-blue-900/30 text-xs text-blue-300">
+          <Card className="p-4 bg-[#F9FAFB] dark:bg-[#273548] border-[#E5E7EB] dark:border-[#374151] text-xs text-[#4B5563] dark:text-[#D1D5DB] leading-relaxed">
             Proposals are community suggestions and do not constitute formal budget sanctions or procurement commitments.
           </Card>
         </div>
@@ -298,27 +298,27 @@ export function ProposalSubmitPage() {
       {submittedProposal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
           <Card className="w-full max-w-md p-6 shadow-2xl text-center space-y-4">
-            <div className="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto">
+            <div className="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-500/20 text-[#0B6640] dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/40 flex items-center justify-center mx-auto">
               <CheckCircleIcon className="w-6 h-6" />
             </div>
 
             <div className="space-y-1">
-              <h3 className="text-lg font-bold text-[#202522] dark:text-[#F5F2EA]">Proposal Lodged Successfully</h3>
-              <p className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
+              <h3 className="text-lg font-bold text-[#111827] dark:text-[#F9FAFB]">Proposal Lodged Successfully</h3>
+              <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
                 Your proposal has been queued for moderation review.
               </p>
             </div>
 
-            <div className="p-3 bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 rounded-lg border border-[#DED8CB] dark:border-[#283931] space-y-1">
-              <span className="text-[11px] font-semibold text-[#54625A] dark:text-[#C5D4C9] block uppercase tracking-wider">
+            <div className="p-3 bg-[#F9FAFB] dark:bg-[#182230] rounded-lg border border-[#E5E7EB] dark:border-[#374151] space-y-1">
+              <span className="text-[11px] font-semibold text-[#6B7280] dark:text-[#D1D5DB] block uppercase tracking-wider">
                 Tracking Identifier
               </span>
-              <span className="font-mono text-base font-bold text-[#1B5E8A] dark:text-[#78B4DD] block">
+              <span className="font-mono text-base font-bold text-[#0B3D2E] dark:text-[#34D399] block">
                 {submittedProposal.trackingId}
               </span>
             </div>
 
-            <p className="text-xs text-[#54625A] dark:text-[#C5D4C9] leading-relaxed">
+            <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] leading-relaxed">
               You will receive an in-app notification when the moderation team completes its review.
             </p>
 

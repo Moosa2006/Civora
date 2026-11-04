@@ -9,15 +9,16 @@ export interface CardProps extends HTMLAttributes<HTMLDivElement> {
 export function Card({ children, className = '', variant = 'default', ...props }: CardProps) {
   const variantStyles = {
     default:
-      'bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] shadow-[0_1px_3px_rgba(32,37,34,0.04)]',
+      'bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] shadow-2xs',
     subtle:
-      'bg-[#FAF8F5] dark:bg-[#141C18] border border-[#EAE5D9] dark:border-[#212C26]',
+      'bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151]',
     interactive:
-      'bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] hover:border-[#173D32] dark:hover:border-[#4F9B8B] transition-colors shadow-[0_1px_3px_rgba(32,37,34,0.04)] hover:shadow-sm cursor-pointer',
+      'bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] hover:border-[#0B3D2E]/40 dark:hover:border-[#34D399]/60 dark:hover:bg-[#273548]/70 transition-colors shadow-2xs hover:shadow-sm cursor-pointer',
   };
 
   return (
     <div
+      data-scroll-reveal="true"
       className={`rounded-xl p-6 ${variantStyles[variant]} ${className}`.trim()}
       {...props}
     >
@@ -48,7 +49,7 @@ export interface CardTitleProps extends HTMLAttributes<HTMLHeadingElement> {
 export function CardTitle({ children, className = '', as: Component = 'h3', ...props }: CardTitleProps) {
   return (
     <Component
-      className={`text-lg font-heading font-semibold tracking-tight text-[#202522] dark:text-[#F5F2EA] ${className}`.trim()}
+      className={`text-xl sm:text-2xl font-semibold tracking-tight text-[#111827] dark:text-[#F9FAFB] font-sans ${className}`.trim()}
       {...props}
     >
       {children}
@@ -63,7 +64,7 @@ export interface CardDescriptionProps extends HTMLAttributes<HTMLParagraphElemen
 
 export function CardDescription({ children, className = '', ...props }: CardDescriptionProps) {
   return (
-    <p className={`text-sm text-[#3E4B44] dark:text-[#C5D4C9] leading-relaxed ${className}`.trim()} {...props}>
+    <p className={`text-base text-[#4B5563] dark:text-[#D1D5DB] leading-relaxed mt-1 ${className}`.trim()} {...props}>
       {children}
     </p>
   );
@@ -86,7 +87,7 @@ export interface CardFooterProps extends HTMLAttributes<HTMLDivElement> {
 export function CardFooter({ children, className = '', ...props }: CardFooterProps) {
   return (
     <div
-      className={`flex items-center pt-4 mt-4 border-t border-[#EAE5D9] dark:border-[#283931] ${className}`.trim()}
+      className={`flex items-center pt-4 mt-4 border-t border-[#E5E7EB] dark:border-[#374151] ${className}`.trim()}
       {...props}
     >
       {children}

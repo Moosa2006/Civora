@@ -241,7 +241,7 @@ export function TrackComplaintPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSearch} className="max-w-2xl space-y-2">
-            <label htmlFor="tracking-id-input" className="block text-sm font-medium text-[#3E4B44] dark:text-[#C5D4C9]">
+            <label htmlFor="tracking-id-input" className="block text-sm font-medium text-[#374151] dark:text-[#D1D5DB]">
               {t('tracking.inputPlaceholder')}
             </label>
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
@@ -251,7 +251,7 @@ export function TrackComplaintPage() {
                   placeholder={t('tracking.inputPlaceholder')}
                   value={trackingId}
                   onChange={(e) => setTrackingId(e.target.value.toUpperCase())}
-                  leftIcon={<SearchIcon className="w-4 h-4 text-[#54625A] dark:text-[#C5D4C9]" />}
+                  leftIcon={<SearchIcon className="w-4 h-4 text-[#6B7280] dark:text-[#D1D5DB]" />}
                   className="h-10"
                   required
                 />
@@ -266,7 +266,7 @@ export function TrackComplaintPage() {
                 {loading ? 'Searching...' : 'Track Issue'}
               </Button>
             </div>
-            <p id="tracking-id-input-helper" className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
+            <p id="tracking-id-input-helper" className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
               Format: CIV-YYYY-XXXXX
             </p>
           </form>
@@ -296,22 +296,22 @@ export function TrackComplaintPage() {
         <div className="space-y-6">
           {/* Citizen Verification Banner for RESOLVED Complaints */}
           {complaint.status === 'RESOLVED' && (
-            <Card className="border-[#1E6B52]/30 bg-white dark:bg-[#16201C] shadow-sm">
+            <Card className="border-[#1E6B52]/30 bg-white dark:bg-[#1F2937] shadow-sm">
               <CardContent className="p-6">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#1E6B52] dark:bg-[#78C7AE]" />
-                      <h3 className="text-base font-heading font-semibold text-[#185541] dark:text-[#78C7AE]">
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#1E6B52] dark:bg-[#34D399]" />
+                      <h3 className="text-base font-heading font-semibold text-[#185541] dark:text-[#34D399]">
                         Official Resolution Submitted — Pending Citizen Verification
                       </h3>
                     </div>
-                    <p className="text-xs text-[#4A5750] dark:text-[#B0C0B6] max-w-2xl leading-relaxed">
+                    <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] max-w-2xl leading-relaxed">
                       The responsible municipal department has marked this issue as resolved. As the citizen reporter, please inspect the work and confirm whether the problem is fixed or request reopening if the issue persists.
                     </p>
                     {complaint.resolutionNotes && (
-                      <div className="mt-2 p-3 rounded-lg bg-[#FAF8F5] dark:bg-[#141C18] border border-[#DED8CB] dark:border-[#283931] text-xs text-[#202522] dark:text-[#F5F2EA]">
-                        <strong className="text-[#1E6B52] dark:text-[#78C7AE]">Official Resolution Summary: </strong>
+                      <div className="mt-2 p-3 rounded-lg bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151] text-xs text-[#111827] dark:text-[#F9FAFB]">
+                        <strong className="text-[#1E6B52] dark:text-[#34D399]">Official Resolution Summary: </strong>
                         {complaint.resolutionNotes}
                       </div>
                     )}
@@ -349,10 +349,10 @@ export function TrackComplaintPage() {
                       </div>
                     </div>
                   ) : (
-                    <div className="text-xs text-[#54625A] dark:text-[#C5D4C9] bg-[#FAF8F5] dark:bg-[#141C18] px-3 py-2 rounded-lg border border-[#DED8CB] dark:border-[#283931]">
+                    <div className="text-xs text-[#6B7280] dark:text-[#D1D5DB] bg-[#F9FAFB] dark:bg-[#182230] px-3 py-2 rounded-lg border border-[#E5E7EB] dark:border-[#374151]">
                       {!isAuthenticated ? (
                         <span>
-                          <Button variant="ghost" size="sm" onClick={() => navigate('/login')} className="text-[#173D32] dark:text-[#7BC4B2] p-0 h-auto inline underline font-semibold">
+                          <Button variant="ghost" size="sm" onClick={() => navigate('/login')} className="text-[#0B3D2E] dark:text-[#34D399] p-0 h-auto inline underline font-semibold">
                             Sign in
                           </Button>{' '}
                           with the reporter account to verify this resolution.
@@ -369,12 +369,12 @@ export function TrackComplaintPage() {
 
           {/* Verified Resolution Banner */}
           {complaint.status === 'VERIFIED' && (
-            <Card className="border-[#1E6B52]/30 bg-white dark:bg-[#16201C] shadow-sm">
+            <Card className="border-[#1E6B52]/30 bg-white dark:bg-[#1F2937] shadow-sm">
               <CardContent className="p-4 flex items-center gap-3">
-                <CheckCircleIcon className="w-6 h-6 text-[#1E6B52] dark:text-[#78C7AE] shrink-0" />
+                <CheckCircleIcon className="w-6 h-6 text-[#1E6B52] dark:text-[#34D399] shrink-0" />
                 <div className="text-xs">
-                  <strong className="text-[#185541] dark:text-[#78C7AE] block text-sm font-heading">Citizen Verified & Finalized</strong>
-                  <span className="text-[#4A5750] dark:text-[#B0C0B6]">
+                  <strong className="text-[#185541] dark:text-[#34D399] block text-sm font-heading">Citizen Verified & Finalized</strong>
+                  <span className="text-[#6B7280] dark:text-[#D1D5DB]">
                     The citizen reporter confirmed that this civic issue was satisfactorily addressed on {formatDate(complaint.verifiedAt)}.
                   </span>
                 </div>
@@ -384,12 +384,12 @@ export function TrackComplaintPage() {
 
           {/* Reopened Banner */}
           {complaint.status === 'REOPENED' && (
-            <Card className="border-amber-500/40 bg-amber-950/20">
+            <Card className="border-amber-300 dark:border-amber-500/40 bg-amber-50/70 dark:bg-amber-950/20">
               <CardContent className="p-4 flex items-center gap-3">
-                <AlertTriangleIcon className="w-6 h-6 text-amber-400 shrink-0" />
+                <AlertTriangleIcon className="w-6 h-6 text-amber-700 dark:text-amber-400 shrink-0" />
                 <div className="text-xs">
-                  <strong className="text-[#854F0B] dark:text-[#F3BA6C] block text-sm">Citizen Requested Reopening</strong>
-                  <span className="text-[#3E4B44] dark:text-[#C5D4C9]">
+                  <strong className="text-amber-900 dark:text-[#F3BA6C] block text-sm">Citizen Requested Reopening</strong>
+                  <span className="text-[#374151] dark:text-[#D1D5DB]">
                     The citizen indicated the issue was incomplete or recurring. This complaint is back under active departmental follow-up.
                   </span>
                 </div>
@@ -399,18 +399,18 @@ export function TrackComplaintPage() {
 
           {/* SLA Commitment & Public Accountability Card */}
           {((complaint as any).sla || (complaint as any).escalations?.length > 0) && (
-            <Card className="border-[#4F9B8B]/40 shadow-xs">
+            <Card className="border-[#0B3D2E]/25 dark:border-[#34D399]/35 shadow-xs">
               <CardContent className="p-5 space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#DED8CB] dark:border-[#283931] pb-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
                   <div className="flex items-center gap-2">
-                    <ClockIcon className="w-5 h-5 text-[#173D32] dark:text-[#7BC4B2] shrink-0" />
+                    <ClockIcon className="w-5 h-5 text-[#0B3D2E] dark:text-[#34D399] shrink-0" />
                     <div>
-                      <h3 className="text-sm font-bold text-[#202522] dark:text-[#F5F2EA]">
+                      <h3 className="text-sm font-bold text-[#111827] dark:text-[#F9FAFB]">
                         Service-Level Agreement (SLA) & Public Commitments
                       </h3>
-                      <p className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
+                      <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
                         Target timelines committed under policy:{' '}
-                        <strong className="text-[#202522] dark:text-[#F5F2EA]">
+                        <strong className="text-[#111827] dark:text-[#F9FAFB]">
                           {(complaint as any).sla?.policyName || 'Standard Municipal SLA'}
                         </strong>
                       </p>
@@ -447,9 +447,9 @@ export function TrackComplaintPage() {
                 {/* Deadlines Grid */}
                 {(complaint as any).sla && (
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-xs">
-                    <div className="bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 p-3 rounded-lg border border-[#DED8CB] dark:border-[#283931]">
-                      <span className="text-[#54625A] dark:text-[#C5D4C9] block mb-0.5">Response Target:</span>
-                      <strong className="text-[#202522] dark:text-[#E8F0EC]">
+                    <div className="bg-[#F9FAFB] dark:bg-[#182230] p-3 rounded-lg border border-[#E5E7EB] dark:border-[#374151]">
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB] block mb-0.5">Response Target:</span>
+                      <strong className="text-[#111827] dark:text-[#F9FAFB]">
                         {new Date((complaint as any).sla.currentResponseDeadline).toLocaleString(undefined, {
                           month: 'short',
                           day: 'numeric',
@@ -460,9 +460,9 @@ export function TrackComplaintPage() {
                       </strong>
                     </div>
 
-                    <div className="bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 p-3 rounded-lg border border-[#DED8CB] dark:border-[#283931]">
-                      <span className="text-[#54625A] dark:text-[#C5D4C9] block mb-0.5">Resolution Target:</span>
-                      <strong className="text-[#202522] dark:text-[#E8F0EC]">
+                    <div className="bg-[#F9FAFB] dark:bg-[#182230] p-3 rounded-lg border border-[#E5E7EB] dark:border-[#374151]">
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB] block mb-0.5">Resolution Target:</span>
+                      <strong className="text-[#111827] dark:text-[#F9FAFB]">
                         {new Date((complaint as any).sla.currentResolutionDeadline).toLocaleString(undefined, {
                           month: 'short',
                           day: 'numeric',
@@ -474,13 +474,13 @@ export function TrackComplaintPage() {
                     </div>
 
                     {(complaint as any).sla.estimatedCompletionDate && (
-                      <div className="bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 p-3 rounded-lg border border-[#4F9B8B]/40 sm:col-span-2 md:col-span-1">
-                        <span className="text-[#1D584D] dark:text-[#7BC4B2] font-semibold block mb-0.5">Department Estimated Completion:</span>
-                        <strong className="text-[#202522] dark:text-[#F5F2EA]">
+                      <div className="bg-[#F9FAFB] dark:bg-[#182230] p-3 rounded-lg border border-[#0B3D2E]/25 dark:border-[#34D399]/35 sm:col-span-2 md:col-span-1">
+                        <span className="text-[#1D584D] dark:text-[#34D399] font-semibold block mb-0.5">Department Estimated Completion:</span>
+                        <strong className="text-[#111827] dark:text-[#F9FAFB]">
                           {new Date((complaint as any).sla.estimatedCompletionDate).toLocaleDateString()}
                         </strong>
                         {(complaint as any).sla.estimatedCompletionNotes && (
-                          <p className="text-[11px] text-[#54625A] dark:text-[#C5D4C9] mt-0.5">
+                          <p className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB] mt-0.5">
                             {(complaint as any).sla.estimatedCompletionNotes}
                           </p>
                         )}
@@ -495,7 +495,7 @@ export function TrackComplaintPage() {
                     <div className="flex items-start gap-2.5 p-3 rounded-lg bg-[#FDF6ED] dark:bg-[#281D0E] border border-[#F2D7A5] dark:border-[#533916] text-xs text-[#854F0B] dark:text-[#F3BA6C]">
                       <AlertTriangleIcon className="w-4 h-4 text-[#854F0B] dark:text-[#F3B768] shrink-0 mt-0.5" />
                       <div>
-                        <strong className="text-[#202522] dark:text-[#F5F2EA]">Supervisory Escalation Notice: </strong>
+                        <strong className="text-[#111827] dark:text-[#F9FAFB]">Supervisory Escalation Notice: </strong>
                         This case has been formally escalated to departmental supervisors to accelerate inspection, resource allocation, and resolution.
                       </div>
                     </div>
@@ -512,7 +512,7 @@ export function TrackComplaintPage() {
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div>
                       <div className="flex items-center gap-2 mb-1.5">
-                        <span className="text-xs font-mono font-bold text-[#1D584D] dark:text-[#7BC4B2] bg-[#4F9B8B]/12 dark:bg-[#1D3E37] px-2.5 py-0.5 rounded border border-[#4F9B8B]/30">
+                        <span className="text-xs font-mono font-bold text-[#0B3D2E] dark:text-[#34D399] bg-[#E5ECE8] dark:bg-[#34D399]/15 px-2.5 py-0.5 rounded border border-[#0B3D2E]/20 dark:border-[#34D399]/30">
                           {complaint.trackingId}
                         </span>
                         <Badge variant={getStatusBadgeVariant(complaint.status)} size="sm" hasDot>
@@ -522,55 +522,55 @@ export function TrackComplaintPage() {
                       <CardTitle className="text-xl">{complaint.title}</CardTitle>
                     </div>
 
-                    <div className="text-left sm:text-right text-xs text-[#54625A] dark:text-[#C5D4C9]">
+                    <div className="text-left sm:text-right text-xs text-[#6B7280] dark:text-[#D1D5DB]">
                       <span>Lodged on:</span>
-                      <p className="text-[#202522] dark:text-[#E8F0EC] font-medium">{formatDate(complaint.createdAt)}</p>
+                      <p className="text-[#111827] dark:text-[#F9FAFB] font-medium">{formatDate(complaint.createdAt)}</p>
                     </div>
                   </div>
                 </CardHeader>
 
                 <CardContent className="space-y-6">
                   {/* Category & Location Badges */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3.5 rounded-xl bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 border border-[#DED8CB] dark:border-[#283931] text-xs">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3.5 rounded-xl bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151] text-xs">
                     <div>
-                      <span className="text-[#54625A] dark:text-[#C5D4C9] block mb-0.5">Civic Category:</span>
-                      <strong className="text-[#202522] dark:text-[#E8F0EC]">{complaint.category?.name || 'Civic Issue'}</strong>
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB] block mb-0.5">Civic Category:</span>
+                      <strong className="text-[#111827] dark:text-[#F9FAFB]">{complaint.category?.name || 'Civic Issue'}</strong>
                     </div>
                     <div>
-                      <span className="text-[#54625A] dark:text-[#C5D4C9] block mb-0.5">Assigned Department:</span>
-                      <strong className="text-[#202522] dark:text-[#E8F0EC]">
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB] block mb-0.5">Assigned Department:</span>
+                      <strong className="text-[#111827] dark:text-[#F9FAFB]">
                         {complaint.assignedDepartment?.name || 'Under Departmental Review'}
                       </strong>
                     </div>
                     <div>
-                      <span className="text-[#54625A] dark:text-[#C5D4C9] block mb-0.5">Priority:</span>
-                      <strong className="text-[#202522] dark:text-[#E8F0EC]">{complaint.priority}</strong>
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB] block mb-0.5">Priority:</span>
+                      <strong className="text-[#111827] dark:text-[#F9FAFB]">{complaint.priority}</strong>
                     </div>
                   </div>
 
                   {/* Description */}
                   <div>
-                    <h4 className="text-xs font-semibold uppercase tracking-wider text-[#54625A] dark:text-[#C5D4C9] mb-2">
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-[#6B7280] dark:text-[#D1D5DB] mb-2">
                       Reported Issue Details
                     </h4>
-                    <p className="text-sm text-[#3E4B44] dark:text-[#C5D4C9] leading-relaxed whitespace-pre-line bg-[#ECE7DB]/30 dark:bg-[#1D2A25]/30 p-3.5 rounded-lg border border-[#DED8CB] dark:border-[#283931]">
+                    <p className="text-sm text-[#374151] dark:text-[#D1D5DB] leading-relaxed whitespace-pre-line bg-[#F9FAFB] dark:bg-[#182230] p-3.5 rounded-lg border border-[#E5E7EB] dark:border-[#374151]">
                       {complaint.description}
                     </p>
                   </div>
 
                   {/* Location Info */}
                   <div>
-                    <h4 className="text-xs font-semibold uppercase tracking-wider text-[#54625A] dark:text-[#C5D4C9] mb-2 flex items-center gap-1.5">
-                      <MapPinIcon className="w-3.5 h-3.5 text-[#185541] dark:text-[#78C7AE]" />
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-[#6B7280] dark:text-[#D1D5DB] mb-2 flex items-center gap-1.5">
+                      <MapPinIcon className="w-3.5 h-3.5 text-[#185541] dark:text-[#34D399]" />
                       Location Information
                     </h4>
-                    <div className="text-xs text-[#3E4B44] dark:text-[#C5D4C9] space-y-1 bg-[#ECE7DB]/30 dark:bg-[#1D2A25]/30 p-3.5 rounded-lg border border-[#DED8CB] dark:border-[#283931]">
+                    <div className="text-xs text-[#374151] dark:text-[#D1D5DB] space-y-1 bg-[#F9FAFB] dark:bg-[#182230] p-3.5 rounded-lg border border-[#E5E7EB] dark:border-[#374151]">
                       <p>
-                        <strong className="text-[#202522] dark:text-[#E8F0EC]">Address: </strong>
+                        <strong className="text-[#111827] dark:text-[#F9FAFB]">Address: </strong>
                         {complaint.locationAddress}
                       </p>
                       <p>
-                        <strong className="text-[#202522] dark:text-[#E8F0EC]">Locality: </strong>
+                        <strong className="text-[#111827] dark:text-[#F9FAFB]">Locality: </strong>
                         {complaint.locality} {complaint.ward ? `• ${complaint.ward}` : ''}
                       </p>
                     </div>
@@ -596,7 +596,7 @@ export function TrackComplaintPage() {
                 <Card>
                   <CardHeader>
                     <CardTitle className="text-base flex items-center gap-2">
-                      <ClockIcon className="w-4 h-4 text-[#173D32] dark:text-[#7BC4B2]" />
+                      <ClockIcon className="w-4 h-4 text-[#0B3D2E] dark:text-[#34D399]" />
                       Official Progress Updates ({complaint.progressUpdates.length})
                     </CardTitle>
                     <CardDescription>
@@ -607,22 +607,22 @@ export function TrackComplaintPage() {
                     {complaint.progressUpdates.map((update) => (
                       <div
                         key={update.id}
-                        className="p-3.5 rounded-lg bg-[#ECE7DB]/40 dark:bg-[#1D2A25]/40 border border-[#DED8CB] dark:border-[#283931] space-y-1.5 text-xs"
+                        className="p-3.5 rounded-lg bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151] space-y-1.5 text-xs"
                       >
                         <div className="flex flex-wrap items-center justify-between gap-2">
                           <div className="flex items-center gap-2">
-                            <span className="font-semibold text-[#202522] dark:text-[#E8F0EC] text-sm">{update.title}</span>
-                            <span className="px-2 py-0.5 rounded bg-[#173D32]/10 dark:bg-[#1D3E37] text-[#173D32] dark:text-[#7BC4B2] font-mono text-[10px] border border-[#173D32]/20 dark:border-[#4F9B8B]/30">
+                            <span className="font-semibold text-[#111827] dark:text-[#F9FAFB] text-sm">{update.title}</span>
+                            <span className="px-2 py-0.5 rounded bg-[#0B3D2E]/10 dark:bg-[#34D399]/15 text-[#0B3D2E] dark:text-[#34D399] font-mono text-[10px] border border-[#0B3D2E]/20 dark:border-[#34D399]/30">
                               {update.stageOrEvent}
                             </span>
                           </div>
-                          <span className="text-[11px] text-[#54625A] dark:text-[#C5D4C9]">
+                          <span className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB]">
                             {formatDate(update.createdAt)}
                           </span>
                         </div>
-                        <p className="text-[#3E4B44] dark:text-[#C5D4C9] leading-relaxed">{update.description}</p>
-                        <div className="text-[11px] text-[#54625A] dark:text-[#C5D4C9] pt-1 flex items-center gap-2">
-                          <span>Logged by: <strong className="text-[#202522] dark:text-[#F5F2EA]">{update.author?.name || 'Department Officer'}</strong></span>
+                        <p className="text-[#374151] dark:text-[#D1D5DB] leading-relaxed">{update.description}</p>
+                        <div className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB] pt-1 flex items-center gap-2">
+                          <span>Logged by: <strong className="text-[#111827] dark:text-[#F9FAFB]">{update.author?.name || 'Department Officer'}</strong></span>
                           {update.department && <span>• {update.department.name}</span>}
                           {update.actionDate && <span>• Target: {formatDate(update.actionDate)}</span>}
                         </div>
@@ -648,30 +648,30 @@ export function TrackComplaintPage() {
                     {complaint.inspections.map((insp) => (
                       <div
                         key={insp.id}
-                        className="p-3.5 rounded-lg bg-[#ECE7DB]/40 dark:bg-[#1D2A25]/40 border border-[#DED8CB] dark:border-[#283931] space-y-2 text-xs"
+                        className="p-3.5 rounded-lg bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151] space-y-2 text-xs"
                       >
                         <div className="flex flex-wrap items-center justify-between gap-2">
                           <span className="font-semibold text-[#854F0B] dark:text-[#F3BA6C]">
                             Outcome: {insp.outcome.replace('_', ' ')}
                           </span>
-                          <span className="text-[11px] text-[#54625A] dark:text-[#C5D4C9]">
+                          <span className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB]">
                             Inspected on: {formatDate(insp.inspectionDate)}
                           </span>
                         </div>
                         <div className="space-y-1">
-                          <p className="text-[#3E4B44] dark:text-[#C5D4C9]">
-                            <strong className="text-[#202522] dark:text-[#F5F2EA]">Findings: </strong>
+                          <p className="text-[#374151] dark:text-[#D1D5DB]">
+                            <strong className="text-[#111827] dark:text-[#F9FAFB]">Findings: </strong>
                             {insp.findings}
                           </p>
                           {insp.measurementsOrReadings && (
-                            <p className="text-[#3E4B44] dark:text-[#C5D4C9]">
-                              <strong className="text-[#202522] dark:text-[#F5F2EA]">Measurements: </strong>
+                            <p className="text-[#374151] dark:text-[#D1D5DB]">
+                              <strong className="text-[#111827] dark:text-[#F9FAFB]">Measurements: </strong>
                               {insp.measurementsOrReadings}
                             </p>
                           )}
                         </div>
-                        <div className="text-[11px] text-[#54625A] dark:text-[#C5D4C9] pt-1">
-                          Inspector: <strong className="text-[#202522] dark:text-[#F5F2EA]">{insp.inspector?.name || 'Assigned Officer'}</strong>
+                        <div className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB] pt-1">
+                          Inspector: <strong className="text-[#111827] dark:text-[#F9FAFB]">{insp.inspector?.name || 'Assigned Officer'}</strong>
                         </div>
                       </div>
                     ))}
@@ -695,7 +695,7 @@ export function TrackComplaintPage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="text-base flex items-center gap-2">
-                    <ShieldCheckIcon className="w-4 h-4 text-[#185541] dark:text-[#78C7AE]" />
+                    <ShieldCheckIcon className="w-4 h-4 text-[#185541] dark:text-[#34D399]" />
                     Public Audit Timeline
                   </CardTitle>
                   <CardDescription>
@@ -704,21 +704,21 @@ export function TrackComplaintPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {complaint.timeline && complaint.timeline.length > 0 ? (
-                    <div className="relative pl-6 space-y-5 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-[#DED8CB] dark:before:bg-[#283931]">
+                    <div className="relative pl-6 space-y-5 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-[#E5E7EB] dark:before:bg-[#374151]">
                       {complaint.timeline.map((item, idx) => (
                         <div key={idx} className="relative group">
-                          <div className="absolute -left-6 top-1 w-3.5 h-3.5 rounded-full bg-[#173D32] dark:bg-[#7BC4B2] border-2 border-white dark:border-[#16201C]" />
+                          <div className="absolute -left-6 top-1 w-3.5 h-3.5 rounded-full bg-[#0B3D2E] dark:bg-[#34D399] border-2 border-white dark:border-[#1F2937]" />
                           <div className="text-xs">
                             <div className="flex items-center gap-1.5">
                               <Badge variant={getStatusBadgeVariant(item.toStatus)} size="sm">
                                 {item.toStatus}
                               </Badge>
                             </div>
-                            <span className="text-[11px] text-[#54625A] dark:text-[#C5D4C9] block mt-1">
+                            <span className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB] block mt-1">
                               {formatDate(item.createdAt)}
                             </span>
                             {item.reasonOrRemarks && (
-                              <p className="text-[11px] text-[#3E4B44] dark:text-[#C5D4C9] mt-1 italic">
+                              <p className="text-[11px] text-[#374151] dark:text-[#D1D5DB] mt-1 italic">
                                 &ldquo;{item.reasonOrRemarks}&rdquo;
                               </p>
                             )}
@@ -727,11 +727,11 @@ export function TrackComplaintPage() {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-xs text-[#54625A] dark:text-[#C5D4C9]">Initial filing registered.</p>
+                    <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">Initial filing registered.</p>
                   )}
 
-                  <div className="pt-3 border-t border-[#DED8CB] dark:border-[#283931] text-[11px] text-[#54625A] dark:text-[#C5D4C9] flex items-center gap-1.5">
-                    <CheckCircleIcon className="w-3.5 h-3.5 text-[#185541] dark:text-[#78C7AE]" />
+                  <div className="pt-3 border-t border-[#E5E7EB] dark:border-[#374151] text-[11px] text-[#6B7280] dark:text-[#D1D5DB] flex items-center gap-1.5">
+                    <CheckCircleIcon className="w-3.5 h-3.5 text-[#185541] dark:text-[#34D399]" />
                     Privacy Protected: Citizen identity is never exposed.
                   </div>
                 </CardContent>
@@ -764,8 +764,9 @@ export function TrackComplaintPage() {
               </div>
               <button
                 type="button"
+                aria-label="Close dialog"
                 onClick={() => setShowReopenModal(false)}
-                className="text-[#54625A] hover:text-[#202522] dark:text-[#C5D4C9] dark:hover:text-[#E8F0EC] p-1 rounded-lg cursor-pointer"
+                className="civora-liquid-btn civora-liquid-btn--ghost p-1.5 rounded-lg"
               >
                 <CloseIcon className="w-5 h-5" />
               </button>
@@ -791,7 +792,7 @@ export function TrackComplaintPage() {
                   />
                 </FormField>
 
-                <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#DED8CB] dark:border-[#283931]">
+                <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#E5E7EB] dark:border-[#374151]">
                   <Button
                     type="button"
                     variant="ghost"

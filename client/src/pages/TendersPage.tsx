@@ -123,35 +123,24 @@ export function TendersPage() {
   };
 
   return (
-    <Container size="xl" className="py-8 space-y-8">
-      {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#DED8CB] dark:border-[#283931] pb-6">
-        <div>
-          <PageHeading
-            title="Civic Tenders & Public Procurement"
-            description="Explore open civic infrastructure tenders, municipal procurement opportunities, and public bidding contracts."
-          />
-        </div>
-        <div className="flex items-center gap-3">
-          {isContractor ? (
-            <Button
-              variant="primary"
-              onClick={() => navigate('/contractor')}
-              className="shadow-sm shadow-blue-500/20"
-            >
+    <Container size="xl" className="space-y-8">
+      {/* Standardized Page Header */}
+      <PageHeading
+        title="Civic Tenders & Public Procurement"
+        description="Explore open civic infrastructure tenders, municipal procurement opportunities, and public bidding contracts."
+        className="mb-0"
+        actions={
+          isContractor ? (
+            <Button variant="primary" size="sm" onClick={() => navigate('/contractor')}>
               Contractor Hub & My Bids →
             </Button>
           ) : (
-            <Button
-              variant="outline"
-              onClick={() => navigate('/login')}
-              className="text-xs"
-            >
+            <Button variant="outline" size="sm" onClick={() => navigate('/login')}>
               Contractor Sign In
             </Button>
-          )}
-        </div>
-      </div>
+          )
+        }
+      />
 
       {/* Filter and Search Bar */}
       <Card className="p-4">
@@ -245,11 +234,11 @@ export function TendersPage() {
             return (
               <Card
                 key={tender.id}
-                className="p-6 hover:border-[#173D32]/40 dark:hover:border-[#7BC4B2]/40 shadow-xs transition-all flex flex-col justify-between"
+                className="p-6 hover:border-[#0B3D2E]/40 dark:hover:border-[#34D399]/50 transition-all flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-start justify-between gap-3 mb-3">
-                    <span className="font-mono text-xs text-[#1B5E8A] dark:text-[#78B4DD] bg-[#E8F1F8] dark:bg-[#152733] border border-[#A8C9E3] dark:border-[#22445E] px-2.5 py-1 rounded-md font-semibold">
+                    <span className="font-mono text-xs text-[#0B3D2E] dark:text-[#34D399] bg-[#E5ECE8] dark:bg-[#34D399]/15 border border-[#0B3D2E]/15 dark:border-[#34D399]/30 px-2.5 py-1 rounded-md font-semibold">
                       {tender.tenderNumber}
                     </span>
                     <div className="flex items-center gap-2">
@@ -260,25 +249,25 @@ export function TendersPage() {
                     </div>
                   </div>
 
-                  <h3 className="text-lg font-bold text-[#202522] dark:text-[#F5F2EA] mb-2 line-clamp-2">
+                  <h3 className="text-lg font-bold text-[#111827] dark:text-[#F9FAFB] mb-2 line-clamp-2">
                     {tender.title}
                   </h3>
 
-                  <p className="text-sm text-[#3E4B44] dark:text-[#C5D4C9] mb-4 line-clamp-3 leading-relaxed">
+                  <p className="text-sm text-[#4B5563] dark:text-[#D1D5DB] mb-4 line-clamp-3 leading-relaxed">
                     {tender.description}
                   </p>
 
                   {/* Metadata Chips */}
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6 bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 p-3 rounded-lg border border-[#DED8CB] dark:border-[#283931] text-xs">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6 bg-[#F9FAFB] dark:bg-[#182230] p-3.5 rounded-xl border border-[#E5E7EB] dark:border-[#374151] text-xs">
                     <div>
-                      <span className="text-[#54625A] dark:text-[#C5D4C9] block text-[11px]">Estimated Value</span>
-                      <strong className="text-[#185541] dark:text-[#78C7AE] font-semibold text-sm">
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB] block text-[11px]">Estimated Value</span>
+                      <strong className="text-[#0B6640] dark:text-[#34D399] font-semibold text-sm">
                         {formatCurrency(tender.estimatedBudget)}
                       </strong>
                     </div>
                     <div>
-                      <span className="text-[#54625A] dark:text-[#C5D4C9] block text-[11px]">Submission Deadline</span>
-                      <strong className={`font-semibold ${expired ? 'text-[#9C3B2D] dark:text-[#F39182]' : 'text-[#854F0B] dark:text-[#F3B768]'}`}>
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB] block text-[11px]">Submission Deadline</span>
+                      <strong className={`font-semibold ${expired ? 'text-[#B91C1C] dark:text-[#F39182]' : 'text-[#92400E] dark:text-[#F3B768]'}`}>
                         {tender.submissionDeadline
                           ? new Date(tender.submissionDeadline).toLocaleDateString('en-IN', {
                               day: '2-digit',
@@ -289,26 +278,26 @@ export function TendersPage() {
                       </strong>
                     </div>
                     <div>
-                      <span className="text-[#54625A] dark:text-[#C5D4C9] block text-[11px]">Min Class Required</span>
-                      <strong className="text-[#202522] dark:text-[#F5F2EA]">
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB] block text-[11px]">Min Class Required</span>
+                      <strong className="text-[#111827] dark:text-[#F9FAFB]">
                         {minClass.startsWith('CLASS_') ? minClass.replace('_', ' ') : `Class ${minClass}`}
                       </strong>
                     </div>
                     <div>
-                      <span className="text-[#54625A] dark:text-[#C5D4C9] block text-[11px]">Department</span>
-                      <span className="text-[#3E4B44] dark:text-[#C5D4C9] truncate block">
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB] block text-[11px]">Department</span>
+                      <span className="text-[#374151] dark:text-[#D1D5DB] truncate block">
                         {tender.department?.name || 'Public Works Dept'}
                       </span>
                     </div>
                     <div>
-                      <span className="text-[#54625A] dark:text-[#C5D4C9] block text-[11px]">Project Duration</span>
-                      <span className="text-[#3E4B44] dark:text-[#C5D4C9]">
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB] block text-[11px]">Project Duration</span>
+                      <span className="text-[#374151] dark:text-[#D1D5DB]">
                         {tender.expectedDurationDays ? `${tender.expectedDurationDays} Days` : 'N/A'}
                       </span>
                     </div>
                     <div>
-                      <span className="text-[#54625A] dark:text-[#C5D4C9] block text-[11px]">Submissions</span>
-                      <span className="text-[#3E4B44] dark:text-[#C5D4C9]">
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB] block text-[11px]">Submissions</span>
+                      <span className="text-[#374151] dark:text-[#D1D5DB]">
                         {tender._count?.bids !== undefined ? `${tender._count.bids} Bids` : 'Confidential'}
                       </span>
                     </div>
@@ -316,9 +305,9 @@ export function TendersPage() {
                 </div>
 
                 {/* Footer Action */}
-                <div className="pt-4 border-t border-[#DED8CB] dark:border-[#283931] flex items-center justify-between gap-3">
-                  <span className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
-                    Category: <span className="text-[#202522] dark:text-[#F5F2EA] font-medium">{categoryDisplay}</span>
+                <div className="pt-4 border-t border-[#E5E7EB] dark:border-[#374151] flex items-center justify-between gap-3">
+                  <span className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
+                    Category: <span className="text-[#111827] dark:text-[#F9FAFB] font-medium">{categoryDisplay}</span>
                   </span>
                   <Button
                     variant="primary"

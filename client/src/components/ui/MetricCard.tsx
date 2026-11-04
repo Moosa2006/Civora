@@ -22,38 +22,38 @@ export function MetricCard({
 }: MetricCardProps) {
   // Editorial civic accents (forest green, muted teal, sage, warm amber, brick)
   const accentBorders = {
-    blue: 'border-[#DED8CB] dark:border-[#283931] bg-white dark:bg-[#16201C]',
-    emerald: 'border-[#C2BAA8] dark:border-[#2B4036] bg-white dark:bg-[#16201C]',
-    amber: 'border-[#E2CFA5] dark:border-[#42341F] bg-white dark:bg-[#16201C]',
-    rose: 'border-[#E8B2A9] dark:border-[#4B2520] bg-white dark:bg-[#16201C]',
-    purple: 'border-[#DED8CB] dark:border-[#283931] bg-white dark:bg-[#16201C]',
-    sky: 'border-[#BBD4DC] dark:border-[#223F4B] bg-white dark:bg-[#16201C]',
+    blue: 'border-[#E5E7EB] dark:border-[#374151] bg-white dark:bg-[#1F2937]',
+    emerald: 'border-[#E5E7EB] dark:border-[#374151] bg-white dark:bg-[#1F2937]',
+    amber: 'border-[#E5E7EB] dark:border-[#374151] bg-white dark:bg-[#1F2937]',
+    rose: 'border-[#E5E7EB] dark:border-[#374151] bg-white dark:bg-[#1F2937]',
+    purple: 'border-[#E5E7EB] dark:border-[#374151] bg-white dark:bg-[#1F2937]',
+    sky: 'border-[#E5E7EB] dark:border-[#374151] bg-white dark:bg-[#1F2937]',
   };
 
   const accentIcons = {
-    blue: 'bg-[#173D32]/10 text-[#173D32] border-[#173D32]/25 dark:bg-[#215748]/30 dark:text-[#E8F0EC] dark:border-[#4F9B8B]/30',
-    emerald: 'bg-[#1E6B52]/10 text-[#185541] border-[#1E6B52]/25 dark:bg-[#1E6B52]/30 dark:text-[#78C7AE] dark:border-[#1E6B52]/30',
-    amber: 'bg-[#B26A15]/10 text-[#854F0B] border-[#B26A15]/25 dark:bg-[#B26A15]/30 dark:text-[#F3B768] dark:border-[#B26A15]/30',
-    rose: 'bg-[#B94B3B]/10 text-[#9C3B2D] border-[#B94B3B]/25 dark:bg-[#B94B3B]/30 dark:text-[#F39182] dark:border-[#B94B3B]/30',
-    purple: 'bg-[#173D32]/10 text-[#173D32] border-[#173D32]/25 dark:bg-[#215748]/30 dark:text-[#E8F0EC] dark:border-[#4F9B8B]/30',
-    sky: 'bg-[#4F9B8B]/10 text-[#1D584D] border-[#4F9B8B]/25 dark:bg-[#4F9B8B]/30 dark:text-[#7BC4B2] dark:border-[#4F9B8B]/30',
+    blue: 'bg-[#E5ECE8] text-[#0B3D2E] border-[#0B3D2E]/15 dark:bg-[#273548] dark:text-[#34D399] dark:border-[#374151]',
+    emerald: 'bg-emerald-50 text-[#065F46] border-emerald-200 dark:bg-[#34D399]/15 dark:text-[#6EE7B7] dark:border-[#34D399]/30',
+    amber: 'bg-amber-50 text-[#92400E] border-amber-200 dark:bg-amber-500/15 dark:text-[#FCD34D] dark:border-amber-500/30',
+    rose: 'bg-red-50 text-[#991B1B] border-red-200 dark:bg-rose-500/15 dark:text-[#FCA5A5] dark:border-rose-500/30',
+    purple: 'bg-[#F3F4F6] text-[#111827] border-[#E5E7EB] dark:bg-[#273548] dark:text-[#F9FAFB] dark:border-[#374151]',
+    sky: 'bg-[#F0FDF4] text-[#0B6640] border-emerald-200 dark:bg-sky-500/15 dark:text-[#7DD3FC] dark:border-sky-500/30',
   };
 
   return (
-    <Card className={`relative overflow-hidden ${accentBorders[accentColor]} ${className}`}>
-      <CardContent className="p-5">
+    <Card className={`relative overflow-hidden p-5 ${accentBorders[accentColor]} ${className}`}>
+      <CardContent>
         <div className="flex items-start justify-between gap-3">
           <div className="space-y-1.5 flex-1">
-            <span className="text-xs font-semibold text-[#3E4B44] dark:text-[#C5D4C9] uppercase tracking-wider block">
+            <span className="text-xs sm:text-sm font-semibold text-[#6B7280] dark:text-[#D1D5DB] uppercase tracking-wider block">
               {label}
             </span>
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl sm:text-3xl font-bold tracking-tight text-[#202522] dark:text-[#F5F2EA] font-mono">
+              <span className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[#111827] dark:text-[#F9FAFB] font-mono">
                 {value}
               </span>
               {badge}
             </div>
-            {subtext && <p className="text-xs text-[#54625A] dark:text-[#94A79D] pt-0.5">{subtext}</p>}
+            {subtext && <p className="text-xs sm:text-sm text-[#6B7280] dark:text-[#9CA3AF] pt-0.5">{subtext}</p>}
           </div>
 
           {icon && (

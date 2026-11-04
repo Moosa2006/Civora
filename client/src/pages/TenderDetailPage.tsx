@@ -218,49 +218,40 @@ export function TenderDetailPage() {
     : false;
 
   return (
-    <Container size="xl" className="py-8 space-y-8">
-      {/* Top Navigation Breadcrumb */}
-      <div className="flex items-center justify-between">
-        <Button variant="ghost" size="sm" onClick={() => navigate('/tenders')}>
-          ← Return to Tenders
-        </Button>
-        <span className="font-mono text-xs text-[#54625A] dark:text-[#C5D4C9]">
-          Ref: {tender.tenderNumber}
-        </span>
-      </div>
-
-      {bidSubmitSuccess && (
-        <Alert variant="success" title="Proposal Submitted Successfully">
-          {bidSubmitSuccess}
-        </Alert>
-      )}
-
-      {/* Main Header Card */}
-      <Card className="p-6 md:p-8">
-        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 border-b border-[#DED8CB] dark:border-[#283931] pb-6 mb-6">
-          <div className="space-y-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="font-mono text-xs px-2.5 py-1 rounded bg-[#E8F1F8] dark:bg-[#152733] text-[#1B5E8A] dark:text-[#78B4DD] border border-[#A8C9E3] dark:border-[#22445E] font-semibold">
-                {tender.tenderNumber}
-              </span>
-              <Badge variant={tender.status === 'PUBLISHED' ? 'success' : 'neutral'}>
-                {(tender.status || 'UNKNOWN').replace(/_/g, ' ')}
-              </Badge>
-              <span className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
-                Department:{' '}
-                <strong className="text-[#202522] dark:text-[#F5F2EA]">
-                  {tender.department?.name || 'Municipal Works'}
-                </strong>
-              </span>
-            </div>
-            <PageHeading title={tender.title} />
-            <p className="text-[#3E4B44] dark:text-[#C5D4C9] text-sm md:text-base leading-relaxed">
-              {tender.description}
-            </p>
+    <Container size="xl" className="space-y-8">
+      {/* Standardized Page Header */}
+      <PageHeading
+        title={tender.title}
+        description={tender.description}
+        className="mb-0"
+        eyebrow={
+          <div className="flex flex-wrap items-center gap-2.5">
+            <button
+              type="button"
+              onClick={() => navigate('/tenders')}
+              className="civora-liquid-btn civora-liquid-btn--text px-2 py-0.5 -ml-2 rounded-md text-xs font-semibold"
+            >
+              &larr; Return to Tenders
+            </button>
+            <span className="text-[#D1D5DB]">&bull;</span>
+            <span className="font-mono text-xs px-2 py-0.5 rounded bg-[#E5ECE8] dark:bg-[#34D399]/15 text-[#0B3D2E] dark:text-[#34D399] font-semibold">
+              {tender.tenderNumber}
+            </span>
+            <span className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
+              Department:{' '}
+              <strong className="text-[#111827] dark:text-[#F9FAFB]">
+                {tender.department?.name || 'Municipal Works'}
+              </strong>
+            </span>
           </div>
-
-          {/* Action Trigger */}
-          <div className="shrink-0 flex flex-col items-end gap-2">
+        }
+        badge={
+          <Badge variant={tender.status === 'PUBLISHED' ? 'success' : 'neutral'}>
+            {(tender.status || 'UNKNOWN').replace(/_/g, ' ')}
+          </Badge>
+        }
+        actions={
+          <>
             {tender.status === 'PUBLISHED' && !isExpired && (
               <>
                 {tender.myBid ? (
@@ -268,40 +259,48 @@ export function TenderDetailPage() {
                 ) : isContractor ? (
                   <Button
                     variant="primary"
-                    size="lg"
+                    size="md"
                     disabled={Boolean(tender.eligibility && !tender.eligibility.canBid)}
                     onClick={() => setIsBidModalOpen(true)}
                   >
                     Submit Bid Proposal
                   </Button>
                 ) : (
-                  <Button variant="secondary" onClick={() => navigate('/login')}>
+                  <Button variant="secondary" size="sm" onClick={() => navigate('/login')}>
                     Sign in to Bid
                   </Button>
                 )}
               </>
             )}
             {isExpired && <Badge variant="danger">Bidding Closed</Badge>}
-          </div>
-        </div>
+          </>
+        }
+      />
 
-        {/* Vital Metrics Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-xl bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 border border-[#DED8CB] dark:border-[#283931]">
+      {bidSubmitSuccess && (
+        <Alert variant="success" title="Proposal Submitted Successfully">
+          {bidSubmitSuccess}
+        </Alert>
+      )}
+
+      {/* Vital Metrics Summary Card */}
+      <Card className="p-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-xl bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151]">
           <div>
-            <span className="text-[#54625A] dark:text-[#C5D4C9] block text-xs">Estimated Budget</span>
-            <strong className="text-[#185541] dark:text-[#78C7AE] text-lg font-bold">
+            <span className="text-[#6B7280] dark:text-[#D1D5DB] block text-xs">Estimated Budget</span>
+            <strong className="text-[#0B6640] dark:text-[#34D399] text-lg font-bold">
               {formatCurrency(tender.estimatedBudget)}
             </strong>
           </div>
           <div>
-            <span className="text-[#54625A] dark:text-[#C5D4C9] block text-xs">Earnest Money Deposit (EMD)</span>
-            <strong className="text-[#202522] dark:text-[#F5F2EA] text-lg font-bold">
+            <span className="text-[#6B7280] dark:text-[#D1D5DB] block text-xs">Earnest Money Deposit (EMD)</span>
+            <strong className="text-[#111827] dark:text-[#F9FAFB] text-lg font-bold">
               {formatCurrency(tender.earnestMoneyDeposit)}
             </strong>
           </div>
           <div>
-            <span className="text-[#54625A] dark:text-[#C5D4C9] block text-xs">Submission Deadline</span>
-            <strong className={`text-sm font-semibold ${isExpired ? 'text-[#9C3B2D] dark:text-[#F39182]' : 'text-[#854F0B] dark:text-[#F3B768]'}`}>
+            <span className="text-[#6B7280] dark:text-[#D1D5DB] block text-xs">Submission Deadline</span>
+            <strong className={`text-sm font-semibold ${isExpired ? 'text-[#B91C1C] dark:text-[#F39182]' : 'text-[#92400E] dark:text-[#F3B768]'}`}>
               {tender.submissionDeadline
                 ? new Date(tender.submissionDeadline).toLocaleString('en-IN', {
                     dateStyle: 'medium',
@@ -311,8 +310,8 @@ export function TenderDetailPage() {
             </strong>
           </div>
           <div>
-            <span className="text-[#54625A] dark:text-[#C5D4C9] block text-xs">Minimum License Class</span>
-            <strong className="text-[#202522] dark:text-[#F5F2EA] text-sm font-semibold">
+            <span className="text-[#6B7280] dark:text-[#D1D5DB] block text-xs">Minimum License Class</span>
+            <strong className="text-[#111827] dark:text-[#F9FAFB] text-sm font-semibold">
               Class {tender.minLicenseClass || 'Open to all classes'}
             </strong>
           </div>
@@ -324,31 +323,31 @@ export function TenderDetailPage() {
         {/* Left Column (2 Cols): Scope of Work and Technical Specifications */}
         <div className="lg:col-span-2 space-y-6">
           <Card className="p-6 space-y-4">
-            <h3 className="text-base font-semibold text-[#202522] dark:text-[#F5F2EA] border-b border-[#DED8CB] dark:border-[#283931] pb-2">
+            <h3 className="text-base font-semibold text-[#111827] dark:text-[#F9FAFB] border-b border-[#E5E7EB] dark:border-[#374151] pb-2">
               Scope of Work & Deliverables
             </h3>
-            <div className="text-sm text-[#3E4B44] dark:text-[#C5D4C9] whitespace-pre-line leading-relaxed">
+            <div className="text-sm text-[#374151] dark:text-[#D1D5DB] whitespace-pre-line leading-relaxed">
               {tender.scopeOfWork || 'Detailed scope of work available upon official tender dossier request.'}
             </div>
           </Card>
 
           <Card className="p-6 space-y-4">
-            <h3 className="text-base font-semibold text-[#202522] dark:text-[#F5F2EA] border-b border-[#DED8CB] dark:border-[#283931] pb-2">
+            <h3 className="text-base font-semibold text-[#111827] dark:text-[#F9FAFB] border-b border-[#E5E7EB] dark:border-[#374151] pb-2">
               Technical Criteria & Quality Requirements
             </h3>
-            <div className="text-sm text-[#3E4B44] dark:text-[#C5D4C9] whitespace-pre-line leading-relaxed">
+            <div className="text-sm text-[#374151] dark:text-[#D1D5DB] whitespace-pre-line leading-relaxed">
               {tender.technicalCriteria || (tender as any).eligibilityCriteria || 'Standard municipal engineering specifications apply.'}
             </div>
           </Card>
 
           {tender.awardedBid && (
-            <Card className="p-6 bg-[#E8F1EC] dark:bg-[#14261F] border-[#A8C9B8] dark:border-[#204A3A] space-y-2">
-              <h3 className="text-base font-semibold text-[#185541] dark:text-[#78C7AE]">
+            <Card className="p-6 bg-[#E8F1EC] dark:bg-[#34D399]/12 border-[#A8C9B8] dark:border-[#34D399]/35 space-y-2">
+              <h3 className="text-base font-semibold text-[#185541] dark:text-[#34D399]">
                 Official Award Outcome
               </h3>
-              <p className="text-sm text-[#3E4B44] dark:text-[#C5D4C9]">
+              <p className="text-sm text-[#374151] dark:text-[#D1D5DB]">
                 This tender was awarded to{' '}
-                <strong className="text-[#202522] dark:text-[#F5F2EA]">
+                <strong className="text-[#111827] dark:text-[#F9FAFB]">
                   {tender.awardedBid.contractor?.name || 'Selected Contractor'}
                 </strong>{' '}
                 for {formatCurrency(tender.awardedBid.bidAmount)}.
@@ -361,7 +360,7 @@ export function TenderDetailPage() {
         <div className="space-y-6">
           {/* Eligibility Card */}
           <Card className="p-6 space-y-4">
-            <h3 className="text-base font-semibold text-[#202522] dark:text-[#F5F2EA] flex items-center justify-between">
+            <h3 className="text-base font-semibold text-[#111827] dark:text-[#F9FAFB] flex items-center justify-between">
               <span>Contractor Eligibility</span>
               {tender.eligibility && (
                 <Badge variant={tender.eligibility.canBid ? 'success' : 'danger'}>
@@ -373,23 +372,23 @@ export function TenderDetailPage() {
             {isContractor && tender.eligibility ? (
               tender.eligibility.details ? (
                 <div className="space-y-4 text-xs">
-                  <p className="text-[#3E4B44] dark:text-[#C5D4C9] leading-relaxed font-medium">
+                  <p className="text-[#374151] dark:text-[#D1D5DB] leading-relaxed font-medium">
                     {tender.eligibility.reason || (tender.eligibility.reasons && tender.eligibility.reasons[0]) || 'Eligibility criteria evaluated.'}
                   </p>
 
-                  <div className="space-y-2 border-t border-[#DED8CB] dark:border-[#283931] pt-3">
+                  <div className="space-y-2 border-t border-[#E5E7EB] dark:border-[#374151] pt-3">
                     <div className="flex items-center justify-between py-1">
-                      <span className="text-[#54625A] dark:text-[#C5D4C9]">Account Status</span>
-                      <strong className="text-[#202522] dark:text-[#F5F2EA] uppercase">
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB]">Account Status</span>
+                      <strong className="text-[#111827] dark:text-[#F9FAFB] uppercase">
                         {tender.eligibility.details.status}
                       </strong>
                     </div>
                     <div className="flex items-center justify-between py-1">
-                      <span className="text-[#54625A] dark:text-[#C5D4C9]">Official Verification</span>
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB]">Official Verification</span>
                       <strong
                         className={
                           tender.eligibility.details.isVerified
-                            ? 'text-[#185541] dark:text-[#78C7AE]'
+                            ? 'text-[#185541] dark:text-[#34D399]'
                             : 'text-[#854F0B] dark:text-[#F3B768]'
                         }
                       >
@@ -397,24 +396,24 @@ export function TenderDetailPage() {
                       </strong>
                     </div>
                     <div className="flex items-center justify-between py-1">
-                      <span className="text-[#54625A] dark:text-[#C5D4C9]">Your License Class</span>
-                      <strong className="text-[#202522] dark:text-[#F5F2EA]">
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB]">Your License Class</span>
+                      <strong className="text-[#111827] dark:text-[#F9FAFB]">
                         Class {tender.eligibility.details.contractorClass || 'Not Set'}
                       </strong>
                     </div>
                     <div className="flex items-center justify-between py-1">
-                      <span className="text-[#54625A] dark:text-[#C5D4C9]">Required Minimum</span>
-                      <strong className="text-[#202522] dark:text-[#F5F2EA]">
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB]">Required Minimum</span>
+                      <strong className="text-[#111827] dark:text-[#F9FAFB]">
                         Class {tender.eligibility.details.requiredClass || 'None'}
                       </strong>
                     </div>
                     <div className="flex items-center justify-between py-1">
-                      <span className="text-[#54625A] dark:text-[#C5D4C9]">Deadline Status</span>
+                      <span className="text-[#6B7280] dark:text-[#D1D5DB]">Deadline Status</span>
                       <strong
                         className={
                           tender.eligibility.details.deadlinePassed
                             ? 'text-[#9C3B2D] dark:text-[#F39182]'
-                            : 'text-[#185541] dark:text-[#78C7AE]'
+                            : 'text-[#185541] dark:text-[#34D399]'
                         }
                       >
                         {tender.eligibility.details.deadlinePassed ? 'Expired' : 'Active'}
@@ -430,7 +429,7 @@ export function TenderDetailPage() {
                 </div>
               ) : (
                 <div className="space-y-3 text-xs">
-                  <p className="text-[#3E4B44] dark:text-[#C5D4C9]">
+                  <p className="text-[#374151] dark:text-[#D1D5DB]">
                     {tender.eligibility.reason || (tender.eligibility.reasons && tender.eligibility.reasons[0]) || 'Eligibility criteria evaluated.'}
                   </p>
                   {!tender.eligibility.canBid && (
@@ -441,12 +440,12 @@ export function TenderDetailPage() {
                 </div>
               )
             ) : isContractor ? (
-              <p className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
+              <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
                 Evaluating your profile against tender requirements...
               </p>
             ) : (
               <div className="space-y-3">
-                <p className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
+                <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
                   Only verified contractors registered on Civora may participate in formal tendering.
                 </p>
                 <Button
@@ -470,20 +469,20 @@ export function TenderDetailPage() {
               </h3>
               <div className="space-y-2 text-xs">
                 <div className="flex justify-between py-1 border-b border-[#A8C9E3]/40 dark:border-[#22445E]/40">
-                  <span className="text-[#54625A] dark:text-[#C5D4C9]">Proposed Amount</span>
-                  <strong className="text-[#185541] dark:text-[#78C7AE]">
+                  <span className="text-[#6B7280] dark:text-[#D1D5DB]">Proposed Amount</span>
+                  <strong className="text-[#185541] dark:text-[#34D399]">
                     {formatCurrency(tender.myBid.bidAmount)}
                   </strong>
                 </div>
                 <div className="flex justify-between py-1 border-b border-[#A8C9E3]/40 dark:border-[#22445E]/40">
-                  <span className="text-[#54625A] dark:text-[#C5D4C9]">Proposed Duration</span>
-                  <span className="text-[#202522] dark:text-[#F5F2EA]">
+                  <span className="text-[#6B7280] dark:text-[#D1D5DB]">Proposed Duration</span>
+                  <span className="text-[#111827] dark:text-[#F9FAFB]">
                     {tender.myBid.proposedDurationDays} Days
                   </span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-[#A8C9E3]/40 dark:border-[#22445E]/40">
-                  <span className="text-[#54625A] dark:text-[#C5D4C9]">Submitted At</span>
-                  <span className="text-[#202522] dark:text-[#F5F2EA]">
+                  <span className="text-[#6B7280] dark:text-[#D1D5DB]">Submitted At</span>
+                  <span className="text-[#111827] dark:text-[#F9FAFB]">
                     {tender.myBid.submittedAt || tender.myBid.createdAt
                       ? new Date(tender.myBid.submittedAt || tender.myBid.createdAt!).toLocaleDateString('en-IN')
                       : 'Recently'}
@@ -511,14 +510,15 @@ export function TenderDetailPage() {
           aria-modal="true"
         >
           <Card className="max-w-xl w-full p-6 shadow-2xl space-y-5">
-            <div className="flex items-center justify-between border-b border-[#DED8CB] dark:border-[#283931] pb-3">
-              <h3 className="text-lg font-bold text-[#202522] dark:text-[#F5F2EA]">
+            <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
+              <h3 className="text-lg font-bold text-[#111827] dark:text-[#F9FAFB]">
                 Submit Bid for {tender.tenderNumber}
               </h3>
               <button
                 type="button"
+                aria-label="Close dialog"
                 onClick={() => setIsBidModalOpen(false)}
-                className="text-[#54625A] hover:text-[#202522] dark:text-[#C5D4C9] dark:hover:text-[#F5F2EA] text-lg font-bold cursor-pointer"
+                className="civora-liquid-btn civora-liquid-btn--ghost px-2.5 py-1 rounded-lg text-sm font-bold"
               >
                 ✕
               </button>
@@ -567,21 +567,21 @@ export function TenderDetailPage() {
                 />
               </FormField>
 
-              <div className="flex items-start gap-3 p-3 bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 rounded-lg border border-[#DED8CB] dark:border-[#283931]">
+              <div className="flex items-start gap-3 p-3 bg-[#F9FAFB] dark:bg-[#182230] rounded-lg border border-[#E5E7EB] dark:border-[#374151]">
                 <input
                   type="checkbox"
                   id="bid-declaration"
                   checked={declarationAccepted}
                   onChange={(e) => setDeclarationAccepted(e.target.checked)}
-                  className="mt-1 h-4 w-4 rounded border-[#DED8CB] dark:border-[#283931] bg-[#ECE7DB] dark:bg-[#1D2A25] text-[#173D32] focus:ring-[#173D32] cursor-pointer"
+                  className="mt-1 h-4 w-4 rounded border-[#E5E7EB] dark:border-[#374151] bg-[#F3F4F6] dark:bg-[#273548] text-[#0B3D2E] accent-[#0B3D2E] dark:accent-[#34D399] focus:ring-[#0B3D2E] dark:focus:ring-[#34D399] cursor-pointer"
                   required
                 />
-                <label htmlFor="bid-declaration" className="text-xs text-[#3E4B44] dark:text-[#C5D4C9] leading-relaxed cursor-pointer">
+                <label htmlFor="bid-declaration" className="text-xs text-[#374151] dark:text-[#D1D5DB] leading-relaxed cursor-pointer">
                   I hereby declare that our organization meets all stated eligibility requirements, possesses the requisite technical capacity, and agrees to Civora's public transparency and milestone verification standards.
                 </label>
               </div>
 
-              <div className="flex justify-end gap-3 pt-3 border-t border-[#DED8CB] dark:border-[#283931]">
+              <div className="flex justify-end gap-3 pt-3 border-t border-[#E5E7EB] dark:border-[#374151]">
                 <Button
                   type="button"
                   variant="ghost"

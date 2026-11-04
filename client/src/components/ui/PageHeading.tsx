@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 export interface PageHeadingProps {
   title: string;
   description?: string;
+  eyebrow?: ReactNode;
   badge?: ReactNode;
   actions?: ReactNode;
   className?: string;
@@ -11,33 +12,37 @@ export interface PageHeadingProps {
 export function PageHeading({
   title,
   description,
+  eyebrow,
   badge,
   actions,
   className = '',
 }: PageHeadingProps) {
   return (
     <div
+      data-scroll-reveal="true"
+      data-reveal-distance="10"
       className={`
-        flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-6 mb-8
-        border-b border-[#DED8CB] dark:border-[#283931]
+        flex flex-col md:flex-row md:items-start md:justify-between gap-4 pb-6 mb-8
+        border-b border-[#E5E7EB] dark:border-[#374151]
         ${className}
       `.trim()}
     >
-      <div className="space-y-1.5">
-        <div className="flex items-center gap-3">
-          <h1 className="text-2xl md:text-3xl font-heading font-bold tracking-tight text-[#202522] dark:text-[#F5F2EA]">
+      <div className="space-y-1.5 min-w-0">
+        {eyebrow && <div className="mb-1">{eyebrow}</div>}
+        <div className="flex flex-wrap items-center gap-3">
+          <h1 className="text-3xl sm:text-4xl lg:text-[44px] font-bold tracking-tight text-[#111827] dark:text-[#F9FAFB] font-sans leading-tight">
             {title}
           </h1>
           {badge}
         </div>
         {description && (
-          <p className="text-sm md:text-base text-[#3E4B44] dark:text-[#C5D4C9] max-w-2xl leading-relaxed">
+          <p className="text-base sm:text-lg text-[#4B5563] dark:text-[#D1D5DB] max-w-3xl leading-relaxed mt-1">
             {description}
           </p>
         )}
       </div>
 
-      {actions && <div className="flex items-center gap-3 shrink-0">{actions}</div>}
+      {actions && <div className="flex flex-wrap items-center gap-2.5 shrink-0">{actions}</div>}
     </div>
   );
 }

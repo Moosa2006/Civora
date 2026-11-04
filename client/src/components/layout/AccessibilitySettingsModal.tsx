@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useAccessibility, type TextSizeOption } from '../../context/useAccessibility.js';
+import { useTheme, type ThemePreference } from '../../context/useTheme.js';
 import { useTranslation } from '../../context/useTranslation.js';
 import { announceToScreenReader } from '../ui/LiveAnnouncer.js';
 import { Button } from '../ui/Button.js';
@@ -21,13 +22,13 @@ export function AccessibilitySettingsModal() {
     resetToDefaults,
   } = useAccessibility();
 
+  const { themePreference, setThemePreference } = useTheme();
   const { locale, setLocale, availableLocales, t } = useTranslation();
 
   // Focus management and Escape key handler
   useEffect(() => {
     if (!isOpen) return;
 
-    // Move focus to modal
     closeBtnRef.current?.focus();
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -37,7 +38,6 @@ export function AccessibilitySettingsModal() {
         triggerRef.current?.focus();
       }
 
-      // Trap focus
       if (e.key === 'Tab' && modalRef.current) {
         const focusable = modalRef.current.querySelectorAll<HTMLElement>(
           'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
@@ -101,6 +101,7 @@ export function AccessibilitySettingsModal() {
 
   const handleReset = async () => {
     await resetToDefaults();
+    setThemePreference('system');
     announceToScreenReader('Accessibility settings reset to defaults');
   };
 
@@ -112,7 +113,7 @@ export function AccessibilitySettingsModal() {
         onClick={handleOpen}
         aria-label={t('accessibility.settingsTitle')}
         title={t('accessibility.settingsTitle')}
-        className="p-2 rounded-lg text-[#E4E0D5] hover:text-white hover:bg-[#112F26] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A8BFAE] cursor-pointer min-h-[36px]"
+        className="civora-liquid-btn civora-liquid-btn--ghost p-2 rounded-lg min-h-[36px] min-w-[36px]"
       >
         <svg
           className="w-5 h-5"
@@ -121,7 +122,6 @@ export function AccessibilitySettingsModal() {
           viewBox="0 0 24 24"
           aria-hidden="true"
         >
-          {/* Universal Accessibility Person Icon */}
           <circle cx="12" cy="4" r="2" strokeWidth="2" strokeLinecap="round" />
           <path
             strokeLinecap="round"
@@ -145,12 +145,12 @@ export function AccessibilitySettingsModal() {
         >
           <div
             ref={modalRef}
-            className="relative w-full max-w-lg bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] rounded-2xl shadow-2xl p-6 sm:p-8 text-[#202522] dark:text-[#F5F2EA]"
+            className="relative w-full max-w-lg bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-2xl shadow-2xl p-6 sm:p-8 text-[#111827] dark:text-[#F9FAFB]"
           >
             {/* Header */}
-            <div className="flex items-center justify-between pb-4 border-b border-[#EAE5D9] dark:border-[#283931]">
+            <div className="flex items-center justify-between pb-4 border-b border-[#E5E7EB] dark:border-[#374151]">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#173D32]/10 text-[#173D32] border border-[#173D32]/25 dark:bg-[#215748]/30 dark:text-[#7BC4B2] dark:border-[#4F9B8B]/30 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-[#E5ECE8] text-[#0B3D2E] border border-[#0B3D2E]/15 dark:bg-[#34D399]/15 dark:text-[#6EE7B7] dark:border-[#34D399]/30 flex items-center justify-center">
                   <svg
                     className="w-5 h-5"
                     fill="none"
@@ -170,11 +170,11 @@ export function AccessibilitySettingsModal() {
                 <div>
                   <h2
                     id="a11y-modal-title"
-                    className="text-lg font-heading font-bold text-[#202522] dark:text-[#F5F2EA] tracking-tight leading-tight"
+                    className="text-lg font-bold text-[#111827] dark:text-[#F9FAFB] tracking-tight leading-tight"
                   >
                     {t('accessibility.settingsTitle')}
                   </h2>
-                  <p id="a11y-modal-desc" className="text-xs text-[#54625A] dark:text-[#C5D4C9] mt-0.5">
+                  <p id="a11y-modal-desc" className="text-xs text-[#6B7280] dark:text-[#D1D5DB] mt-0.5">
                     {t('accessibility.settingsDesc')}
                   </p>
                 </div>
@@ -184,7 +184,7 @@ export function AccessibilitySettingsModal() {
                 type="button"
                 onClick={handleClose}
                 aria-label={t('common.close')}
-                className="p-1.5 rounded-lg text-[#54625A] hover:text-[#202522] dark:text-[#C5D4C9] dark:hover:text-[#F5F2EA] hover:bg-black/5 dark:hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#173D32] cursor-pointer"
+                className="civora-liquid-btn civora-liquid-btn--ghost p-1.5 rounded-lg min-h-[34px] min-w-[34px]"
               >
                 <svg
                   className="w-5 h-5"
@@ -204,10 +204,42 @@ export function AccessibilitySettingsModal() {
             </div>
 
             {/* Settings Content */}
-            <div className="py-5 space-y-6">
-              {/* 1. Language Option */}
+            <div className="py-5 space-y-5">
+              {/* 1. Theme / Appearance Selector */}
               <div>
-                <label className="block text-sm font-semibold text-[#202522] dark:text-[#F5F2EA] mb-2 font-heading">
+                <label className="block text-sm font-semibold text-[#111827] dark:text-[#F9FAFB] mb-2">
+                  {t('accessibility.themeLabel')}
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {(
+                    [
+                      { id: 'light' as ThemePreference, label: t('accessibility.themeLight') },
+                      { id: 'dark' as ThemePreference, label: t('accessibility.themeDark') },
+                      { id: 'system' as ThemePreference, label: t('accessibility.themeSystem') },
+                    ]
+                  ).map((opt) => {
+                    const isSelected = themePreference === opt.id;
+                    return (
+                      <button
+                        key={opt.id}
+                        type="button"
+                        data-active={isSelected}
+                        aria-pressed={isSelected}
+                        onClick={() => setThemePreference(opt.id)}
+                        className={`civora-liquid-tab px-3 py-2.5 rounded-xl text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0B3D2E] dark:focus-visible:ring-[#34D399] ${
+                          isSelected ? 'font-semibold' : 'text-[#111827] dark:text-[#F9FAFB]'
+                        }`}
+                      >
+                        <span className="block text-sm font-medium">{opt.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 2. Language Option */}
+              <div>
+                <label className="block text-sm font-semibold text-[#111827] dark:text-[#F9FAFB] mb-2">
                   {t('accessibility.languageLabel')}
                 </label>
                 <div className="grid grid-cols-3 gap-2">
@@ -217,19 +249,15 @@ export function AccessibilitySettingsModal() {
                       <button
                         key={loc.code}
                         type="button"
+                        data-active={isSelected}
+                        aria-pressed={isSelected}
                         onClick={async () => {
                           await setLocale(loc.code as SupportedLocale);
                           announceToScreenReader(`Language changed to ${loc.name}`);
                         }}
-                        className={`
-                          px-3 py-2.5 rounded-xl border text-center transition-colors cursor-pointer
-                          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#173D32]
-                          ${
-                            isSelected
-                              ? 'bg-[#173D32] text-white border-[#173D32] font-bold shadow-xs dark:bg-[#215748] dark:border-[#215748]'
-                              : 'bg-[#FAF8F5] border-[#DED8CB] text-[#202522] hover:bg-[#ECE7DB] dark:bg-[#1C2823] dark:border-[#283931] dark:text-[#F5F2EA]'
-                          }
-                        `.trim()}
+                        className={`civora-liquid-tab px-3 py-2.5 rounded-xl text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0B3D2E] dark:focus-visible:ring-[#34D399] ${
+                          isSelected ? 'font-semibold' : 'text-[#111827] dark:text-[#F9FAFB]'
+                        }`}
                       >
                         <span className="block text-sm font-medium">{loc.nativeName}</span>
                         <span className="block text-[11px] opacity-75">{loc.name}</span>
@@ -239,9 +267,9 @@ export function AccessibilitySettingsModal() {
                 </div>
               </div>
 
-              {/* 2. Text Sizing */}
+              {/* 3. Text Sizing */}
               <div>
-                <label className="block text-sm font-semibold text-[#202522] dark:text-[#F5F2EA] mb-2 font-heading">
+                <label className="block text-sm font-semibold text-[#111827] dark:text-[#F9FAFB] mb-2">
                   {t('accessibility.textSizeLabel')}
                 </label>
                 <div className="grid grid-cols-3 gap-2">
@@ -257,16 +285,12 @@ export function AccessibilitySettingsModal() {
                       <button
                         key={opt.id}
                         type="button"
+                        data-active={isSelected}
+                        aria-pressed={isSelected}
                         onClick={() => handleTextSizeChange(opt.id)}
-                        className={`
-                          px-3 py-2.5 rounded-xl border text-center transition-colors cursor-pointer
-                          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#173D32]
-                          ${
-                            isSelected
-                              ? 'bg-[#173D32] text-white border-[#173D32] font-bold shadow-xs dark:bg-[#215748] dark:border-[#215748]'
-                              : 'bg-[#FAF8F5] border-[#DED8CB] text-[#202522] hover:bg-[#ECE7DB] dark:bg-[#1C2823] dark:border-[#283931] dark:text-[#F5F2EA]'
-                          }
-                        `.trim()}
+                        className={`civora-liquid-tab px-3 py-2.5 rounded-xl text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0B3D2E] dark:focus-visible:ring-[#34D399] ${
+                          isSelected ? 'font-semibold' : 'text-[#111827] dark:text-[#F9FAFB]'
+                        }`}
                       >
                         <span className="block text-sm font-medium">{opt.label}</span>
                         <span className="block text-[11px] opacity-75">{opt.scale}</span>
@@ -276,13 +300,13 @@ export function AccessibilitySettingsModal() {
                 </div>
               </div>
 
-              {/* 3. Reduced Motion */}
-              <div className="flex items-center justify-between p-3.5 rounded-xl bg-[#FAF8F5] dark:bg-[#141C18] border border-[#DED8CB] dark:border-[#283931]">
+              {/* 4. Reduced Motion */}
+              <div className="flex items-center justify-between p-3.5 rounded-xl bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151]">
                 <div className="pr-4">
-                  <span className="block text-sm font-semibold text-[#202522] dark:text-[#F5F2EA]">
+                  <span className="block text-sm font-semibold text-[#111827] dark:text-[#F9FAFB]">
                     {t('accessibility.reducedMotionLabel')}
                   </span>
-                  <span className="block text-xs text-[#54625A] dark:text-[#C5D4C9] mt-0.5">
+                  <span className="block text-xs text-[#6B7280] dark:text-[#D1D5DB] mt-0.5">
                     {t('accessibility.reducedMotionDesc')}
                   </span>
                 </div>
@@ -293,8 +317,8 @@ export function AccessibilitySettingsModal() {
                   onClick={handleReducedMotionToggle}
                   className={`
                     relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent
-                    transition-colors duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#173D32]
-                    ${reducedMotion ? 'bg-[#173D32] dark:bg-[#4F9B8B]' : 'bg-[#C2BAA8] dark:bg-[#283931]'}
+                    transition-colors duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0B3D2E] dark:focus-visible:ring-[#34D399]
+                    ${reducedMotion ? 'bg-[#0B3D2E] dark:bg-[#10B981]' : 'bg-[#D1D5DB] dark:bg-[#374151]'}
                   `.trim()}
                 >
                   <span
@@ -307,13 +331,13 @@ export function AccessibilitySettingsModal() {
                 </button>
               </div>
 
-              {/* 4. High Contrast */}
-              <div className="flex items-center justify-between p-3.5 rounded-xl bg-[#FAF8F5] dark:bg-[#141C18] border border-[#DED8CB] dark:border-[#283931]">
+              {/* 5. High Contrast */}
+              <div className="flex items-center justify-between p-3.5 rounded-xl bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151]">
                 <div className="pr-4">
-                  <span className="block text-sm font-semibold text-[#202522] dark:text-[#F5F2EA]">
+                  <span className="block text-sm font-semibold text-[#111827] dark:text-[#F9FAFB]">
                     {t('accessibility.highContrastLabel')}
                   </span>
-                  <span className="block text-xs text-[#54625A] dark:text-[#C5D4C9] mt-0.5">
+                  <span className="block text-xs text-[#6B7280] dark:text-[#D1D5DB] mt-0.5">
                     {t('accessibility.highContrastDesc')}
                   </span>
                 </div>
@@ -324,8 +348,8 @@ export function AccessibilitySettingsModal() {
                   onClick={handleHighContrastToggle}
                   className={`
                     relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent
-                    transition-colors duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#173D32]
-                    ${highContrast ? 'bg-[#173D32] dark:bg-[#4F9B8B]' : 'bg-[#C2BAA8] dark:bg-[#283931]'}
+                    transition-colors duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0B3D2E] dark:focus-visible:ring-[#34D399]
+                    ${highContrast ? 'bg-[#0B3D2E] dark:bg-[#10B981]' : 'bg-[#D1D5DB] dark:bg-[#374151]'}
                   `.trim()}
                 >
                   <span
@@ -339,21 +363,17 @@ export function AccessibilitySettingsModal() {
               </div>
 
               {/* Screen reader & keyboard note */}
-              <div className="p-3 bg-[#FAF8F5] dark:bg-[#141C18] border border-[#DED8CB] dark:border-[#283931] rounded-xl text-xs text-[#54625A] dark:text-[#C5D4C9] space-y-1">
+              <div className="p-3 bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151] rounded-xl text-xs text-[#6B7280] dark:text-[#9CA3AF] space-y-1">
                 <p>{t('accessibility.keyboardInstructions')}</p>
                 <p>{t('accessibility.screenReaderOptimized')}</p>
               </div>
             </div>
 
             {/* Footer Buttons */}
-            <div className="flex items-center justify-between pt-4 border-t border-[#EAE5D9] dark:border-[#283931]">
-              <button
-                type="button"
-                onClick={handleReset}
-                className="text-xs text-[#54625A] dark:text-[#C5D4C9] hover:text-[#202522] dark:hover:text-[#F5F2EA] hover:underline cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#173D32] rounded p-1"
-              >
+            <div className="flex items-center justify-between pt-4 border-t border-[#E5E7EB] dark:border-[#374151]">
+              <Button onClick={handleReset} variant="ghost" size="sm">
                 {t('accessibility.resetBtn')}
-              </button>
+              </Button>
               <Button onClick={handleClose} variant="primary" size="md">
                 {t('common.done')}
               </Button>

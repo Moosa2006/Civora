@@ -96,6 +96,8 @@ export const pa: TranslationDictionary = {
     dropdownExecution: 'ਲਾਗੂ ਕਰਨਾ',
     dropdownMore: 'ਹੋਰ',
     dashboard: 'ਡੈਸ਼ਬੋਰਡ',
+    switchToDark: 'ਡਾਰਕ ਮੋਡ ਵਿੱਚ ਬਦਲੋ',
+    switchToLight: 'ਲਾਈਟ ਮੋਡ ਵਿੱਚ ਬਦਲੋ',
   },
 
   home: {
@@ -232,6 +234,10 @@ export const pa: TranslationDictionary = {
     settingsTitle: 'ਪਹੁੰਚਯੋਗਤਾ ਅਤੇ ਭਾਸ਼ਾ ਤਰਜੀਹਾਂ',
     settingsDesc: 'ਅੱਖਰਾਂ ਦੇ ਆਕਾਰ, ਗਤੀ, ਉੱਚ ਕੰਟਰਾਸਟ ਅਤੇ ਖੇਤਰੀ ਭਾਸ਼ਾ ਨਾਲ ਆਪਣਾ ਤਜ਼ਰਬਾ ਅਨੁਕੂਲ ਬਣਾਓ।',
     languageLabel: 'ਪਲੇਟਫਾਰਮ ਭਾਸ਼ਾ',
+    themeLabel: 'ਦਿੱਖ ਅਤੇ ਥੀਮ',
+    themeLight: 'ਲਾਈਟ',
+    themeDark: 'ਡਾਰਕ',
+    themeSystem: 'ਸਿਸਟਮ',
     textSizeLabel: 'ਅੱਖਰਾਂ ਦਾ ਆਕਾਰ',
     textNormal: 'ਆਮ (੧੦੦%)',
     textLarge: 'ਵੱਡਾ (੧੧੫%)',

@@ -115,14 +115,14 @@ export function ReportAbuseModal({
       aria-modal="true"
       aria-labelledby="report-modal-title"
     >
-      <div className="relative w-full max-w-lg bg-white dark:bg-[#16201C] border border-[#DED8CB] dark:border-[#283931] rounded-2xl shadow-2xl p-6 sm:p-8">
-        <h2 id="report-modal-title" className="text-xl font-bold text-[#202522] dark:text-[#F5F2EA] mb-1">
+      <div className="relative w-full max-w-lg bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] rounded-2xl shadow-2xl p-6 sm:p-8">
+        <h2 id="report-modal-title" className="text-xl font-bold text-[#111827] dark:text-[#F9FAFB] mb-1">
           Report Content for Moderation Review
         </h2>
-        <p className="text-sm text-[#54625A] dark:text-[#C5D4C9] mb-4">
-          Reporting flag: <span className="font-semibold text-[#202522] dark:text-[#E8F0EC]">{targetType.replace(/_/g, ' ')}</span>
+        <p className="text-sm text-[#4B5563] dark:text-[#D1D5DB] mb-4">
+          Reporting flag: <span className="font-semibold text-[#111827] dark:text-[#F9FAFB]">{targetType.replace(/_/g, ' ')}</span>
           {contentTitle && (
-            <span className="block text-xs text-[#3E4B44] dark:text-[#C5D4C9] mt-1 italic truncate">
+            <span className="block text-xs text-[#6B7280] dark:text-[#D1D5DB] mt-1 italic truncate">
               &ldquo;{contentTitle}&rdquo;
             </span>
           )}
@@ -150,7 +150,7 @@ export function ReportAbuseModal({
             )}
 
             <div>
-              <label htmlFor="abuse-reason" className="block text-xs font-semibold uppercase tracking-wider text-[#3E4B44] dark:text-[#C5D4C9] mb-1.5">
+              <label htmlFor="abuse-reason" className="block text-xs font-semibold uppercase tracking-wider text-[#374151] dark:text-[#D1D5DB] mb-1.5">
                 Reason Category *
               </label>
               <Select
@@ -162,13 +162,13 @@ export function ReportAbuseModal({
                   label: `${r.label}`,
                 }))}
               />
-              <p className="text-xs text-[#54625A] dark:text-[#C5D4C9] mt-1">
+              <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] mt-1">
                 {REASON_OPTIONS.find((r) => r.value === reason)?.description}
               </p>
             </div>
 
             <div>
-              <label htmlFor="abuse-explanation" className="block text-xs font-semibold uppercase tracking-wider text-[#3E4B44] dark:text-[#C5D4C9] mb-1.5">
+              <label htmlFor="abuse-explanation" className="block text-xs font-semibold uppercase tracking-wider text-[#374151] dark:text-[#D1D5DB] mb-1.5">
                 Additional Details (Optional)
               </label>
               <TextArea
@@ -179,13 +179,13 @@ export function ReportAbuseModal({
                 onChange={(e) => setExplanation(e.target.value)}
                 maxLength={1000}
               />
-              <span className="text-[11px] text-[#54625A] dark:text-[#C5D4C9] float-right mt-1">
+              <span className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB] float-right mt-1">
                 {explanation.length}/1000
               </span>
             </div>
 
-            <div className="p-3 bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/50 rounded-xl border border-[#DED8CB] dark:border-[#283931] text-xs text-[#54625A] dark:text-[#C5D4C9] leading-relaxed">
-              <span className="font-semibold text-[#3E4B44] dark:text-[#C5D4C9] block mb-1">
+            <div className="p-3 bg-[#F9FAFB] dark:bg-[#182230] rounded-xl border border-[#E5E7EB] dark:border-[#374151] text-xs text-[#4B5563] dark:text-[#D1D5DB] leading-relaxed">
+              <span className="font-semibold text-[#111827] dark:text-[#D1D5DB] block mb-1">
                 Civic Integrity Safeguard:
               </span>
               Reports are reviewed by authorized human moderators with a documented audit record.
@@ -193,7 +193,7 @@ export function ReportAbuseModal({
               is lawful and will not be removed.
             </div>
 
-            <div className="flex items-center justify-end space-x-3 pt-3 border-t border-[#DED8CB] dark:border-[#283931]">
+            <div className="flex items-center justify-end space-x-3 pt-3 border-t border-[#E5E7EB] dark:border-[#374151]">
               <Button type="button" variant="outline" onClick={handleClose} disabled={submitting}>
                 Cancel
               </Button>

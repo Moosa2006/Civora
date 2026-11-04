@@ -135,12 +135,12 @@ export function ContractorWorkspacePage() {
   if (!isAuthenticated || user?.role !== 'CONTRACTOR') {
     return (
       <Container size="md" className="py-16">
-        <Card className="p-8 text-center border-[#DED8CB] dark:border-[#283931] space-y-4">
-          <div className="w-12 h-12 mx-auto rounded-full bg-[#173D32]/10 text-[#173D32] dark:bg-[#7BC4B2]/20 dark:text-[#7BC4B2] flex items-center justify-center font-bold text-xl">
+        <Card className="p-8 text-center border-[#E5E7EB] dark:border-[#374151] space-y-4">
+          <div className="w-12 h-12 mx-auto rounded-full bg-[#0B3D2E]/10 text-[#0B3D2E] dark:bg-[#34D399]/15 dark:text-[#34D399] flex items-center justify-center font-bold text-xl">
             🔒
           </div>
-          <h2 className="text-xl font-bold font-heading text-[#202522] dark:text-[#E8F0EC]">Contractor Access Required</h2>
-          <p className="text-[#4A5750] dark:text-[#A8BFAE] text-sm max-w-md mx-auto">
+          <h2 className="text-xl font-bold font-heading text-[#111827] dark:text-[#F9FAFB]">Contractor Access Required</h2>
+          <p className="text-[#6B7280] dark:text-[#D1D5DB] text-sm max-w-md mx-auto">
             This workspace is reserved for authorized enterprise contractors accredited with Civora. Please sign in with your contractor credentials.
           </p>
           <div className="pt-2">
@@ -352,29 +352,26 @@ export function ContractorWorkspacePage() {
   ).length;
 
   return (
-    <Container size="xl" className="py-8 space-y-8">
-      {/* Workspace Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#DED8CB] dark:border-[#283931] pb-6">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-semibold px-2 py-0.5 rounded bg-[#173D32]/10 text-[#173D32] border border-[#173D32]/25 dark:bg-[#215748]/30 dark:text-[#7BC4B2] dark:border-[#4F9B8B]/30 uppercase font-mono">
+    <Container size="xl" className="space-y-8">
+      {/* Standardized Workspace Header */}
+      <PageHeading
+        title={profile?.name || user?.name || 'Contractor Portal'}
+        description={`Registration: ${profile?.licenseNumber || profile?.registrationNumber || 'ACCREDITED'} | License: ${profile?.licenseClass || 'CLASS_A'} | Region: ${profile?.operatingRegion || 'National'}`}
+        className="mb-0"
+        eyebrow={
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold px-2 py-0.5 rounded bg-[#E5ECE8] text-[#0B3D2E] border border-[#0B3D2E]/15 dark:bg-[#34D399]/15 dark:text-[#34D399] dark:border-[#34D399]/30 uppercase font-mono">
               {t('roles.contractor')} {t('nav.contractorDashboard')}
             </span>
-            {profile?.isVerified && (
-              <Badge variant="success">Verified Enterprise</Badge>
-            )}
+            {profile?.isVerified && <Badge variant="success">Verified Enterprise</Badge>}
           </div>
-          <PageHeading
-            title={profile?.name || user?.name || 'Contractor Portal'}
-            description={`Registration: ${profile?.licenseNumber || profile?.registrationNumber || 'ACCREDITED'} | License: ${profile?.licenseClass || 'CLASS_A'} | Region: ${profile?.operatingRegion || 'National'}`}
-          />
-        </div>
-        <div className="flex items-center gap-3">
-          <Button variant="primary" onClick={() => navigate('/tenders')}>
+        }
+        actions={
+          <Button variant="primary" size="sm" onClick={() => navigate('/tenders')}>
             {t('nav.findTenders')} →
           </Button>
-        </div>
-      </div>
+        }
+      />
 
       {/* Global Alerts */}
       {actionSuccess && (
@@ -394,84 +391,32 @@ export function ContractorWorkspacePage() {
       )}
 
       {/* Navigation Tabs */}
-      <div className="flex border-b border-[#DED8CB] dark:border-[#283931] overflow-x-auto gap-1 text-sm font-medium font-sans">
-        <button
-          type="button"
-          onClick={() => handleTabChange('overview')}
-          className={`px-4 py-2.5 border-b-2 whitespace-nowrap transition-colors cursor-pointer ${
-            activeTab === 'overview'
-              ? 'border-[#173D32] text-[#173D32] dark:border-[#4F9B8B] dark:text-[#7BC4B2] font-semibold'
-              : 'border-transparent text-[#4A5750] dark:text-[#B0C0B6] hover:text-[#202522] dark:hover:text-[#F5F2EA]'
-          }`}
-        >
-          Overview & Metrics
-        </button>
-        <button
-          type="button"
-          onClick={() => handleTabChange('bids')}
-          className={`px-4 py-2.5 border-b-2 whitespace-nowrap transition-colors cursor-pointer ${
-            activeTab === 'bids'
-              ? 'border-[#173D32] text-[#173D32] dark:border-[#4F9B8B] dark:text-[#7BC4B2] font-semibold'
-              : 'border-transparent text-[#4A5750] dark:text-[#B0C0B6] hover:text-[#202522] dark:hover:text-[#F5F2EA]'
-          }`}
-        >
-          My Bids ({bids.length})
-        </button>
-        <button
-          type="button"
-          onClick={() => handleTabChange('work_orders')}
-          className={`px-4 py-2.5 border-b-2 whitespace-nowrap transition-colors cursor-pointer ${
-            activeTab === 'work_orders'
-              ? 'border-[#173D32] text-[#173D32] dark:border-[#4F9B8B] dark:text-[#7BC4B2] font-semibold'
-              : 'border-transparent text-[#4A5750] dark:text-[#B0C0B6] hover:text-[#202522] dark:hover:text-[#F5F2EA]'
-          }`}
-        >
-          Awarded Work Orders ({workOrders.length})
-        </button>
-        <button
-          type="button"
-          onClick={() => handleTabChange('work_start')}
-          className={`px-4 py-2.5 border-b-2 whitespace-nowrap transition-colors cursor-pointer ${
-            activeTab === 'work_start'
-              ? 'border-[#173D32] text-[#173D32] dark:border-[#4F9B8B] dark:text-[#7BC4B2] font-semibold'
-              : 'border-transparent text-[#4A5750] dark:text-[#B0C0B6] hover:text-[#202522] dark:hover:text-[#F5F2EA]'
-          }`}
-        >
-          Work-Start Declarations
-        </button>
-        <button
-          type="button"
-          onClick={() => handleTabChange('milestones')}
-          className={`px-4 py-2.5 border-b-2 whitespace-nowrap transition-colors cursor-pointer ${
-            activeTab === 'milestones'
-              ? 'border-[#173D32] text-[#173D32] dark:border-[#4F9B8B] dark:text-[#7BC4B2] font-semibold'
-              : 'border-transparent text-[#4A5750] dark:text-[#B0C0B6] hover:text-[#202522] dark:hover:text-[#F5F2EA]'
-          }`}
-        >
-          Milestones & Progress
-        </button>
-        <button
-          type="button"
-          onClick={() => handleTabChange('payments')}
-          className={`px-4 py-2.5 border-b-2 whitespace-nowrap transition-colors cursor-pointer ${
-            activeTab === 'payments'
-              ? 'border-[#173D32] text-[#173D32] dark:border-[#4F9B8B] dark:text-[#7BC4B2] font-semibold'
-              : 'border-transparent text-[#4A5750] dark:text-[#B0C0B6] hover:text-[#202522] dark:hover:text-[#F5F2EA]'
-          }`}
-        >
-          Payment Ledger
-        </button>
-        <button
-          type="button"
-          onClick={() => handleTabChange('defects')}
-          className={`px-4 py-2.5 border-b-2 whitespace-nowrap transition-colors cursor-pointer ${
-            activeTab === 'defects'
-              ? 'border-[#173D32] text-[#173D32] dark:border-[#4F9B8B] dark:text-[#7BC4B2] font-semibold'
-              : 'border-transparent text-[#4A5750] dark:text-[#B0C0B6] hover:text-[#202522] dark:hover:text-[#F5F2EA]'
-          }`}
-        >
-          Warranty & Defects ({openDefectsCount})
-        </button>
+      <div className="flex border-b border-[#E5E7EB] dark:border-[#374151] overflow-x-auto gap-1.5 pb-2 text-xs sm:text-sm font-medium font-sans">
+        {(
+          [
+            { id: 'overview', label: 'Overview & Metrics' },
+            { id: 'bids', label: `My Bids (${bids.length})` },
+            { id: 'work_orders', label: `Awarded Work Orders (${workOrders.length})` },
+            { id: 'work_start', label: 'Work-Start Declarations' },
+            { id: 'milestones', label: 'Milestones & Progress' },
+            { id: 'payments', label: 'Payment Ledger' },
+            { id: 'defects', label: `Warranty & Defects (${openDefectsCount})` },
+          ] as const
+        ).map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            data-active={activeTab === tab.id}
+            onClick={() => handleTabChange(tab.id)}
+            className={`civora-liquid-tab px-4 py-2 rounded-lg whitespace-nowrap ${
+              activeTab === tab.id
+                ? 'font-semibold'
+                : 'text-[#6B7280] dark:text-[#D1D5DB]'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       {isLoading ? (
@@ -485,49 +430,49 @@ export function ContractorWorkspacePage() {
             <div className="space-y-8">
               {/* Metrics Grid */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <Card className="p-5 border-[#DED8CB] dark:border-[#283931]">
-                  <span className="text-[11px] font-mono tracking-wider text-[#54625A] dark:text-[#C5D4C9] uppercase font-semibold">Available Tenders</span>
-                  <p className="text-2xl font-bold font-mono text-[#173D32] dark:text-[#7BC4B2] mt-1">{metrics?.openTendersCount ?? metrics?.openTenders ?? 0}</p>
-                  <span className="text-[11px] text-[#54625A] dark:text-[#C5D4C9] block mt-1">Open public procurement</span>
+                <Card className="p-5 border-[#E5E7EB] dark:border-[#374151]">
+                  <span className="text-[11px] font-mono tracking-wider text-[#6B7280] dark:text-[#D1D5DB] uppercase font-semibold">Available Tenders</span>
+                  <p className="text-2xl font-bold font-mono text-[#0B3D2E] dark:text-[#34D399] mt-1">{metrics?.openTendersCount ?? metrics?.openTenders ?? 0}</p>
+                  <span className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB] block mt-1">Open public procurement</span>
                 </Card>
-                <Card className="p-5 border-[#DED8CB] dark:border-[#283931]">
-                  <span className="text-[11px] font-mono tracking-wider text-[#54625A] dark:text-[#C5D4C9] uppercase font-semibold">Submitted Bids</span>
-                  <p className="text-2xl font-bold font-mono text-[#202522] dark:text-[#E8F0EC] mt-1">{metrics?.activeBidsCount ?? metrics?.activeBids ?? bids.length}</p>
-                  <span className="text-[11px] text-[#54625A] dark:text-[#C5D4C9] block mt-1">Competitive proposals</span>
+                <Card className="p-5 border-[#E5E7EB] dark:border-[#374151]">
+                  <span className="text-[11px] font-mono tracking-wider text-[#6B7280] dark:text-[#D1D5DB] uppercase font-semibold">Submitted Bids</span>
+                  <p className="text-2xl font-bold font-mono text-[#111827] dark:text-[#F9FAFB] mt-1">{metrics?.activeBidsCount ?? metrics?.activeBids ?? bids.length}</p>
+                  <span className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB] block mt-1">Competitive proposals</span>
                 </Card>
-                <Card className="p-5 border-[#DED8CB] dark:border-[#283931]">
-                  <span className="text-[11px] font-mono tracking-wider text-[#54625A] dark:text-[#C5D4C9] uppercase font-semibold">Awarded Contracts</span>
-                  <p className="text-2xl font-bold font-mono text-[#1E6B52] dark:text-[#52B79A] mt-1">{metrics?.awardedContractsCount ?? metrics?.awardedContracts ?? workOrders.length}</p>
-                  <span className="text-[11px] text-[#54625A] dark:text-[#C5D4C9] block mt-1">Active execution orders</span>
+                <Card className="p-5 border-[#E5E7EB] dark:border-[#374151]">
+                  <span className="text-[11px] font-mono tracking-wider text-[#6B7280] dark:text-[#D1D5DB] uppercase font-semibold">Awarded Contracts</span>
+                  <p className="text-2xl font-bold font-mono text-[#1E6B52] dark:text-[#34D399] mt-1">{metrics?.awardedContractsCount ?? metrics?.awardedContracts ?? workOrders.length}</p>
+                  <span className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB] block mt-1">Active execution orders</span>
                 </Card>
-                <Card className="p-5 border-[#DED8CB] dark:border-[#283931]">
-                  <span className="text-[11px] font-mono tracking-wider text-[#54625A] dark:text-[#C5D4C9] uppercase font-semibold">Pending Milestones</span>
+                <Card className="p-5 border-[#E5E7EB] dark:border-[#374151]">
+                  <span className="text-[11px] font-mono tracking-wider text-[#6B7280] dark:text-[#D1D5DB] uppercase font-semibold">Pending Milestones</span>
                   <p className="text-2xl font-bold font-mono text-[#9C6D19] dark:text-[#E8C07D] mt-1">{metrics?.pendingMilestonesCount ?? metrics?.pendingMilestones ?? 0}</p>
-                  <span className="text-[11px] text-[#54625A] dark:text-[#C5D4C9] block mt-1">Awaiting verification</span>
+                  <span className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB] block mt-1">Awaiting verification</span>
                 </Card>
               </div>
 
               {/* Secondary Metric Bar */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Card className="p-5 border-[#DED8CB] dark:border-[#283931] flex items-center justify-between">
+                <Card className="p-5 border-[#E5E7EB] dark:border-[#374151] flex items-center justify-between">
                   <div>
-                    <span className="text-[11px] font-mono tracking-wider text-[#54625A] dark:text-[#C5D4C9] uppercase font-semibold">Total Disbursements Released</span>
-                    <p className="text-xl font-bold font-mono text-[#1E6B52] dark:text-[#52B79A] mt-0.5">
+                    <span className="text-[11px] font-mono tracking-wider text-[#6B7280] dark:text-[#D1D5DB] uppercase font-semibold">Total Disbursements Released</span>
+                    <p className="text-xl font-bold font-mono text-[#1E6B52] dark:text-[#34D399] mt-0.5">
                       {formatCurrency(metrics?.totalPaidAmount ?? 0)}
                     </p>
-                    <span className="text-[11px] text-[#54625A] dark:text-[#C5D4C9]">Traceable bank/treasury records</span>
+                    <span className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB]">Traceable bank/treasury records</span>
                   </div>
                   <Button variant="outline" size="sm" onClick={() => handleTabChange('payments')}>
                     View Ledger →
                   </Button>
                 </Card>
-                <Card className="p-5 border-[#DED8CB] dark:border-[#283931] flex items-center justify-between">
+                <Card className="p-5 border-[#E5E7EB] dark:border-[#374151] flex items-center justify-between">
                   <div>
-                    <span className="text-[11px] font-mono tracking-wider text-[#54625A] dark:text-[#C5D4C9] uppercase font-semibold">Warranty & Defect Items</span>
-                    <p className={`text-xl font-bold font-mono mt-0.5 ${openDefectsCount > 0 ? 'text-[#B94B3B]' : 'text-[#202522] dark:text-[#E8F0EC]'}`}>
+                    <span className="text-[11px] font-mono tracking-wider text-[#6B7280] dark:text-[#D1D5DB] uppercase font-semibold">Warranty & Defect Items</span>
+                    <p className={`text-xl font-bold font-mono mt-0.5 ${openDefectsCount > 0 ? 'text-[#B94B3B]' : 'text-[#111827] dark:text-[#F9FAFB]'}`}>
                       {openDefectsCount} Open Action{openDefectsCount === 1 ? '' : 's'}
                     </p>
-                    <span className="text-[11px] text-[#54625A] dark:text-[#C5D4C9]">Post-completion liability period</span>
+                    <span className="text-[11px] text-[#6B7280] dark:text-[#D1D5DB]">Post-completion liability period</span>
                   </div>
                   <Button variant="outline" size="sm" onClick={() => handleTabChange('defects')}>
                     Inspect Defects →
@@ -536,15 +481,15 @@ export function ContractorWorkspacePage() {
               </div>
 
               {/* Recent Bids Section */}
-              <Card className="p-6 border-[#DED8CB] dark:border-[#283931] space-y-4">
-                <div className="flex items-center justify-between border-b border-[#DED8CB] dark:border-[#283931] pb-3">
-                  <h3 className="text-base font-bold font-heading text-[#202522] dark:text-[#E8F0EC]">Recent Submitted Bids</h3>
+              <Card className="p-6 border-[#E5E7EB] dark:border-[#374151] space-y-4">
+                <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
+                  <h3 className="text-base font-bold font-heading text-[#111827] dark:text-[#F9FAFB]">Recent Submitted Bids</h3>
                   <Button variant="ghost" size="sm" onClick={() => handleTabChange('bids')}>
                     View All Bids ({bids.length}) →
                   </Button>
                 </div>
                 {bids.length === 0 ? (
-                  <p className="text-xs text-[#54625A] dark:text-[#C5D4C9] py-4 text-center">
+                  <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] py-4 text-center">
                     You have not submitted proposals for any civic tenders yet.
                   </p>
                 ) : (
@@ -552,18 +497,18 @@ export function ContractorWorkspacePage() {
                     {bids.slice(0, 3).map((b) => (
                       <div
                         key={b.id}
-                        className="p-3.5 bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/60 rounded-xl border border-[#DED8CB] dark:border-[#283931] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs"
+                        className="p-3.5 bg-[#F9FAFB] dark:bg-[#182230] rounded-xl border border-[#E5E7EB] dark:border-[#374151] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs"
                       >
                         <div>
                           <div className="flex items-center gap-2 mb-0.5">
-                            <span className="font-mono text-[#173D32] dark:text-[#7BC4B2] font-semibold">{b.tender?.tenderNumber || 'TND'}</span>
+                            <span className="font-mono text-[#0B3D2E] dark:text-[#34D399] font-semibold">{b.tender?.tenderNumber || 'TND'}</span>
                             {getBidStatusBadge(b.status)}
                           </div>
-                          <span className="font-semibold text-[#202522] dark:text-[#E8F0EC]">{b.tender?.title || 'Infrastructure Work'}</span>
+                          <span className="font-semibold text-[#111827] dark:text-[#F9FAFB]">{b.tender?.title || 'Infrastructure Work'}</span>
                         </div>
                         <div className="sm:text-right">
-                          <strong className="text-[#1E6B52] dark:text-[#52B79A] font-mono text-sm block">{formatCurrency(b.bidAmount)}</strong>
-                          <span className="text-[#54625A] dark:text-[#C5D4C9]">
+                          <strong className="text-[#1E6B52] dark:text-[#34D399] font-mono text-sm block">{formatCurrency(b.bidAmount)}</strong>
+                          <span className="text-[#6B7280] dark:text-[#D1D5DB]">
                             {new Date(b.createdAt || b.submittedAt).toLocaleDateString('en-IN')}
                           </span>
                         </div>
@@ -574,34 +519,34 @@ export function ContractorWorkspacePage() {
               </Card>
 
               {/* Enterprise Profile Card */}
-              <Card className="p-6 border-[#DED8CB] dark:border-[#283931] space-y-4">
-                <h3 className="text-base font-bold font-heading text-[#202522] dark:text-[#E8F0EC] border-b border-[#DED8CB] dark:border-[#283931] pb-3">
+              <Card className="p-6 border-[#E5E7EB] dark:border-[#374151] space-y-4">
+                <h3 className="text-base font-bold font-heading text-[#111827] dark:text-[#F9FAFB] border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
                   Accredited Enterprise Profile
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
                   <div>
-                    <span className="text-[#54625A] dark:text-[#C5D4C9] block mb-1">Company Legal Name</span>
-                    <strong className="text-[#202522] dark:text-[#E8F0EC] text-sm">{profile?.name || user?.name}</strong>
+                    <span className="text-[#6B7280] dark:text-[#D1D5DB] block mb-1">Company Legal Name</span>
+                    <strong className="text-[#111827] dark:text-[#F9FAFB] text-sm">{profile?.name || user?.name}</strong>
                   </div>
                   <div>
-                    <span className="text-[#54625A] dark:text-[#C5D4C9] block mb-1">License & Registration</span>
-                    <strong className="text-[#202522] dark:text-[#E8F0EC] text-sm font-mono">
+                    <span className="text-[#6B7280] dark:text-[#D1D5DB] block mb-1">License & Registration</span>
+                    <strong className="text-[#111827] dark:text-[#F9FAFB] text-sm font-mono">
                       {profile?.licenseNumber || profile?.registrationNumber || 'ACCREDITED'} ({profile?.licenseClass || 'CLASS_A'})
                     </strong>
                   </div>
                   <div>
-                    <span className="text-[#54625A] dark:text-[#C5D4C9] block mb-1">Approved Categories</span>
+                    <span className="text-[#6B7280] dark:text-[#D1D5DB] block mb-1">Approved Categories</span>
                     <div className="flex flex-wrap gap-1 mt-1">
                       {profile?.workCategories?.map((cat: string) => (
-                        <span key={cat} className="px-2 py-0.5 rounded bg-[#ECE7DB] dark:bg-[#1D2A25] text-[#202522] dark:text-[#E8F0EC] border border-[#DED8CB] dark:border-[#283931] font-mono text-[10px]">
+                        <span key={cat} className="px-2 py-0.5 rounded bg-[#F3F4F6] dark:bg-[#273548] text-[#111827] dark:text-[#F9FAFB] border border-[#E5E7EB] dark:border-[#374151] font-mono text-[10px]">
                           {cat}
                         </span>
                       ))}
                     </div>
                   </div>
                   <div>
-                    <span className="text-[#54625A] dark:text-[#C5D4C9] block mb-1">Operating Region</span>
-                    <strong className="text-[#202522] dark:text-[#E8F0EC] text-sm">{profile?.operatingRegion || 'National'}</strong>
+                    <span className="text-[#6B7280] dark:text-[#D1D5DB] block mb-1">Operating Region</span>
+                    <strong className="text-[#111827] dark:text-[#F9FAFB] text-sm">{profile?.operatingRegion || 'National'}</strong>
                   </div>
                 </div>
               </Card>
@@ -624,49 +569,49 @@ export function ContractorWorkspacePage() {
               ) : (
                 <div className="space-y-4">
                   {bids.map((bid) => (
-                    <Card key={bid.id} className="p-6 border-[#DED8CB] dark:border-[#283931] space-y-4">
-                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-[#DED8CB] dark:border-[#283931] pb-3">
+                    <Card key={bid.id} className="p-6 border-[#E5E7EB] dark:border-[#374151] space-y-4">
+                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="font-mono text-xs font-semibold text-[#173D32] dark:text-[#7BC4B2] bg-[#ECE7DB] dark:bg-[#1D2A25] px-2 py-0.5 rounded border border-[#DED8CB] dark:border-[#283931]">
+                            <span className="font-mono text-xs font-semibold text-[#0B3D2E] dark:text-[#34D399] bg-[#F3F4F6] dark:bg-[#273548] px-2 py-0.5 rounded border border-[#E5E7EB] dark:border-[#374151]">
                               {bid.tender?.tenderNumber || 'TND'}
                             </span>
                             {getBidStatusBadge(bid.status)}
                           </div>
-                          <h4 className="text-base font-bold font-heading text-[#202522] dark:text-[#E8F0EC] mt-1">
+                          <h4 className="text-base font-bold font-heading text-[#111827] dark:text-[#F9FAFB] mt-1">
                             {bid.tender?.title || 'Tender Proposal'}
                           </h4>
                         </div>
                         <div className="text-right">
-                          <span className="text-[11px] font-mono tracking-wider text-[#54625A] dark:text-[#C5D4C9] uppercase font-semibold block">Proposed Amount</span>
-                          <strong className="text-lg font-bold font-mono text-[#1E6B52] dark:text-[#52B79A]">
+                          <span className="text-[11px] font-mono tracking-wider text-[#6B7280] dark:text-[#D1D5DB] uppercase font-semibold block">Proposed Amount</span>
+                          <strong className="text-lg font-bold font-mono text-[#1E6B52] dark:text-[#34D399]">
                             {formatCurrency(bid.bidAmount)}
                           </strong>
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs bg-[#ECE7DB]/40 dark:bg-[#1D2A25]/50 p-3.5 rounded-lg border border-[#DED8CB] dark:border-[#283931]">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs bg-[#F9FAFB] dark:bg-[#182230] p-3.5 rounded-lg border border-[#E5E7EB] dark:border-[#374151]">
                         <div>
-                          <span className="text-[#54625A] dark:text-[#C5D4C9] block">Duration</span>
-                          <span className="text-[#202522] dark:text-[#E8F0EC] font-medium">{bid.proposedDurationDays} Days</span>
+                          <span className="text-[#6B7280] dark:text-[#D1D5DB] block">Duration</span>
+                          <span className="text-[#111827] dark:text-[#F9FAFB] font-medium">{bid.proposedDurationDays} Days</span>
                         </div>
                         <div>
-                          <span className="text-[#54625A] dark:text-[#C5D4C9] block">Submitted On</span>
-                          <span className="text-[#202522] dark:text-[#E8F0EC]">
+                          <span className="text-[#6B7280] dark:text-[#D1D5DB] block">Submitted On</span>
+                          <span className="text-[#111827] dark:text-[#F9FAFB]">
                             {new Date(bid.createdAt || bid.submittedAt).toLocaleDateString('en-IN')}
                           </span>
                         </div>
                         <div>
-                          <span className="text-[#54625A] dark:text-[#C5D4C9] block">Tender Deadline</span>
-                          <span className="text-[#202522] dark:text-[#E8F0EC]">
+                          <span className="text-[#6B7280] dark:text-[#D1D5DB] block">Tender Deadline</span>
+                          <span className="text-[#111827] dark:text-[#F9FAFB]">
                             {bid.tender?.submissionDeadline
                               ? new Date(bid.tender.submissionDeadline).toLocaleDateString('en-IN')
                               : 'Closed'}
                           </span>
                         </div>
                         <div>
-                          <span className="text-[#54625A] dark:text-[#C5D4C9] block">Evaluation Notes</span>
-                          <span className="text-[#4A5750] dark:text-[#A8BFAE]">
+                          <span className="text-[#6B7280] dark:text-[#D1D5DB] block">Evaluation Notes</span>
+                          <span className="text-[#6B7280] dark:text-[#D1D5DB]">
                             {bid.officialEvaluationNotes || bid.evaluationNotes || 'Pending formal scoring'}
                           </span>
                         </div>
@@ -721,55 +666,55 @@ export function ContractorWorkspacePage() {
                     const hasWorkStart = wo.workStartDeclarations && wo.workStartDeclarations.length > 0;
 
                     return (
-                      <Card key={wo.id} className="p-6 border-[#DED8CB] dark:border-[#283931] space-y-4">
-                        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 border-b border-[#DED8CB] dark:border-[#283931] pb-4">
+                      <Card key={wo.id} className="p-6 border-[#E5E7EB] dark:border-[#374151] space-y-4">
+                        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 border-b border-[#E5E7EB] dark:border-[#374151] pb-4">
                           <div>
                             <div className="flex items-center gap-2 mb-1">
-                              <span className="font-mono text-xs font-semibold text-[#173D32] dark:text-[#7BC4B2] bg-[#ECE7DB] dark:bg-[#1D2A25] px-2.5 py-0.5 rounded border border-[#DED8CB] dark:border-[#283931]">
+                              <span className="font-mono text-xs font-semibold text-[#0B3D2E] dark:text-[#34D399] bg-[#F3F4F6] dark:bg-[#273548] px-2.5 py-0.5 rounded border border-[#E5E7EB] dark:border-[#374151]">
                                 WO #{orderNo}
                               </span>
                               <Badge variant={rawStatus === 'IN_PROGRESS' ? 'success' : 'neutral'}>
                                 {rawStatus.replace(/_/g, ' ')}
                               </Badge>
                             </div>
-                            <h4 className="text-lg font-bold font-heading text-[#202522] dark:text-[#E8F0EC]">
+                            <h4 className="text-lg font-bold font-heading text-[#111827] dark:text-[#F9FAFB]">
                               {wo.civicWork?.title || wo.tender?.title || 'Civic Infrastructure Project'}
                             </h4>
-                            <p className="text-xs text-[#54625A] dark:text-[#C5D4C9] mt-0.5">
+                            <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] mt-0.5">
                               Location: {wo.civicWork?.location || wo.tender?.location || 'Municipal jurisdiction'}
                             </p>
                           </div>
                           <div className="text-right">
-                            <span className="text-[11px] font-mono tracking-wider text-[#54625A] dark:text-[#C5D4C9] uppercase font-semibold block">Sanctioned Contract Value</span>
-                            <strong className="text-xl font-bold font-mono text-[#1E6B52] dark:text-[#52B79A]">
+                            <span className="text-[11px] font-mono tracking-wider text-[#6B7280] dark:text-[#D1D5DB] uppercase font-semibold block">Sanctioned Contract Value</span>
+                            <strong className="text-xl font-bold font-mono text-[#1E6B52] dark:text-[#34D399]">
                               {formatCurrency(contractVal)}
                             </strong>
                           </div>
                         </div>
 
                         {/* Work Order Details */}
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs bg-[#ECE7DB]/40 dark:bg-[#1D2A25]/50 p-4 rounded-lg border border-[#DED8CB] dark:border-[#283931]">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs bg-[#F9FAFB] dark:bg-[#182230] p-4 rounded-lg border border-[#E5E7EB] dark:border-[#374151]">
                           <div>
-                            <span className="text-[#54625A] dark:text-[#C5D4C9] block">Scheduled Start</span>
-                            <strong className="text-[#202522] dark:text-[#E8F0EC]">
+                            <span className="text-[#6B7280] dark:text-[#D1D5DB] block">Scheduled Start</span>
+                            <strong className="text-[#111827] dark:text-[#F9FAFB]">
                               {scheduledStart ? new Date(scheduledStart).toLocaleDateString('en-IN') : 'Immediate'}
                             </strong>
                           </div>
                           <div>
-                            <span className="text-[#54625A] dark:text-[#C5D4C9] block">Scheduled Completion</span>
-                            <strong className="text-[#202522] dark:text-[#E8F0EC]">
+                            <span className="text-[#6B7280] dark:text-[#D1D5DB] block">Scheduled Completion</span>
+                            <strong className="text-[#111827] dark:text-[#F9FAFB]">
                               {scheduledEnd ? new Date(scheduledEnd).toLocaleDateString('en-IN') : 'Per Contract'}
                             </strong>
                           </div>
                           <div>
-                            <span className="text-[#54625A] dark:text-[#C5D4C9] block">Deliverables</span>
-                            <strong className="text-[#202522] dark:text-[#E8F0EC]">
+                            <span className="text-[#6B7280] dark:text-[#D1D5DB] block">Deliverables</span>
+                            <strong className="text-[#111827] dark:text-[#F9FAFB]">
                               {wo.milestones?.length || 0} Milestones
                             </strong>
                           </div>
                           <div>
-                            <span className="text-[#54625A] dark:text-[#C5D4C9] block">Mobilization Verification</span>
-                            <strong className="text-[#1E6B52] dark:text-[#52B79A]">
+                            <span className="text-[#6B7280] dark:text-[#D1D5DB] block">Mobilization Verification</span>
+                            <strong className="text-[#1E6B52] dark:text-[#34D399]">
                               {wo.workStartDeclarations?.[0]?.status || 'NOT_DECLARED'}
                             </strong>
                           </div>
@@ -818,11 +763,11 @@ export function ContractorWorkspacePage() {
           {/* TAB 4: WORK-START DECLARATIONS */}
           {activeTab === 'work_start' && (
             <div className="space-y-4">
-              <div className="border-b border-[#DED8CB] dark:border-[#283931] pb-3">
-                <h3 className="text-base font-bold font-heading text-[#202522] dark:text-[#E8F0EC]">
+              <div className="border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
+                <h3 className="text-base font-bold font-heading text-[#111827] dark:text-[#F9FAFB]">
                   Work-Start Declarations & Engineering Verifications
                 </h3>
-                <p className="text-xs text-[#54625A] dark:text-[#C5D4C9] mt-0.5">
+                <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] mt-0.5">
                   Formal site mobilization notices submitted prior to commencement of physical construction.
                 </p>
               </div>
@@ -846,13 +791,13 @@ export function ContractorWorkspacePage() {
                       const isApproved = ws.status === 'VERIFIED' || ws.status === 'APPROVED';
 
                       return (
-                        <Card key={ws.id} className="p-6 border-[#DED8CB] dark:border-[#283931] space-y-3">
-                          <div className="flex items-center justify-between border-b border-[#DED8CB] dark:border-[#283931] pb-3">
+                        <Card key={ws.id} className="p-6 border-[#E5E7EB] dark:border-[#374151] space-y-3">
+                          <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
                             <div>
-                              <span className="font-mono text-xs font-semibold text-[#173D32] dark:text-[#7BC4B2]">
+                              <span className="font-mono text-xs font-semibold text-[#0B3D2E] dark:text-[#34D399]">
                                 WO #{orderNo}
                               </span>
-                              <h4 className="text-sm font-bold font-heading text-[#202522] dark:text-[#E8F0EC] mt-0.5">
+                              <h4 className="text-sm font-bold font-heading text-[#111827] dark:text-[#F9FAFB] mt-0.5">
                                 {wo.civicWork?.title || wo.tender?.title || 'Contract Site'}
                               </h4>
                             </div>
@@ -862,24 +807,24 @@ export function ContractorWorkspacePage() {
                           </div>
                           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
                             <div>
-                              <span className="text-[#54625A] dark:text-[#C5D4C9] block">Mobilization Date</span>
-                              <span className="text-[#202522] dark:text-[#E8F0EC] font-medium">
+                              <span className="text-[#6B7280] dark:text-[#D1D5DB] block">Mobilization Date</span>
+                              <span className="text-[#111827] dark:text-[#F9FAFB] font-medium">
                                 {new Date(sDate).toLocaleDateString('en-IN')}
                               </span>
                             </div>
                             <div>
-                              <span className="text-[#54625A] dark:text-[#C5D4C9] block">Site Address / Coordinate</span>
-                              <span className="text-[#202522] dark:text-[#E8F0EC]">{ws.siteAddress || 'Registered Project Boundary'}</span>
+                              <span className="text-[#6B7280] dark:text-[#D1D5DB] block">Site Address / Coordinate</span>
+                              <span className="text-[#111827] dark:text-[#F9FAFB]">{ws.siteAddress || 'Registered Project Boundary'}</span>
                             </div>
                             <div>
-                              <span className="text-[#54625A] dark:text-[#C5D4C9] block">Declaration Filed</span>
-                              <span className="text-[#202522] dark:text-[#E8F0EC]">
+                              <span className="text-[#6B7280] dark:text-[#D1D5DB] block">Declaration Filed</span>
+                              <span className="text-[#111827] dark:text-[#F9FAFB]">
                                 {new Date(ws.createdAt).toLocaleDateString('en-IN')}
                               </span>
                             </div>
                             <div>
-                              <span className="text-[#54625A] dark:text-[#C5D4C9] block">Engineering Review</span>
-                              <span className="text-[#4A5750] dark:text-[#A8BFAE]">
+                              <span className="text-[#6B7280] dark:text-[#D1D5DB] block">Engineering Review</span>
+                              <span className="text-[#6B7280] dark:text-[#D1D5DB]">
                                 {ws.reviewNotes || ws.rejectionReason || (isApproved ? 'Verified by municipal engineer' : 'Pending site inspection')}
                               </span>
                             </div>
@@ -910,11 +855,11 @@ export function ContractorWorkspacePage() {
                 workOrders.map((wo) => {
                   const orderNo = wo.workOrderNumber || wo.orderNumber || 'WO';
                   return (
-                    <Card key={wo.id} className="p-6 border-[#DED8CB] dark:border-[#283931] space-y-4">
-                      <div className="border-b border-[#DED8CB] dark:border-[#283931] pb-3 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+                    <Card key={wo.id} className="p-6 border-[#E5E7EB] dark:border-[#374151] space-y-4">
+                      <div className="border-b border-[#E5E7EB] dark:border-[#374151] pb-3 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
                         <div>
-                          <span className="font-mono text-xs font-semibold text-[#173D32] dark:text-[#7BC4B2]">WO #{orderNo}</span>
-                          <h4 className="text-base font-bold font-heading text-[#202522] dark:text-[#E8F0EC]">
+                          <span className="font-mono text-xs font-semibold text-[#0B3D2E] dark:text-[#34D399]">WO #{orderNo}</span>
+                          <h4 className="text-base font-bold font-heading text-[#111827] dark:text-[#F9FAFB]">
                             {wo.civicWork?.title || wo.tender?.title || 'Contract Deliverables'}
                           </h4>
                         </div>
@@ -940,17 +885,17 @@ export function ContractorWorkspacePage() {
                           return (
                             <div
                               key={m.id}
-                              className="p-4 rounded-xl bg-[#ECE7DB]/40 dark:bg-[#1D2A25]/50 border border-[#DED8CB] dark:border-[#283931] flex flex-col md:flex-row md:items-center justify-between gap-4"
+                              className="p-4 rounded-xl bg-[#F9FAFB] dark:bg-[#182230] border border-[#E5E7EB] dark:border-[#374151] flex flex-col md:flex-row md:items-center justify-between gap-4"
                             >
                               <div className="space-y-1">
                                 <div className="flex items-center gap-2">
-                                  <span className="font-mono text-xs px-2 py-0.5 rounded bg-[#ECE7DB] dark:bg-[#1D2A25] text-[#202522] dark:text-[#E8F0EC] border border-[#DED8CB] dark:border-[#283931]">
+                                  <span className="font-mono text-xs px-2 py-0.5 rounded bg-[#F3F4F6] dark:bg-[#273548] text-[#111827] dark:text-[#F9FAFB] border border-[#E5E7EB] dark:border-[#374151]">
                                     Stage {mNum}
                                   </span>
                                   {getMilestoneStatusBadge(m.status)}
                                 </div>
-                                <h5 className="text-sm font-bold text-[#202522] dark:text-[#E8F0EC]">{mTitle}</h5>
-                                <p className="text-xs text-[#4A5750] dark:text-[#A8BFAE]">{m.description}</p>
+                                <h5 className="text-sm font-bold text-[#111827] dark:text-[#F9FAFB]">{mTitle}</h5>
+                                <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">{m.description}</p>
                                 {m.reviewerRemarks && (
                                   <p className="text-xs text-[#9C6D19] dark:text-[#E8C07D] mt-1">
                                     Engineer remark: {m.reviewerRemarks}
@@ -960,8 +905,8 @@ export function ContractorWorkspacePage() {
 
                               <div className="flex items-center gap-4 shrink-0">
                                 <div className="text-right text-xs">
-                                  <span className="text-[#54625A] dark:text-[#C5D4C9] block">Target Amount</span>
-                                  <strong className="text-[#1E6B52] dark:text-[#52B79A] text-sm font-mono">
+                                  <span className="text-[#6B7280] dark:text-[#D1D5DB] block">Target Amount</span>
+                                  <strong className="text-[#1E6B52] dark:text-[#34D399] text-sm font-mono">
                                     {formatCurrency(m.targetAmount)}
                                   </strong>
                                 </div>
@@ -996,11 +941,11 @@ export function ContractorWorkspacePage() {
           {/* TAB 6: PAYMENT LEDGER */}
           {activeTab === 'payments' && (
             <div className="space-y-4">
-              <div className="border-b border-[#DED8CB] dark:border-[#283931] pb-3">
-                <h3 className="text-base font-bold font-heading text-[#202522] dark:text-[#E8F0EC]">
+              <div className="border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
+                <h3 className="text-base font-bold font-heading text-[#111827] dark:text-[#F9FAFB]">
                   Audited Payment Ledger & Treasury Disbursements
                 </h3>
-                <p className="text-xs text-[#54625A] dark:text-[#C5D4C9] mt-1">
+                <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] mt-1">
                   Payments are officially recorded by authorized municipal finance authorities upon successful engineering milestone verification.
                 </p>
               </div>
@@ -1020,21 +965,21 @@ export function ContractorWorkspacePage() {
                       const txStatus = tx.paymentStatus || tx.status || 'PAID';
 
                       return (
-                        <Card key={tx.id} className="p-4 border-[#DED8CB] dark:border-[#283931] flex items-center justify-between text-xs">
+                        <Card key={tx.id} className="p-4 border-[#E5E7EB] dark:border-[#374151] flex items-center justify-between text-xs">
                           <div>
-                            <span className="font-mono text-[11px] font-semibold text-[#173D32] dark:text-[#7BC4B2]">
+                            <span className="font-mono text-[11px] font-semibold text-[#0B3D2E] dark:text-[#34D399]">
                               Ref #{txRef}
                             </span>
-                            <h5 className="text-sm font-bold text-[#202522] dark:text-[#E8F0EC] mt-0.5">
+                            <h5 className="text-sm font-bold text-[#111827] dark:text-[#F9FAFB] mt-0.5">
                               {txDesc}
                             </h5>
-                            <span className="text-[#54625A] dark:text-[#C5D4C9]">
+                            <span className="text-[#6B7280] dark:text-[#D1D5DB]">
                               Date: {new Date(txDate).toLocaleDateString('en-IN')}
                             </span>
                           </div>
                           <div className="text-right">
-                            <span className="text-[11px] font-mono tracking-wider text-[#54625A] dark:text-[#C5D4C9] uppercase font-semibold block">Disbursed Amount</span>
-                            <strong className="text-base font-bold font-mono text-[#1E6B52] dark:text-[#52B79A]">
+                            <span className="text-[11px] font-mono tracking-wider text-[#6B7280] dark:text-[#D1D5DB] uppercase font-semibold block">Disbursed Amount</span>
+                            <strong className="text-base font-bold font-mono text-[#1E6B52] dark:text-[#34D399]">
                               {formatCurrency(tx.amount)}
                             </strong>
                             <Badge variant="success" className="mt-1">
@@ -1053,11 +998,11 @@ export function ContractorWorkspacePage() {
           {/* TAB 7: DEFECTS & WARRANTY */}
           {activeTab === 'defects' && (
             <div className="space-y-4">
-              <div className="border-b border-[#DED8CB] dark:border-[#283931] pb-3">
-                <h3 className="text-base font-bold font-heading text-[#202522] dark:text-[#E8F0EC]">
+              <div className="border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
+                <h3 className="text-base font-bold font-heading text-[#111827] dark:text-[#F9FAFB]">
                   Defect Liability & Warranty Rectification Queue
                 </h3>
-                <p className="text-xs text-[#54625A] dark:text-[#C5D4C9] mt-1">
+                <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] mt-1">
                   Items logged by municipal engineers during the contractual defect liability period requiring contractor rectification.
                 </p>
               </div>
@@ -1075,16 +1020,16 @@ export function ContractorWorkspacePage() {
                     const workOrderNo = defect.workOrder?.workOrderNumber || defect.workOrder?.orderNumber || 'WO';
 
                     return (
-                      <Card key={defect.id} className="p-6 border-[#DED8CB] dark:border-[#283931] space-y-4">
-                        <div className="flex items-center justify-between border-b border-[#DED8CB] dark:border-[#283931] pb-3">
+                      <Card key={defect.id} className="p-6 border-[#E5E7EB] dark:border-[#374151] space-y-4">
+                        <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-[#374151] pb-3">
                           <div>
                             <span className="font-mono text-xs font-semibold text-[#B94B3B]">
                               Tracking #{defect.trackingId || defect.id.slice(0, 8)}
                             </span>
-                            <h4 className="text-base font-bold font-heading text-[#202522] dark:text-[#E8F0EC] mt-0.5">
+                            <h4 className="text-base font-bold font-heading text-[#111827] dark:text-[#F9FAFB] mt-0.5">
                               {defect.title}
                             </h4>
-                            <span className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
+                            <span className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
                               Work Order: #{workOrderNo} | Severity: {defect.severity || 'STANDARD'}
                             </span>
                           </div>
@@ -1093,14 +1038,14 @@ export function ContractorWorkspacePage() {
                           </Badge>
                         </div>
 
-                        <p className="text-xs text-[#4A5750] dark:text-[#A8BFAE] leading-relaxed">
+                        <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB] leading-relaxed">
                           {defect.description}
                         </p>
 
                         {defect.rectificationNotes && (
-                          <div className="p-3.5 bg-[#ECE7DB]/50 dark:bg-[#1D2A25]/60 rounded-xl border border-[#DED8CB] dark:border-[#283931] text-xs">
-                            <strong className="text-[#202522] dark:text-[#E8F0EC] block mb-1">Your Rectification Submission:</strong>
-                            <span className="text-[#4A5750] dark:text-[#A8BFAE]">{defect.rectificationNotes}</span>
+                          <div className="p-3.5 bg-[#F9FAFB] dark:bg-[#182230] rounded-xl border border-[#E5E7EB] dark:border-[#374151] text-xs">
+                            <strong className="text-[#111827] dark:text-[#F9FAFB] block mb-1">Your Rectification Submission:</strong>
+                            <span className="text-[#6B7280] dark:text-[#D1D5DB]">{defect.rectificationNotes}</span>
                           </div>
                         )}
 
@@ -1131,11 +1076,11 @@ export function ContractorWorkspacePage() {
       {/* Modal: Submit Work-Start Declaration */}
       {isWorkStartModalOpen && selectedWorkOrder && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <Card className="max-w-lg w-full p-6 border-[#DED8CB] dark:border-[#283931] shadow-2xl space-y-4">
-            <h3 className="text-lg font-bold font-heading text-[#202522] dark:text-[#E8F0EC] border-b border-[#DED8CB] dark:border-[#283931] pb-2">
+          <Card className="max-w-lg w-full p-6 border-[#E5E7EB] dark:border-[#374151] shadow-2xl space-y-4">
+            <h3 className="text-lg font-bold font-heading text-[#111827] dark:text-[#F9FAFB] border-b border-[#E5E7EB] dark:border-[#374151] pb-2">
               Submit Work-Start Declaration
             </h3>
-            <p className="text-xs text-[#54625A] dark:text-[#C5D4C9]">
+            <p className="text-xs text-[#6B7280] dark:text-[#D1D5DB]">
               Work Order: #{selectedWorkOrder.workOrderNumber || selectedWorkOrder.orderNumber} &mdash; {selectedWorkOrder.civicWork?.title || selectedWorkOrder.tender?.title}
             </p>
             <form onSubmit={handleSubmitWorkStart} className="space-y-4">
@@ -1166,7 +1111,7 @@ export function ContractorWorkspacePage() {
                   placeholder="Describe mobilized workforce, safety barricades, machinery deployed on site..."
                 />
               </FormField>
-              <div className="flex justify-end gap-3 pt-3 border-t border-[#DED8CB] dark:border-[#283931]">
+              <div className="flex justify-end gap-3 pt-3 border-t border-[#E5E7EB] dark:border-[#374151]">
                 <Button type="button" variant="ghost" onClick={() => setIsWorkStartModalOpen(false)}>
                   Cancel
                 </Button>
@@ -1182,8 +1127,8 @@ export function ContractorWorkspacePage() {
       {/* Modal: Log Daily Progress */}
       {isProgressModalOpen && selectedWorkOrder && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <Card className="max-w-lg w-full p-6 border-[#DED8CB] dark:border-[#283931] shadow-2xl space-y-4">
-            <h3 className="text-lg font-bold font-heading text-[#202522] dark:text-[#E8F0EC] border-b border-[#DED8CB] dark:border-[#283931] pb-2">
+          <Card className="max-w-lg w-full p-6 border-[#E5E7EB] dark:border-[#374151] shadow-2xl space-y-4">
+            <h3 className="text-lg font-bold font-heading text-[#111827] dark:text-[#F9FAFB] border-b border-[#E5E7EB] dark:border-[#374151] pb-2">
               Log Daily Execution Progress
             </h3>
             <form onSubmit={handleSubmitProgress} className="space-y-4">
@@ -1232,7 +1177,7 @@ export function ContractorWorkspacePage() {
                   placeholder="e.g., 50 bags Grade 53 cement, 2 truckloads aggregate..."
                 />
               </FormField>
-              <div className="flex justify-end gap-3 pt-3 border-t border-[#DED8CB] dark:border-[#283931]">
+              <div className="flex justify-end gap-3 pt-3 border-t border-[#E5E7EB] dark:border-[#374151]">
                 <Button type="button" variant="ghost" onClick={() => setIsProgressModalOpen(false)}>
                   Cancel
                 </Button>
@@ -1248,8 +1193,8 @@ export function ContractorWorkspacePage() {
       {/* Modal: Claim Milestone */}
       {isMilestoneModalOpen && selectedMilestone && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <Card className="max-w-lg w-full p-6 border-[#DED8CB] dark:border-[#283931] shadow-2xl space-y-4">
-            <h3 className="text-lg font-bold font-heading text-[#202522] dark:text-[#E8F0EC] border-b border-[#DED8CB] dark:border-[#283931] pb-2">
+          <Card className="max-w-lg w-full p-6 border-[#E5E7EB] dark:border-[#374151] shadow-2xl space-y-4">
+            <h3 className="text-lg font-bold font-heading text-[#111827] dark:text-[#F9FAFB] border-b border-[#E5E7EB] dark:border-[#374151] pb-2">
               Claim Milestone: {selectedMilestone.title || selectedMilestone.name}
             </h3>
             <form onSubmit={handleClaimMilestone} className="space-y-4">
@@ -1283,7 +1228,7 @@ export function ContractorWorkspacePage() {
                   required
                 />
               </FormField>
-              <div className="flex justify-end gap-3 pt-3 border-t border-[#DED8CB] dark:border-[#283931]">
+              <div className="flex justify-end gap-3 pt-3 border-t border-[#E5E7EB] dark:border-[#374151]">
                 <Button type="button" variant="ghost" onClick={() => setIsMilestoneModalOpen(false)}>
                   Cancel
                 </Button>
@@ -1299,8 +1244,8 @@ export function ContractorWorkspacePage() {
       {/* Modal: Rectify Defect */}
       {isDefectModalOpen && selectedDefect && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <Card className="max-w-lg w-full p-6 border-[#DED8CB] dark:border-[#283931] shadow-2xl space-y-4">
-            <h3 className="text-lg font-bold font-heading text-[#202522] dark:text-[#E8F0EC] border-b border-[#DED8CB] dark:border-[#283931] pb-2">
+          <Card className="max-w-lg w-full p-6 border-[#E5E7EB] dark:border-[#374151] shadow-2xl space-y-4">
+            <h3 className="text-lg font-bold font-heading text-[#111827] dark:text-[#F9FAFB] border-b border-[#E5E7EB] dark:border-[#374151] pb-2">
               Rectify Defect: {selectedDefect.title}
             </h3>
             <form onSubmit={handleRectifyDefect} className="space-y-4">
@@ -1314,7 +1259,7 @@ export function ContractorWorkspacePage() {
                   required
                 />
               </FormField>
-              <div className="flex justify-end gap-3 pt-3 border-t border-[#DED8CB] dark:border-[#283931]">
+              <div className="flex justify-end gap-3 pt-3 border-t border-[#E5E7EB] dark:border-[#374151]">
                 <Button type="button" variant="ghost" onClick={() => setIsDefectModalOpen(false)}>
                   Cancel
                 </Button>
