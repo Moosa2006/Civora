@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { NavLink } from '../../router/NavLink.js';
 import { useRouter } from '../../router/index.js';
 import { useAuth } from '../../context/useAuth.js';
@@ -12,12 +13,65 @@ import {
   SettingsIcon,
   LogOutIcon,
   BellIcon,
+  BuildingIcon,
+  FileTextIcon,
+  SearchIcon,
+  ClockIcon,
+  AlertTriangleIcon,
+  EyeIcon,
+  VoteIcon,
+  PlusIcon,
+  ServerIcon,
+  CheckCircleIcon,
+  CheckIcon,
+  DownloadIcon,
+  InfoIcon,
+  MapPinIcon,
 } from '../ui/icons.js';
 import { NotificationDropdown } from './NotificationDropdown.js';
 import { LanguageSelector } from './LanguageSelector.js';
 import { AccessibilitySettingsModal } from './AccessibilitySettingsModal.js';
 import { ThemeToggle } from './ThemeToggle.js';
-import { getRolePrimaryNav, getRoleSecondaryNav, getRoleLandingPage } from '../../config/navigation.js';
+import { getRolePrimaryNav, getRoleSecondaryNav, getRoleLandingPage, normalizeUserRole } from '../../config/navigation.js';
+
+function NavItemIcon({ iconName, className = 'w-4 h-4 shrink-0' }: { iconName?: string; className?: string }) {
+  switch (iconName) {
+    case 'BuildingIcon':
+      return <BuildingIcon className={className} />;
+    case 'PlusIcon':
+      return <PlusIcon className={className} />;
+    case 'FileTextIcon':
+      return <FileTextIcon className={className} />;
+    case 'SearchIcon':
+      return <SearchIcon className={className} />;
+    case 'EyeIcon':
+      return <EyeIcon className={className} />;
+    case 'MapPinIcon':
+      return <MapPinIcon className={className} />;
+    case 'VoteIcon':
+      return <VoteIcon className={className} />;
+    case 'ActivityIcon':
+      return <ActivityIcon className={className} />;
+    case 'ShieldCheckIcon':
+      return <ShieldCheckIcon className={className} />;
+    case 'ServerIcon':
+      return <ServerIcon className={className} />;
+    case 'ClockIcon':
+      return <ClockIcon className={className} />;
+    case 'CheckCircleIcon':
+      return <CheckCircleIcon className={className} />;
+    case 'CheckIcon':
+      return <CheckIcon className={className} />;
+    case 'AlertTriangleIcon':
+      return <AlertTriangleIcon className={className} />;
+    case 'DownloadIcon':
+      return <DownloadIcon className={className} />;
+    case 'InfoIcon':
+      return <InfoIcon className={className} />;
+    default:
+      return null;
+  }
+}
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -29,7 +83,7 @@ export function Navbar() {
   const { currentPath, navigate } = useRouter();
   const { t } = useTranslation();
 
-  const role = user?.role || null;
+  const role = normalizeUserRole(user?.role);
   const primaryNavItems = getRolePrimaryNav(role, isAuthenticated);
   const secondaryNavItems = getRoleSecondaryNav(role, isAuthenticated);
 
@@ -406,14 +460,14 @@ export function Navbar() {
       </div>
 
       {/* =====================================================================
-          4. RESPONSIVE MOBILE & TABLET SLIDE-OUT NAVIGATION DRAWER
-          Smooth slide-out drawer with full touch support (44x44px min targets)
+          4. RESPONSIVE MOBILE & TABLET SLIDE-OUT NAVIGATION DRAWER (PORTAL)
+          Portaled directly to document.body to prevent any container clipping
           ===================================================================== */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
+      {mobileMenuOpen && typeof document !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[9999] lg:hidden isolate">
           {/* Backdrop with Blur */}
           <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity duration-200"
+            className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity duration-200"
             onClick={closeMobileMenu}
             aria-hidden="true"
           />
@@ -424,10 +478,10 @@ export function Navbar() {
             role="dialog"
             aria-modal="true"
             aria-label="Civora Mobile Navigation"
-            className="fixed inset-y-0 right-0 w-full max-w-sm sm:max-w-md bg-white dark:bg-[#111827] border-l border-slate-200 dark:border-[#334155] shadow-2xl flex flex-col justify-between overflow-y-auto z-50 animate-in slide-in-from-right duration-200"
+            className="fixed inset-y-0 right-0 w-full max-w-[340px] xs:max-w-sm sm:max-w-md bg-white dark:bg-[#111827] border-l border-slate-200 dark:border-[#334155] shadow-2xl flex flex-col justify-between h-[100dvh] max-h-[100dvh] z-[10000] animate-in slide-in-from-right duration-200"
           >
             {/* Top Bar of Drawer */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-[#334155] bg-slate-50/60 dark:bg-[#182230]/60 shrink-0">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-[#334155] bg-slate-50/80 dark:bg-[#182230]/80 shrink-0">
               <div className="flex items-center gap-2.5">
                 <div className="flex items-center justify-center h-9 w-13 rounded-lg bg-white border border-slate-200 p-0.5 shadow-2xs">
                   <img src="/civora_icon.jpeg" alt="Civora" className="h-full w-full object-contain" />
@@ -452,10 +506,10 @@ export function Navbar() {
             </div>
 
             {/* Scrollable Drawer Content */}
-            <div className="flex-1 px-5 py-4 space-y-5 overflow-y-auto">
+            <div className="flex-1 px-4 sm:px-5 py-4 space-y-5 overflow-y-auto overscroll-contain min-h-0">
               {/* Authenticated User Profile Summary Card */}
               {isAuthenticated && user && (
-                <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] flex items-center justify-between gap-3">
+                <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] flex items-center justify-between gap-3 shadow-2xs">
                   <div className="flex items-center gap-3 min-w-0">
                     <span className="w-9 h-9 rounded-full bg-emerald-700 dark:bg-emerald-600 text-white font-bold text-sm flex items-center justify-center shrink-0 shadow-2xs">
                       {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
@@ -467,6 +521,16 @@ export function Navbar() {
                       <p className="text-[11px] text-slate-500 dark:text-[#9CA3AF] truncate">
                         {user.email}
                       </p>
+                      {user.department?.name && (
+                        <p className="text-[10px] text-emerald-700 dark:text-emerald-400 font-medium truncate">
+                          {user.department.name}
+                        </p>
+                      )}
+                      {user.contractor?.name && (
+                        <p className="text-[10px] text-emerald-700 dark:text-emerald-400 font-medium truncate">
+                          {user.contractor.name}
+                        </p>
+                      )}
                     </div>
                   </div>
                   <span
@@ -484,17 +548,37 @@ export function Navbar() {
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 px-3 pb-1 block">
                   {t('nav.mainMenu')}
                 </span>
-                {primaryNavItems.map((item) => (
-                  <NavLink
-                    key={`mobile-${item.id}`}
-                    to={item.path}
-                    onClick={closeMobileMenu}
-                    className="flex items-center min-h-[44px] px-3.5 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-[#CBD5E1] hover:bg-slate-100 dark:hover:bg-[#1E293B] hover:text-slate-900 dark:hover:text-[#F8FAFC] transition-colors"
-                    activeClassName="bg-emerald-50 text-emerald-800 border border-emerald-200 dark:bg-[#10B981]/15 dark:text-[#34D399] dark:border-[#10B981]/30 font-semibold"
-                  >
-                    {getNavLabel(item)}
-                  </NavLink>
-                ))}
+                {primaryNavItems.map((item) => {
+                  const isActive = checkItemActive(item.path);
+                  return (
+                    <NavLink
+                      key={`mobile-${item.id}`}
+                      to={item.path}
+                      onClick={closeMobileMenu}
+                      className={`flex items-center justify-between min-h-[46px] px-3.5 py-2.5 rounded-xl text-sm font-medium transition-colors group select-none ${
+                        isActive
+                          ? 'bg-emerald-50 text-emerald-800 border border-emerald-200/90 dark:bg-[#10B981]/15 dark:text-[#34D399] dark:border-[#10B981]/30 font-semibold shadow-2xs'
+                          : 'text-slate-700 dark:text-[#CBD5E1] hover:bg-slate-100 dark:hover:bg-[#1E293B] hover:text-slate-900 dark:hover:text-[#F8FAFC]'
+                      }`}
+                    >
+                      <span className="flex items-center gap-3">
+                        <span
+                          className={`flex items-center justify-center w-7 h-7 rounded-lg transition-colors ${
+                            isActive
+                              ? 'bg-emerald-100 dark:bg-[#10B981]/20 text-emerald-700 dark:text-[#34D399]'
+                              : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400'
+                          }`}
+                        >
+                          <NavItemIcon iconName={item.iconName} className="w-4 h-4" />
+                        </span>
+                        <span>{getNavLabel(item)}</span>
+                      </span>
+                      {isActive && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-[#10B981]" />
+                      )}
+                    </NavLink>
+                  );
+                })}
               </nav>
 
               {/* Secondary Navigation Links (if any) */}
@@ -503,17 +587,37 @@ export function Navbar() {
                   <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 px-3 pb-1 block">
                     {getDropdownLabel()}
                   </span>
-                  {secondaryNavItems.map((item) => (
-                    <NavLink
-                      key={`mobile-sec-${item.id}`}
-                      to={item.path}
-                      onClick={closeMobileMenu}
-                      className="flex items-center min-h-[44px] px-3.5 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-[#CBD5E1] hover:bg-slate-100 dark:hover:bg-[#1E293B] hover:text-slate-900 dark:hover:text-[#F8FAFC] transition-colors"
-                      activeClassName="bg-emerald-50 text-emerald-800 border border-emerald-200 dark:bg-[#10B981]/15 dark:text-[#34D399] dark:border-[#10B981]/30 font-semibold"
-                    >
-                      {getNavLabel(item)}
-                    </NavLink>
-                  ))}
+                  {secondaryNavItems.map((item) => {
+                    const isActive = checkItemActive(item.path);
+                    return (
+                      <NavLink
+                        key={`mobile-sec-${item.id}`}
+                        to={item.path}
+                        onClick={closeMobileMenu}
+                        className={`flex items-center justify-between min-h-[46px] px-3.5 py-2.5 rounded-xl text-sm font-medium transition-colors group select-none ${
+                          isActive
+                            ? 'bg-emerald-50 text-emerald-800 border border-emerald-200/90 dark:bg-[#10B981]/15 dark:text-[#34D399] dark:border-[#10B981]/30 font-semibold shadow-2xs'
+                            : 'text-slate-700 dark:text-[#CBD5E1] hover:bg-slate-100 dark:hover:bg-[#1E293B] hover:text-slate-900 dark:hover:text-[#F8FAFC]'
+                        }`}
+                      >
+                        <span className="flex items-center gap-3">
+                          <span
+                            className={`flex items-center justify-center w-7 h-7 rounded-lg transition-colors ${
+                              isActive
+                                ? 'bg-emerald-100 dark:bg-[#10B981]/20 text-emerald-700 dark:text-[#34D399]'
+                                : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400'
+                            }`}
+                          >
+                            <NavItemIcon iconName={item.iconName} className="w-4 h-4" />
+                          </span>
+                          <span>{getNavLabel(item)}</span>
+                        </span>
+                        {isActive && (
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-[#10B981]" />
+                        )}
+                      </NavLink>
+                    );
+                  })}
                 </div>
               )}
 
@@ -533,6 +637,13 @@ export function Navbar() {
                   <ThemeToggle showLabel className="w-full justify-between min-h-[44px] px-3" />
                 </div>
 
+                {/* Mobile Accessibility Settings Modal Trigger */}
+                <div className="px-1">
+                  <AccessibilitySettingsModal
+                    triggerClassName="w-full justify-between min-h-[44px] px-3 flex items-center rounded-lg border border-slate-200 dark:border-[#334155] bg-slate-50/80 dark:bg-[#1F2937]/80 hover:bg-slate-100 dark:hover:bg-[#374151] text-slate-700 dark:text-[#F8FAFC] text-xs font-medium transition-colors"
+                  />
+                </div>
+
                 {/* Mobile Notifications Link (if authenticated) */}
                 {isAuthenticated && (
                   <NavLink
@@ -541,8 +652,8 @@ export function Navbar() {
                     className="flex items-center justify-between min-h-[44px] px-3.5 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-[#CBD5E1] hover:bg-slate-100 dark:hover:bg-[#1E293B] transition-colors"
                   >
                     <span className="flex items-center gap-2">
-                      <BellIcon className="w-4.5 h-4.5" />
-                      <span>{t('notifications.title') || 'Notifications'}</span>
+                      <BellIcon className="w-4.5 h-4.5 text-slate-500 dark:text-slate-400" />
+                      <span>{t('notifications.title') && t('notifications.title') !== 'notifications.title' ? t('notifications.title') : 'Notifications'}</span>
                     </span>
                   </NavLink>
                 )}
@@ -550,7 +661,7 @@ export function Navbar() {
             </div>
 
             {/* Bottom Drawer Actions */}
-            <div className="p-5 border-t border-slate-200 dark:border-[#334155] bg-slate-50/60 dark:bg-[#182230]/60 shrink-0">
+            <div className="p-4 sm:p-5 border-t border-slate-200 dark:border-[#334155] bg-slate-50/80 dark:bg-[#182230]/80 shrink-0">
               {isAuthenticated ? (
                 <button
                   type="button"
@@ -589,7 +700,8 @@ export function Navbar() {
               )}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </header>
   );
