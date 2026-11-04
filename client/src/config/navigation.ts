@@ -272,7 +272,7 @@ export function getRolePrimaryNav(role?: UserRole | null, isAuthenticated?: bool
       return [
         { id: 'admin-complaints', label: 'Triage Dashboard', path: '/admin/complaints', translationKey: 'nav.triageDashboard' },
         { id: 'official-tenders', label: 'Tenders & Awards', path: '/admin/tenders', translationKey: 'nav.tendersAndAwards' },
-        { id: 'admin-system', label: 'Platform Health', path: '/admin/system', translationKey: 'nav.systemHealth' },
+        { id: 'admin-system', label: 'System & Health', path: '/admin/system', translationKey: 'nav.systemHealth' },
         { id: 'official-sla', label: 'SLA Management', path: '/sla', translationKey: 'nav.slaManagement' },
         { id: 'transparency', label: 'Transparency', path: '/transparency', translationKey: 'nav.transparency' },
         { id: 'civic-map', label: 'Civic Map', path: '/map', translationKey: 'nav.civicMap' },

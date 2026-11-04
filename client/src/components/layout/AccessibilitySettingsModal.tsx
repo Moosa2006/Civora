@@ -6,7 +6,11 @@ import { announceToScreenReader } from '../ui/LiveAnnouncer.js';
 import { Button } from '../ui/Button.js';
 import type { SupportedLocale } from '../../i18n/index.js';
 
-export function AccessibilitySettingsModal() {
+export interface AccessibilitySettingsModalProps {
+  triggerClassName?: string;
+}
+
+export function AccessibilitySettingsModal({ triggerClassName }: AccessibilitySettingsModalProps = {}) {
   const [isOpen, setIsOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -113,7 +117,7 @@ export function AccessibilitySettingsModal() {
         onClick={handleOpen}
         aria-label={t('accessibility.settingsTitle')}
         title={t('accessibility.settingsTitle')}
-        className="civora-liquid-btn civora-liquid-btn--ghost p-2 rounded-lg min-h-[36px] min-w-[36px]"
+        className={triggerClassName || "civora-liquid-btn civora-liquid-btn--ghost p-2 rounded-lg min-h-[36px] min-w-[36px]"}
       >
         <svg
           className="w-5 h-5"

@@ -28,9 +28,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       if (res.status === 401) {
         localStorage.removeItem('civora_token');
+        localStorage.removeItem('civora_user');
+        setUser(null);
+        return;
+      }
+      const cached = typeof window !== 'undefined' ? localStorage.getItem('civora_user') : null;
+      if (cached) {
+        try {
+          setUser(JSON.parse(cached));
+          return;
+        } catch {}
       }
       setUser(null);
     } catch {
+      const cached = typeof window !== 'undefined' ? localStorage.getItem('civora_user') : null;
+      if (cached) {
+        try {
+          setUser(JSON.parse(cached));
+          return;
+        } catch {}
+      }
       setUser(null);
     } finally {
       setIsLoading(false);
@@ -61,9 +78,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
         if (res.status === 401) {
           localStorage.removeItem('civora_token');
+          localStorage.removeItem('civora_user');
+          if (isMounted) setUser(null);
+          return;
+        }
+        const cached = typeof window !== 'undefined' ? localStorage.getItem('civora_user') : null;
+        if (cached && isMounted) {
+          try {
+            setUser(JSON.parse(cached));
+            return;
+          } catch {}
         }
         if (isMounted) setUser(null);
       } catch {
+        const cached = typeof window !== 'undefined' ? localStorage.getItem('civora_user') : null;
+        if (cached && isMounted) {
+          try {
+            setUser(JSON.parse(cached));
+            return;
+          } catch {}
+        }
         if (isMounted) setUser(null);
       } finally {
         if (isMounted) setIsLoading(false);
@@ -112,6 +146,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (data.data.token) {
         localStorage.setItem('civora_token', data.data.token);
       }
+      localStorage.setItem('civora_user', JSON.stringify(data.data.user));
       setUser(data.data.user);
       return { success: true, user: data.data.user };
 
@@ -168,6 +203,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = async () => {
     try {
       localStorage.removeItem('civora_token');
+      localStorage.removeItem('civora_user');
       await fetch('/api/auth/logout', {
         method: 'POST',
         credentials: 'include',

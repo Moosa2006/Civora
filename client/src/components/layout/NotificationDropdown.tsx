@@ -40,7 +40,11 @@ function getBadgeColor(type: NotificationType): string {
   }
 }
 
-export function NotificationDropdown() {
+export interface NotificationDropdownProps {
+  triggerClassName?: string;
+}
+
+export function NotificationDropdown({ triggerClassName }: NotificationDropdownProps = {}) {
   const [isOpen, setIsOpen] = useState(false);
   const { unreadCount, recentNotifications, isLoading, fetchRecentNotifications, markAsRead, markAllAsRead } =
     useNotifications();
@@ -90,7 +94,7 @@ export function NotificationDropdown() {
         onClick={handleToggle}
         aria-label={`Notifications (${unreadCount} unread)`}
         aria-expanded={isOpen}
-        className="civora-liquid-btn civora-liquid-btn--ghost relative p-2 rounded-lg min-h-[36px] min-w-[36px]"
+        className={triggerClassName || "civora-liquid-btn civora-liquid-btn--ghost relative p-2 rounded-lg min-h-[36px] min-w-[36px]"}
       >
         <BellIcon className="w-5 h-5" />
         {unreadCount > 0 && (

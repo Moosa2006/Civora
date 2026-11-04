@@ -3,8 +3,16 @@ import { NavLink } from '../../router/NavLink.js';
 import { useRouter } from '../../router/index.js';
 import { useAuth } from '../../context/useAuth.js';
 import { useTranslation } from '../../context/useTranslation.js';
-import { Container } from './Container.js';
-import { MenuIcon, CloseIcon, ChevronDownIcon, ShieldCheckIcon, ActivityIcon, SettingsIcon } from '../ui/icons.js';
+import {
+  MenuIcon,
+  CloseIcon,
+  ChevronDownIcon,
+  ShieldCheckIcon,
+  ActivityIcon,
+  SettingsIcon,
+  LogOutIcon,
+  BellIcon,
+} from '../ui/icons.js';
 import { NotificationDropdown } from './NotificationDropdown.js';
 import { LanguageSelector } from './LanguageSelector.js';
 import { AccessibilitySettingsModal } from './AccessibilitySettingsModal.js';
@@ -15,6 +23,7 @@ export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [secondaryDropdownOpen, setSecondaryDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const mobileDrawerRef = useRef<HTMLDivElement>(null);
 
   const { user, isAuthenticated, isLoading, logout } = useAuth();
   const { currentPath, navigate } = useRouter();
@@ -47,6 +56,18 @@ export function Navbar() {
     };
   }, []);
 
+  // Lock body scroll when mobile drawer is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
+
   // Close mobile drawer on route changes
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -62,11 +83,12 @@ export function Navbar() {
     navigate('/');
   };
 
-  // Exact Homepage pill navigation link styling with dedicated Dark Mode states
+  // Modern institutional sans-serif navigation link styling
   const navLinkBase =
-    'px-3 xl:px-4 py-1.5 rounded-full text-sm xl:text-[15px] font-medium text-[#2D3748] dark:text-[#D1D5DB] hover:text-[#0B3D2E] hover:bg-[#F3F6F4] dark:hover:text-[#F9FAFB] dark:hover:bg-[#273548] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0B3D2E] dark:focus-visible:ring-[#34D399] whitespace-nowrap shrink-0 font-sans';
+    'px-2 xl:px-2 2xl:px-3 py-1.5 rounded-lg text-[13px] 2xl:text-[14px] font-medium text-slate-600 dark:text-[#CBD5E1] hover:text-slate-900 dark:hover:text-[#F8FAFC] hover:bg-slate-100 dark:hover:bg-[#1E293B] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#10B981] whitespace-nowrap shrink-0 font-sans select-none';
+
   const navLinkActive =
-    'bg-[#E5ECE8] !text-[#0B3D2E] dark:bg-[#34D399]/15 dark:!text-[#6EE7B7] font-semibold';
+    'bg-emerald-50 text-emerald-800 border border-emerald-200/90 dark:bg-[#10B981]/15 dark:text-[#34D399] dark:border-[#10B981]/30 font-semibold shadow-2xs';
 
   const getRoleBadge = (userRole?: string) => {
     switch (userRole) {
@@ -81,16 +103,16 @@ export function Navbar() {
     }
   };
 
-  const formatRoleLabel = (userRole?: string) => {
+  const formatRoleLabel = (userRole?: string, compact = false) => {
     switch (userRole) {
       case 'ADMIN':
-        return t('roles.admin');
+        return compact ? 'Admin' : t('roles.admin');
       case 'GOVERNMENT_OFFICIAL':
-        return t('roles.official');
+        return compact ? 'Official' : t('roles.official');
       case 'CONTRACTOR':
-        return t('roles.contractor');
+        return compact ? 'Contractor' : t('roles.contractor');
       default:
-        return t('roles.citizen');
+        return compact ? 'Citizen' : t('roles.citizen');
     }
   };
 
@@ -115,14 +137,14 @@ export function Navbar() {
   };
 
   const getDropdownIcon = () => {
-    if (role === 'CONTRACTOR') return <ActivityIcon className="w-3.5 h-3.5 text-[#0B6640] dark:text-[#34D399] shrink-0" />;
-    if (role === 'ADMIN') return <SettingsIcon className="w-3.5 h-3.5 text-[#0B3D2E] dark:text-[#34D399] shrink-0" />;
-    if (role === 'GOVERNMENT_OFFICIAL') return <ShieldCheckIcon className="w-3.5 h-3.5 text-[#0B3D2E] dark:text-[#34D399] shrink-0" />;
+    if (role === 'CONTRACTOR') return <ActivityIcon className="w-3.5 h-3.5 text-emerald-600 dark:text-[#34D399] shrink-0" />;
+    if (role === 'ADMIN') return <SettingsIcon className="w-3.5 h-3.5 text-slate-700 dark:text-[#34D399] shrink-0" />;
+    if (role === 'GOVERNMENT_OFFICIAL') return <ShieldCheckIcon className="w-3.5 h-3.5 text-slate-700 dark:text-[#34D399] shrink-0" />;
     return null;
   };
 
-  const isDropdownActive = secondaryNavItems.some((item) => {
-    const [itemBaseRaw, itemQuery] = item.path.split('?');
+  const checkItemActive = (path: string) => {
+    const [itemBaseRaw, itemQuery] = path.split('?');
     const [currBaseRaw, currQuery = ''] = currentPath.split('?');
     const itemBase = (itemBaseRaw || '/').replace(/\/+$/, '') || '/';
     const currBase = (currBaseRaw || '/').replace(/\/+$/, '') || '/';
@@ -130,68 +152,116 @@ export function Navbar() {
     if (itemQuery !== undefined) {
       return currBase === itemBase && currQuery === itemQuery;
     }
-    return currBase === itemBase || currBase.startsWith(`${itemBase}/`);
-  });
+    return currBase === itemBase || (itemBase !== '/' && currBase.startsWith(`${itemBase}/`));
+  };
+
+  // Adaptive primary items across desktop breakpoints:
+  // 1. lg (1024px - 1279px): first 3 items inline. Items 4-6 in More dropdown.
+  // 2. xl+ (>= 1280px): ALL 6 primary items inline!
+  const getDesktopItemClass = (index: number) => {
+    if (index < 3) return 'inline-flex';
+    return 'hidden xl:inline-flex';
+  };
+
+  const overflowItemsForLg = primaryNavItems.slice(3);
+
+  const isDropdownActive = [...overflowItemsForLg, ...secondaryNavItems].some((item) =>
+    checkItemActive(item.path)
+  );
+
+  // Consistent utility icon button styling
+  const utilityBtnClass =
+    'flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-lg border border-slate-200 dark:border-[#334155] bg-slate-50/80 dark:bg-[#1F2937]/80 hover:bg-slate-100 dark:hover:bg-[#374151] text-slate-700 dark:text-[#F8FAFC] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#10B981] shrink-0';
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white dark:bg-[#111827]/95 dark:backdrop-blur-md border-b border-[#E5E7EB] dark:border-[#374151] shadow-2xs transition-colors duration-150">
-      <Container size="xl">
-        <div className="flex items-center justify-between h-16 sm:h-[68px] gap-2 lg:gap-4">
-          {/* 1. Left: Civora Brand Logo (Preserved & Clearly Framed in Both Themes) */}
-          <div className="flex items-center shrink-0">
+    <header className="sticky top-0 z-50 w-full bg-white/95 dark:bg-[#111827]/95 backdrop-blur-md border-b border-slate-200 dark:border-[#334155] shadow-xs transition-colors duration-150 font-sans [font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,'Segoe_UI',Roboto,'Helvetica_Neue',Arial,sans-serif]">
+      <div className="w-full max-w-[1680px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-[76px] sm:h-[80px] gap-2 lg:gap-3 xl:gap-4">
+          
+          {/* =====================================================================
+              1. LEFT SECTION — Branding
+              ===================================================================== */}
+          <div className="flex items-center shrink-0 min-w-fit mr-2 xl:mr-4">
             <NavLink
               to={getLogoDestination()}
               exact
               onClick={closeMobileMenu}
-              className="flex items-center py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0B3D2E] dark:focus-visible:ring-[#34D399] rounded-lg"
+              className="flex items-center gap-3 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#10B981] rounded-lg group select-none"
               aria-label="Civora Home"
             >
-              <img
-                src="/civora_icon.jpeg"
-                alt="Civora"
-                className="h-10 sm:h-11 w-auto object-contain transition-transform duration-200 hover:scale-105 dark:bg-white dark:rounded-xl dark:px-1.5 dark:py-0.5 dark:ring-1 dark:ring-white/15"
-              />
+              <div className="relative flex items-center justify-center h-10 w-14 sm:h-11 sm:w-16 rounded-lg bg-white shadow-2xs border border-slate-200/90 dark:border-slate-700/80 overflow-hidden shrink-0 transition-transform duration-200 group-hover:scale-[1.03] p-0.5">
+                <img
+                  src="/civora_icon.jpeg"
+                  alt="Civora"
+                  className="h-full w-full object-contain"
+                />
+              </div>
+              <div className="hidden min-[1680px]:flex flex-col">
+                <span className="text-base font-bold tracking-tight text-slate-900 dark:text-[#F8FAFC] leading-tight">
+                  Civora
+                </span>
+                <span className="text-[10px] uppercase tracking-widest font-bold text-emerald-600 dark:text-[#10B981] leading-none">
+                  GovTech
+                </span>
+              </div>
             </NavLink>
           </div>
 
-          {/* 2. Centre: Role-Aware Pill Navigation Matching Homepage */}
+          {/* =====================================================================
+              2. CENTER SECTION — Primary Navigation
+              ===================================================================== */}
           <nav
-            className="hidden lg:flex items-center gap-0.5 xl:gap-1.5 flex-1 justify-center min-w-0"
+            className="hidden lg:flex items-center flex-1 min-w-0 px-1 xl:px-2 overflow-visible"
             aria-label="Primary Navigation"
           >
             {isLoading ? (
-              <div className="h-7 w-52 bg-[#F3F4F6] dark:bg-[#273548] animate-pulse rounded-full" />
+              <div className="h-8 w-64 bg-slate-100 dark:bg-[#1F2937] animate-pulse rounded-lg mx-auto" />
             ) : (
-              <>
-                {primaryNavItems.map((item) => (
+              <div className="flex items-center gap-1 2xl:gap-2 mx-auto shrink-0">
+                {/* Responsive Primary Navigation Items */}
+                {primaryNavItems.map((item, index) => (
                   <NavLink
                     key={item.id}
                     to={item.path}
-                    className={navLinkBase}
+                    className={`${navLinkBase} ${getDesktopItemClass(index)}`}
                     activeClassName={navLinkActive}
                   >
                     {getNavLabel(item)}
                   </NavLink>
                 ))}
 
-                {/* Secondary Grouped Dropdown (More / Execution / Operations / Governance) */}
-                {secondaryNavItems.length > 0 && (
-                  <div className="relative" ref={dropdownRef}>
+                {/* 
+                  Adaptive Dropdown for More / Secondary Items:
+                  Visible on lg (1024px-1279px) containing overflow items 4, 5, 6 + secondary items.
+                  Visible on 2xl+ (>= 1536px) only when secondaryNavItems exist.
+                */}
+                {(secondaryNavItems.length > 0 || overflowItemsForLg.length > 0) && (
+                  <div
+                    className={`relative ${
+                      secondaryNavItems.length > 0
+                        ? 'inline-flex xl:hidden 2xl:inline-flex'
+                        : 'inline-flex xl:hidden'
+                    }`}
+                    ref={dropdownRef}
+                  >
                     <button
                       type="button"
                       onClick={() => setSecondaryDropdownOpen((prev) => !prev)}
                       aria-expanded={secondaryDropdownOpen}
                       aria-haspopup="true"
-                      className={`civora-liquid-btn ${
-                        isDropdownActive || secondaryDropdownOpen
-                          ? 'civora-liquid-btn--outline font-semibold'
-                          : 'civora-liquid-btn--ghost'
-                      } px-3.5 xl:px-4 py-1.5 rounded-full text-sm xl:text-[15px] font-medium gap-1.5 whitespace-nowrap shrink-0`}
+                      className={`
+                        flex items-center gap-1.5 px-2.5 xl:px-3 py-1.5 rounded-lg text-[13px] xl:text-[14px] font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#10B981] whitespace-nowrap shrink-0 select-none
+                        ${
+                          (secondaryDropdownOpen || isDropdownActive)
+                            ? 'bg-emerald-50 text-emerald-800 border border-emerald-200/90 dark:bg-[#10B981]/15 dark:text-[#34D399] dark:border-[#10B981]/30 font-semibold shadow-2xs'
+                            : 'text-slate-600 dark:text-[#CBD5E1] hover:text-slate-900 dark:hover:text-[#F8FAFC] hover:bg-slate-100 dark:hover:bg-[#1E293B]'
+                        }
+                      `}
                     >
                       {getDropdownIcon()}
                       <span>{getDropdownLabel()}</span>
                       <ChevronDownIcon
-                        className={`w-3.5 h-3.5 transition-transform duration-150 ${
+                        className={`w-3.5 h-3.5 transition-transform duration-200 opacity-80 ${
                           secondaryDropdownOpen ? 'rotate-180' : ''
                         }`}
                       />
@@ -201,100 +271,131 @@ export function Navbar() {
                       <div
                         role="menu"
                         aria-label={`${getDropdownLabel()} Menu`}
-                        className="absolute right-0 mt-2 w-56 rounded-xl bg-white dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] shadow-xl z-50 p-1.5 space-y-0.5"
+                        className="absolute left-1/2 -translate-x-1/2 mt-2 w-56 sm:w-60 rounded-xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] shadow-xl z-50 p-1.5 space-y-0.5 animate-in fade-in duration-150"
                       >
-                        <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#9CA3AF] border-b border-[#F3F4F6] dark:border-[#374151] mb-1">
-                          {getDropdownLabel()}
-                        </div>
-                        {secondaryNavItems.map((subItem) => (
-                          <NavLink
-                            key={subItem.id}
-                            to={subItem.path}
-                            onClick={() => setSecondaryDropdownOpen(false)}
-                            className="flex items-center px-3 py-2 text-xs font-medium text-[#111827] dark:text-[#F9FAFB] hover:bg-[#F3F4F6] dark:hover:bg-[#273548] rounded-lg transition-colors"
-                            activeClassName="!text-[#0B3D2E] dark:!text-[#6EE7B7] bg-[#E5ECE8] dark:bg-[#34D399]/15 font-semibold"
-                          >
-                            {getNavLabel(subItem)}
-                          </NavLink>
+                        {/* Overflow primary items (visible in dropdown below 1280px) */}
+                        {primaryNavItems.slice(3).map((item) => (
+                          <div key={`overflow-${item.id}`} className="xl:hidden">
+                            <NavLink
+                              to={item.path}
+                              onClick={() => setSecondaryDropdownOpen(false)}
+                              className="flex items-center px-3 py-2 text-xs font-medium text-slate-700 dark:text-[#CBD5E1] hover:bg-slate-100 dark:hover:bg-[#273548] hover:text-slate-900 dark:hover:text-[#F8FAFC] rounded-lg transition-colors"
+                              activeClassName="bg-emerald-50 text-emerald-800 dark:bg-[#10B981]/15 dark:text-[#34D399] font-semibold"
+                            >
+                              {getNavLabel(item)}
+                            </NavLink>
+                          </div>
                         ))}
+
+                        {/* Secondary portals (always inside dropdown if present) */}
+                        {secondaryNavItems.length > 0 && (
+                          <>
+                            <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-[#374151] mt-1 pt-1">
+                              {getDropdownLabel()}
+                            </div>
+                            {secondaryNavItems.map((subItem) => (
+                              <NavLink
+                                key={subItem.id}
+                                to={subItem.path}
+                                onClick={() => setSecondaryDropdownOpen(false)}
+                                className="flex items-center px-3 py-2 text-xs font-medium text-slate-700 dark:text-[#CBD5E1] hover:bg-slate-100 dark:hover:bg-[#273548] hover:text-slate-900 dark:hover:text-[#F8FAFC] rounded-lg transition-colors"
+                                activeClassName="bg-emerald-50 text-emerald-800 dark:bg-[#10B981]/15 dark:text-[#34D399] font-semibold"
+                              >
+                                {getNavLabel(subItem)}
+                              </NavLink>
+                            ))}
+                          </>
+                        )}
                       </div>
                     )}
                   </div>
                 )}
-              </>
+              </div>
             )}
           </nav>
 
-          {/* 3. Right: Language Selector, Theme Toggle, Accessibility, Notifications & Auth Actions */}
-          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          {/* =====================================================================
+              3. RIGHT SECTION — Utility Controls (Strictly Ordered)
+              Order: 1. Language, 2. Theme, 3. A11y, 4. Notifications, 5. Profile, 6. Sign Out
+              ===================================================================== */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 ml-auto select-none">
+            {/* 1. Language Selector */}
             <div className="hidden sm:block">
-              <LanguageSelector variant="forest-pill" />
+              <LanguageSelector variant="navbar" />
             </div>
 
-            <ThemeToggle />
+            {/* 2. Theme Toggle */}
+            <ThemeToggle className={utilityBtnClass} />
 
-            <AccessibilitySettingsModal />
+            {/* 3. Accessibility Control */}
+            <AccessibilitySettingsModal triggerClassName={utilityBtnClass} />
 
-            {isAuthenticated && <NotificationDropdown />}
+            {/* 4. Notifications (when authenticated) */}
+            {isAuthenticated && (
+              <NotificationDropdown triggerClassName={utilityBtnClass} />
+            )}
 
+            {/* 5 & 6. User Profile & Sign Out (Authenticated) OR Sign In / Action (Visitor) */}
             {isLoading ? (
-              <div className="w-8 h-8 rounded-full bg-[#F3F4F6] dark:bg-[#273548] animate-pulse" />
+              <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-[#1F2937] animate-pulse" />
             ) : isAuthenticated && user ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                {/* 5. Administrator Profile Pill */}
                 <NavLink
                   to={getLogoDestination()}
                   exact
-                  className="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-lg bg-[#F9FAFB] dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] hover:border-[#D1D5DB] dark:hover:border-[#4B5563] transition-colors"
+                  className="hidden md:flex items-center gap-1.5 sm:gap-2 h-9 sm:h-10 px-2 sm:px-2.5 rounded-lg border border-slate-200 dark:border-[#334155] bg-slate-50/80 dark:bg-[#1F2937]/80 hover:bg-slate-100 dark:hover:bg-[#374151] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#10B981]"
+                  title={`${user.name} (${formatRoleLabel(user.role)})`}
                 >
-                  <div className="w-7 h-7 rounded-full bg-[#0B3D2E] dark:bg-[#0D7A58] text-white font-semibold text-xs flex items-center justify-center shrink-0">
+                  <div className="w-6.5 h-6.5 sm:w-7 sm:h-7 rounded-full bg-emerald-700 dark:bg-emerald-600 text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-2xs">
                     {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                   </div>
-                  <div className="text-left max-w-[110px] xl:max-w-[140px]">
-                    <span className="text-xs font-medium text-[#111827] dark:text-[#F9FAFB] truncate block leading-tight">
-                      {user.name}
-                    </span>
-                    <span
-                      className={`inline-block text-[9px] font-semibold px-1.5 py-0.2 rounded border mt-0.5 leading-none ${getRoleBadge(
-                        user.role
-                      )}`}
-                    >
-                      {formatRoleLabel(user.role)}
-                    </span>
-                  </div>
+                  <span
+                    className={`text-[10px] font-semibold px-1.5 py-0.5 rounded border uppercase tracking-wider shrink-0 ${getRoleBadge(
+                      user.role
+                    )}`}
+                  >
+                    <span className="hidden 2xl:inline">{formatRoleLabel(user.role)}</span>
+                    <span className="2xl:hidden">{formatRoleLabel(user.role, true)}</span>
+                  </span>
+                  <span className="text-xs font-semibold text-slate-800 dark:text-[#F8FAFC] truncate max-w-[85px] xl:max-w-[120px] hidden min-[1680px]:block">
+                    {user.name}
+                  </span>
                 </NavLink>
 
+                {/* 6. Sign Out Button */}
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="civora-liquid-btn civora-liquid-btn--ghost hidden sm:inline-flex px-2.5 py-1.5 rounded-lg text-xs font-medium hover:!text-[#B91C1C] dark:hover:!text-[#FCA5A5] min-h-[36px] items-center font-sans"
+                  className="hidden md:inline-flex items-center gap-1.5 h-9 sm:h-10 px-2.5 sm:px-3 rounded-lg border border-slate-200 dark:border-[#334155] bg-slate-50/80 dark:bg-[#1F2937]/80 hover:bg-red-50 dark:hover:bg-red-950/40 text-slate-700 dark:text-slate-300 hover:text-red-600 dark:hover:text-red-400 hover:border-red-300 dark:hover:border-red-800/50 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 shrink-0"
                   title={t('nav.signOut')}
                 >
-                  {t('nav.signOut')}
+                  <LogOutIcon className="w-4 h-4 shrink-0" />
+                  <span className="hidden 2xl:inline">{t('nav.signOut')}</span>
                 </button>
               </div>
             ) : (
-              <div className="hidden sm:flex items-center gap-2.5">
+              <div className="hidden sm:flex items-center gap-2">
                 <NavLink
                   to="/login"
-                  className="civora-liquid-btn civora-liquid-btn--ghost px-3 py-1.5 rounded-lg text-sm font-medium min-h-[36px]"
-                  activeClassName="civora-liquid-btn--outline font-semibold"
+                  className="flex items-center justify-center h-9 sm:h-10 px-3 sm:px-3.5 rounded-lg text-xs sm:text-sm font-medium border border-slate-200 dark:border-[#334155] bg-slate-50/80 dark:bg-[#1F2937]/80 hover:bg-slate-100 dark:hover:bg-[#374151] text-slate-700 dark:text-[#F8FAFC] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#10B981]"
                 >
                   {t('nav.signIn')}
                 </NavLink>
                 <NavLink
                   to="/report"
-                  className="civora-liquid-btn civora-liquid-btn--primary px-4 py-2 rounded-lg text-sm font-medium min-h-[38px]"
+                  className="flex items-center justify-center h-9 sm:h-10 px-3.5 sm:px-4 rounded-lg text-xs sm:text-sm font-semibold bg-emerald-700 hover:bg-emerald-800 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white shadow-2xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#10B981]"
                 >
                   {t('nav.reportIssue')}
                 </NavLink>
               </div>
             )}
 
-            {/* Mobile Menu Hamburger Button */}
+            {/* Hamburger Toggle Button (Mobile & Tablet < 1024px) */}
             <button
               type="button"
               onClick={() => setMobileMenuOpen((prev) => !prev)}
-              className="civora-liquid-btn civora-liquid-btn--ghost lg:hidden p-2 rounded-lg min-h-[40px] min-w-[40px]"
+              className="lg:hidden flex items-center justify-center w-10 h-10 rounded-lg border border-slate-200 dark:border-[#334155] bg-slate-50/80 dark:bg-[#1F2937]/80 hover:bg-slate-100 dark:hover:bg-[#374151] text-slate-700 dark:text-[#F8FAFC] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#10B981] shrink-0"
               aria-label={mobileMenuOpen ? t('nav.closeMenu') : t('nav.openMenu')}
               aria-expanded={mobileMenuOpen}
             >
@@ -302,87 +403,169 @@ export function Navbar() {
             </button>
           </div>
         </div>
-      </Container>
+      </div>
 
-      {/* 4. Responsive Mobile Drawer Menu */}
+      {/* =====================================================================
+          4. RESPONSIVE MOBILE & TABLET SLIDE-OUT NAVIGATION DRAWER
+          Smooth slide-out drawer with full touch support (44x44px min targets)
+          ===================================================================== */}
       {mobileMenuOpen && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label="Mobile Navigation Menu"
-          className="lg:hidden border-t border-[#E5E7EB] dark:border-[#374151] bg-white dark:bg-[#182230] px-4 sm:px-6 py-4 shadow-lg space-y-4"
-        >
-          <nav className="flex flex-col space-y-1" aria-label="Mobile Navigation">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#9CA3AF] px-3 pb-1">
-              {t('nav.mainMenu')}
-            </span>
-            {primaryNavItems.map((item) => (
-              <NavLink
-                key={item.id}
-                to={item.path}
-                onClick={closeMobileMenu}
-                className="px-3.5 py-2.5 rounded-lg text-sm font-medium text-[#2D3748] dark:text-[#D1D5DB] hover:bg-[#F3F6F4] dark:hover:bg-[#273548] transition-colors"
-                activeClassName="bg-[#E5ECE8] !text-[#0B3D2E] dark:bg-[#34D399]/15 dark:!text-[#6EE7B7] font-semibold"
-              >
-                {getNavLabel(item)}
-              </NavLink>
-            ))}
+        <div className="fixed inset-0 z-50 lg:hidden">
+          {/* Backdrop with Blur */}
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity duration-200"
+            onClick={closeMobileMenu}
+            aria-hidden="true"
+          />
 
-            {secondaryNavItems.length > 0 && (
-              <div className="pt-2 mt-2 border-t border-[#F3F4F6] dark:border-[#374151] space-y-1">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#9CA3AF] px-3 block pb-1">
-                  {getDropdownLabel()}
+          {/* Slide-out Drawer Container */}
+          <div
+            ref={mobileDrawerRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Civora Mobile Navigation"
+            className="fixed inset-y-0 right-0 w-full max-w-sm sm:max-w-md bg-white dark:bg-[#111827] border-l border-slate-200 dark:border-[#334155] shadow-2xl flex flex-col justify-between overflow-y-auto z-50 animate-in slide-in-from-right duration-200"
+          >
+            {/* Top Bar of Drawer */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-[#334155] bg-slate-50/60 dark:bg-[#182230]/60 shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="flex items-center justify-center h-9 w-13 rounded-lg bg-white border border-slate-200 p-0.5 shadow-2xs">
+                  <img src="/civora_icon.jpeg" alt="Civora" className="h-full w-full object-contain" />
+                </div>
+                <div>
+                  <span className="block text-sm font-bold text-slate-900 dark:text-[#F8FAFC] leading-none">
+                    Civora
+                  </span>
+                  <span className="text-[10px] uppercase tracking-wider font-semibold text-emerald-600 dark:text-[#10B981]">
+                    Civic Portal
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={closeMobileMenu}
+                className="w-11 h-11 flex items-center justify-center rounded-lg hover:bg-slate-200 dark:hover:bg-[#273548] text-slate-500 dark:text-slate-400 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#10B981]"
+                aria-label={t('nav.closeMenu')}
+              >
+                <CloseIcon className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Scrollable Drawer Content */}
+            <div className="flex-1 px-5 py-4 space-y-5 overflow-y-auto">
+              {/* Authenticated User Profile Summary Card */}
+              {isAuthenticated && user && (
+                <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="w-9 h-9 rounded-full bg-emerald-700 dark:bg-emerald-600 text-white font-bold text-sm flex items-center justify-center shrink-0 shadow-2xs">
+                      {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold text-slate-900 dark:text-[#F8FAFC] truncate">
+                        {user.name}
+                      </p>
+                      <p className="text-[11px] text-slate-500 dark:text-[#9CA3AF] truncate">
+                        {user.email}
+                      </p>
+                    </div>
+                  </div>
+                  <span
+                    className={`px-2 py-0.5 rounded text-[10px] font-semibold border uppercase tracking-wider shrink-0 ${getRoleBadge(
+                      user.role
+                    )}`}
+                  >
+                    {formatRoleLabel(user.role)}
+                  </span>
+                </div>
+              )}
+
+              {/* Primary Navigation Links */}
+              <nav className="space-y-1" aria-label="Mobile Primary Navigation">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 px-3 pb-1 block">
+                  {t('nav.mainMenu')}
                 </span>
-                {secondaryNavItems.map((item) => (
+                {primaryNavItems.map((item) => (
                   <NavLink
-                    key={item.id}
+                    key={`mobile-${item.id}`}
                     to={item.path}
                     onClick={closeMobileMenu}
-                    className="block px-3.5 py-2.5 rounded-lg text-sm font-medium text-[#2D3748] dark:text-[#D1D5DB] hover:bg-[#F3F6F4] dark:hover:bg-[#273548] transition-colors"
-                    activeClassName="bg-[#E5ECE8] !text-[#0B3D2E] dark:bg-[#34D399]/15 dark:!text-[#6EE7B7] font-semibold"
+                    className="flex items-center min-h-[44px] px-3.5 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-[#CBD5E1] hover:bg-slate-100 dark:hover:bg-[#1E293B] hover:text-slate-900 dark:hover:text-[#F8FAFC] transition-colors"
+                    activeClassName="bg-emerald-50 text-emerald-800 border border-emerald-200 dark:bg-[#10B981]/15 dark:text-[#34D399] dark:border-[#10B981]/30 font-semibold"
                   >
                     {getNavLabel(item)}
                   </NavLink>
                 ))}
-              </div>
-            )}
+              </nav>
 
-            {/* Mobile Profile & Auth Controls */}
-            <div className="pt-3 mt-2 border-t border-[#E5E7EB] dark:border-[#374151]">
-              {isAuthenticated && user ? (
-                <div className="space-y-2.5">
-                  <div className="px-3.5 py-2.5 rounded-xl bg-[#F9FAFB] dark:bg-[#1F2937] border border-[#E5E7EB] dark:border-[#374151] flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <span className="w-8 h-8 rounded-full bg-[#0B3D2E] dark:bg-[#0D7A58] text-white font-semibold text-xs flex items-center justify-center shrink-0">
-                        {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
-                      </span>
-                      <div className="min-w-0">
-                        <p className="text-xs font-semibold text-[#111827] dark:text-[#F9FAFB] truncate">{user.name}</p>
-                        <p className="text-[11px] text-[#6B7280] dark:text-[#9CA3AF] truncate">{user.email}</p>
-                      </div>
-                    </div>
-                    <span
-                      className={`px-2 py-0.5 rounded text-[10px] font-semibold border shrink-0 ${getRoleBadge(
-                        user.role
-                      )}`}
+              {/* Secondary Navigation Links (if any) */}
+              {secondaryNavItems.length > 0 && (
+                <div className="pt-3 border-t border-slate-200 dark:border-[#334155] space-y-1">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 px-3 pb-1 block">
+                    {getDropdownLabel()}
+                  </span>
+                  {secondaryNavItems.map((item) => (
+                    <NavLink
+                      key={`mobile-sec-${item.id}`}
+                      to={item.path}
+                      onClick={closeMobileMenu}
+                      className="flex items-center min-h-[44px] px-3.5 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-[#CBD5E1] hover:bg-slate-100 dark:hover:bg-[#1E293B] hover:text-slate-900 dark:hover:text-[#F8FAFC] transition-colors"
+                      activeClassName="bg-emerald-50 text-emerald-800 border border-emerald-200 dark:bg-[#10B981]/15 dark:text-[#34D399] dark:border-[#10B981]/30 font-semibold"
                     >
-                      {formatRoleLabel(user.role)}
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handleLogout}
-                    className="civora-liquid-btn civora-liquid-btn--danger w-full px-3.5 py-2.5 text-sm font-medium rounded-lg"
-                  >
-                    {t('nav.signOut')}
-                  </button>
+                      {getNavLabel(item)}
+                    </NavLink>
+                  ))}
                 </div>
+              )}
+
+              {/* Preferences & Accessibility Section */}
+              <div className="pt-3 border-t border-slate-200 dark:border-[#334155] space-y-2.5">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 px-3 block">
+                  {t('accessibility.settingsTitle')}
+                </span>
+
+                {/* Mobile Language Selector */}
+                <div className="px-1">
+                  <LanguageSelector variant="default" />
+                </div>
+
+                {/* Mobile Theme Toggle */}
+                <div className="px-1">
+                  <ThemeToggle showLabel className="w-full justify-between min-h-[44px] px-3" />
+                </div>
+
+                {/* Mobile Notifications Link (if authenticated) */}
+                {isAuthenticated && (
+                  <NavLink
+                    to="/notifications"
+                    onClick={closeMobileMenu}
+                    className="flex items-center justify-between min-h-[44px] px-3.5 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-[#CBD5E1] hover:bg-slate-100 dark:hover:bg-[#1E293B] transition-colors"
+                  >
+                    <span className="flex items-center gap-2">
+                      <BellIcon className="w-4.5 h-4.5" />
+                      <span>{t('notifications.title') || 'Notifications'}</span>
+                    </span>
+                  </NavLink>
+                )}
+              </div>
+            </div>
+
+            {/* Bottom Drawer Actions */}
+            <div className="p-5 border-t border-slate-200 dark:border-[#334155] bg-slate-50/60 dark:bg-[#182230]/60 shrink-0">
+              {isAuthenticated ? (
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="w-full flex items-center justify-center gap-2 min-h-[44px] px-4 py-2.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-sm font-semibold transition-colors shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+                >
+                  <LogOutIcon className="w-4.5 h-4.5" />
+                  <span>{t('nav.signOut')}</span>
+                </button>
               ) : (
-                <div className="flex flex-col space-y-2.5">
+                <div className="space-y-2.5">
                   <NavLink
                     to="/report"
                     onClick={closeMobileMenu}
-                    className="civora-liquid-btn civora-liquid-btn--primary w-full text-center px-4 py-2.5 rounded-lg text-sm font-medium"
+                    className="w-full flex items-center justify-center min-h-[44px] px-4 py-2.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold transition-colors shadow-2xs"
                   >
                     {t('nav.reportIssue')}
                   </NavLink>
@@ -390,14 +573,14 @@ export function Navbar() {
                     <NavLink
                       to="/login"
                       onClick={closeMobileMenu}
-                      className="civora-liquid-btn civora-liquid-btn--secondary px-3 py-2.5 text-center text-sm font-medium rounded-lg"
+                      className="flex items-center justify-center min-h-[44px] px-3 py-2 rounded-lg border border-slate-200 dark:border-[#334155] bg-white dark:bg-[#1F2937] text-slate-700 dark:text-[#F8FAFC] text-sm font-medium hover:bg-slate-100 dark:hover:bg-[#273548] transition-colors"
                     >
                       {t('nav.signIn')}
                     </NavLink>
                     <NavLink
                       to="/register"
                       onClick={closeMobileMenu}
-                      className="civora-liquid-btn civora-liquid-btn--outline px-3 py-2.5 text-center text-sm font-medium rounded-lg"
+                      className="flex items-center justify-center min-h-[44px] px-3 py-2 rounded-lg border border-slate-200 dark:border-[#334155] bg-white dark:bg-[#1F2937] text-slate-700 dark:text-[#F8FAFC] text-sm font-medium hover:bg-slate-100 dark:hover:bg-[#273548] transition-colors"
                     >
                       {t('nav.register')}
                     </NavLink>
@@ -405,14 +588,7 @@ export function Navbar() {
                 </div>
               )}
             </div>
-
-            <div className="pt-2 sm:hidden flex items-center justify-between gap-2">
-              <LanguageSelector variant="forest-pill" />
-              <div className="w-36">
-                <ThemeToggle showLabel />
-              </div>
-            </div>
-          </nav>
+          </div>
         </div>
       )}
     </header>
